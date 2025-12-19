@@ -1,0 +1,317 @@
+{% schema %}
+{
+  "name": "Featured Collection",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Überschrift", "default": "Unsere Empfehlungen" },
+    { "type": "collection", "id": "collection", "label": "Kategorie auswählen" },
+    { "type": "checkbox", "id": "show_subheading", "label": "Untertitel anzeigen", "default": false },
+    { "type": "text", "id": "subheading", "label": "Untertitel", "default": "Entdecke unsere besten Produkte." },
+    { "type": "checkbox", "id": "zoom_enable", "default": true, "label": "Zoom beim Hover aktivieren" },
+    {
+      "type": "select",
+      "id": "zoom_scale",
+      "label": "Zoom-Stärke",
+      "default": "1.05",
+      "options": [
+        { "value": "1.05", "label": "Leicht (1.05)" },
+        { "value": "1.15", "label": "Mittel (1.15)" },
+        { "value": "1.30", "label": "Stark (1.30)" }
+      ]
+    },
+    { "type": "range", "id": "max_products", "min": 4, "max": 24, "step": 1, "default": 8, "label": "Max. Anzahl Produkte" },
+    { "type": "range", "id": "columns_desktop", "min": 2, "max": 5, "step": 1, "default": 4, "label": "Spalten (Desktop)" },
+    { "type": "checkbox", "id": "show_badge", "default": true, "label": "Sale Badge anzeigen" },
+    { "type": "checkbox", "id": "show_rating", "label": "Bewertungen anzeigen", "default": true },
+    { "type": "text", "id": "button_label", "label": "Button-Text (optional)", "default": "Alle anzeigen" },
+    { "type": "url", "id": "button_link", "label": "Button-Link (optional)" }
+  ],
+  "presets": [
+    { "name": "Featured Collection Grid" }
+  ]
+}
+{% endschema %}
+
+{%- liquid
+  assign _zoom_enabled = section.settings.zoom_enable
+  assign _zoom_scale   = section.settings.zoom_scale | default: '1.05'
+  assign _max_products = section.settings.max_products | default: 8
+  assign _columns      = section.settings.columns_desktop | default: 4
+-%}
+
+<section
+  id="fc-{{ section.id }}"
+  class="fc-wrap{% unless _zoom_enabled %} fc-nozoom{% endunless %}"
+  data-section-id="{{ section.id }}"
+>
+  <div class="fc-container">
+    <div class="fc-head">
+      {% if section.settings.heading != blank %}
+        <h2 class="fc-h2">{{ section.settings.heading }}</h2>
+      {% endif %}
+      {% if section.settings.show_subheading and section.settings.subheading != blank %}
+        <p class="fc-subtitle">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </div>
+
+    {% if section.settings.collection == blank %}
+      <p class="fc-message">Bitte im Theme Editor eine Kategorie auswählen.</p>
+    {% else %}
+      {% assign coll = section.settings.collection %}
+      
+      <div class="fc-grid" style="--columns-desktop: {{ _columns }};">
+        {% for product in coll.products limit: _max_products %}
+          {% assign price = product.price %}
+          {% assign compare_at = product.compare_at_price %}
+          {% assign first_available_variant = product.selected_or_first_available_variant %}
+
+          {%- assign discount = nil -%}
+          {% if compare_at and compare_at > price %}
+            {% assign diff          = compare_at | minus: price %}
+            {% assign discount_raw  = diff | times: 100 %}
+            {% assign discount      = discount_raw | divided_by: compare_at | round %}
+          {% endif %}
+
+          {% assign rating_val = 0 %}
+          {% assign rating_count = 0 %}
+          {% if section.settings.show_rating and product.metafields.reviews.rating.value %}
+            {% assign rating_val   = product.metafields.reviews.rating.value | default: 0 %}
+            {% assign rating_count = product.metafields.reviews.rating_count | default: 0 %}
+          {% endif %}
+
+          <article class="fc-card">
+            {% if section.settings.show_badge and discount %}
+              <div class="fc-badge">Sale</div>
+            {% endif %}
+
+            <a class="fc-card__link" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+              <div class="fc-card__img-wrap">
+                {% if product.featured_image %}
+                  <img
+                    class="fc-card__img"
+                    src="{{ product.featured_image | img_url: '600x' }}"
+                    alt="{{ product.title | escape }}"
+                    loading="lazy"
+                  >
+                {% else %}
+                  {{ 'image' | placeholder_svg_tag: 'fc-card__img' }}
+                {% endif %}
+              </div>
+
+              <div class="fc-card__body">
+                <h3 class="fc-card__title">{{ product.title }}</h3>
+
+                {% if section.settings.show_rating and rating_val > 0 %}
+                  <div class="fc-rating">
+                    <div class="fc-stars" aria-hidden="true">
+                      {% assign full_stars = rating_val | round %}
+                      {% for i in (1..5) %}
+                        {% if i <= full_stars %}
+                          <span class="fc-star fc-star--full">★</span>
+                        {% else %}
+                          <span class="fc-star fc-star--empty">★</span>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                <div class="fc-price-row">
+                  {% if compare_at and compare_at > price %}
+                    <s class="fc-price-compare">{{ compare_at | money }}</s>
+                  {% endif %}
+                  <span class="fc-price-main">{{ price | money }}</span>
+                </div>
+              </div>
+            </a>
+          </article>
+        {% endfor %}
+      </div>
+
+      {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+        <div class="fc-footer">
+          <a href="{{ section.settings.button_link }}" class="fc-button">
+            {{ section.settings.button_label }}
+          </a>
+        </div>
+      {% endif %}
+
+    {% endif %}
+  </div>
+</section>
+
+<style>
+#fc-{{ section.id }} .fc-wrap {
+  padding: 3rem 0;
+  background-color: #ffffff;
+}
+
+#fc-{{ section.id }} .fc-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header */
+#fc-{{ section.id }} .fc-head {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+#fc-{{ section.id }} .fc-h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: #111;
+}
+#fc-{{ section.id }} .fc-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+}
+#fc-{{ section.id }} .fc-message {
+  text-align: center;
+  color: #666;
+}
+
+/* Grid */
+#fc-{{ section.id }} .fc-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--columns-desktop), 1fr);
+  gap: 30px;
+  margin-bottom: 2.5rem;
+}
+
+/* Card */
+#fc-{{ section.id }} .fc-card {
+  position: relative;
+  transition: transform 0.3s ease;
+}
+#fc-{{ section.id }} .fc-card:hover {
+  transform: translateY(-5px);
+}
+
+#fc-{{ section.id }} .fc-card__link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* Image */
+#fc-{{ section.id }} .fc-card__img-wrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1/1;
+  background: #f7f7f7;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+#fc-{{ section.id }} .fc-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.5s ease;
+}
+
+/* Zoom Effect */
+#fc-{{ section.id }}.fc-wrap:not(.fc-nozoom) .fc-card:hover .fc-card__img {
+  transform: scale({{ _zoom_scale }});
+}
+
+/* Badge */
+#fc-{{ section.id }} .fc-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #000;
+  color: #fff;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+  z-index: 2;
+}
+
+/* Body */
+#fc-{{ section.id }} .fc-card__body {
+  text-align: center;
+}
+
+#fc-{{ section.id }} .fc-card__title {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 0 0.5rem;
+  color: #333;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Rating */
+#fc-{{ section.id }} .fc-rating {
+  margin-bottom: 0.5rem;
+  font-size: 12px;
+}
+#fc-{{ section.id }} .fc-star {
+  color: #ddd;
+}
+#fc-{{ section.id }} .fc-star--full {
+  color: #000;
+}
+
+/* Price */
+#fc-{{ section.id }} .fc-price-row {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #000;
+}
+#fc-{{ section.id }} .fc-price-compare {
+  color: #999;
+  font-weight: 400;
+  text-decoration: line-through;
+  margin-right: 8px;
+  font-size: 0.95rem;
+}
+
+/* Footer Button */
+#fc-{{ section.id }} .fc-footer {
+  text-align: center;
+  margin-top: 2rem;
+}
+#fc-{{ section.id }} .fc-button {
+  display: inline-block;
+  text-decoration: none;
+  color: #333;
+  border-bottom: 1px solid #333;
+  padding-bottom: 2px;
+  font-size: 0.95rem;
+  transition: opacity 0.2s;
+}
+#fc-{{ section.id }} .fc-button:hover {
+  opacity: 0.7;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  #fc-{{ section.id }} .fc-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  #fc-{{ section.id }} .fc-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  #fc-{{ section.id }} .fc-h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #fc-{{ section.id }} .fc-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+</style>
