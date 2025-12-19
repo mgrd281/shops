@@ -1086,6 +1086,23 @@
         "padding-block-start": 0,
         "padding-block-end": 0
       }
+    },
+    "black_friday_grid_giVmFz": {
+      "type": "black-friday-grid",
+      "name": "BF Slider",
+      "settings": {
+        "heading": "Aktuelle Deals für dich",
+        "collection": "black-friday",
+        "show_subheading": true,
+        "subheading": "Alle Black Friday Deals auf einen Blick.",
+        "zoom_enable": true,
+        "zoom_scale": "1.15",
+        "show_badge": true,
+        "max_products": 20,
+        "show_arrows": true,
+        "show_bestseller": true,
+        "show_rating": true
+      }
     }
   },
   "order": [
@@ -1096,6 +1113,7 @@
     "product_hotspots_RzCyE8",
     "collection_list_3ejxRy",
     "collection_list_XaY9C3",
-    "media_with_content_HP7Qpp"
+    "media_with_content_HP7Qpp",
+    "black_friday_grid_giVmFz"
   ]
 }
