@@ -1,0 +1,93 @@
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="section page-width-content color-{{ section.settings.color_scheme }}">
+  <div
+    class="
+      spacing-style
+      layout-panel-flex
+      layout-panel-flex--column
+      section-content-wrapper
+      mobile-column
+    "
+    style="
+      --gap: 24px;
+      padding-top: {{ section.settings.padding-block-start }}px;
+      padding-bottom: {{ section.settings.padding-block-end }}px;
+    "
+  >
+    <div class="rte" style="max-width: 800px; margin: 0 auto; width: 100%;">
+      <h1 style="text-align: center; margin-bottom: 2rem;">{{ page.title }}</h1>
+      {{ page.content }}
+      
+      <div class="cookie-settings-container" style="margin-top: 3rem; padding: 2.5rem; background-color: rgba(0,0,0,0.03); border-radius: 12px; text-align: center; border: 1px solid rgba(0,0,0,0.05);">
+        <h3 style="margin-top: 0;">Cookie-Präferenzen verwalten</h3>
+        <p style="margin-bottom: 1.5rem;">Hier können Sie Ihre Cookie-Einstellungen jederzeit anpassen und Ihre Einwilligung überprüfen.</p>
+        <button id="open-cookie-settings-btn" class="button" style="cursor: pointer; padding: 12px 24px; background-color: #2e7d32; color: white; border: none; border-radius: 4px; font-weight: bold;">
+          Cookie-Einstellungen öffnen
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('open-cookie-settings-btn');
+    if (btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // 1. Shopify Customer Privacy
+        if (window.Shopify && window.Shopify.customerPrivacy && typeof window.Shopify.customerPrivacy.showPreferences === 'function') {
+            window.Shopify.customerPrivacy.showPreferences();
+        } 
+        // 2. Cookiebot
+        else if (window.Cookiebot && typeof window.Cookiebot.renew === 'function') {
+            window.Cookiebot.renew();
+        } 
+        // 3. Fallback
+        else {
+            alert('Das Cookie-Einstellungs-Fenster konnte nicht geöffnet werden. Bitte überprüfen Sie, ob ein Ad-Blocker aktiv ist.');
+        }
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Cookie Settings",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 60
+    }
+  ]
+}
+{% endschema %}
