@@ -1,218 +1,253 @@
 
 
-{% if section.blocks.size > 1 %}
-  <script
-    src="{{ 'announcement-bar.js' | asset_url }}"
-    type="module"
-    fetchpriority="low"
-  ></script>
-{% endif %}
-
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
-<aside
-  class="announcement-bar spacing-style section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }}"
-  style="{% render 'spacing-padding', settings: section.settings %}; --border-bottom-width: {{ section.settings.divider_width }}px;"
->
-  {% liquid
-    assign autoplay = false
-    assign show_arrows = false
-    if section.blocks.size > 1
-      assign autoplay = true
-      assign show_arrows = true
-    endif
-  %}
-
-  <announcement-bar-component
-    class="announcement-bar__slider"
-    {% if autoplay == true %}
-      autoplay="{{ section.settings.speed }}" aria-live="polite"
-    {% endif %}
-  >
-    {% if show_arrows %}
-      {% render 'slideshow-arrows', icon_style: 'chevron' %}
-    {% endif %}
-
-    <div class="announcement-bar__slides">
-      {% content_for 'blocks' %}
+{% if section.blocks.size > 0 %}
+  <div id="announcement-bar-{{ section.id }}" class="announcement-bar-wrapper">
+    <div class="announcement-bar-content">
+      <div class="announcement-left">
+        {% assign block = section.blocks.first %}
+        <span class="announcement-text">{{ block.settings.text }}</span>
+        {% if block.settings.link != blank %}
+          <a href="{{ block.settings.link }}" class="announcement-cta">{{ block.settings.link_text | default: 'SHOP NOW' }}</a>
+        {% endif %}
+      </div>
+      
+      {% if section.settings.show_timer %}
+        <div class="announcement-right">
+          <div class="countdown-timer" data-date="{{ section.settings.timer_date }}">
+            <div class="timer-block">
+              <span class="timer-value" id="days">00</span>
+              <span class="timer-label">DAY</span>
+            </div>
+            <span class="timer-separator">:</span>
+            <div class="timer-block">
+              <span class="timer-value" id="hours">00</span>
+              <span class="timer-label">HRS</span>
+            </div>
+            <span class="timer-separator">:</span>
+            <div class="timer-block">
+              <span class="timer-value" id="minutes">00</span>
+              <span class="timer-label">MIN</span>
+            </div>
+            <span class="timer-separator">:</span>
+            <div class="timer-block">
+              <span class="timer-value" id="seconds">00</span>
+              <span class="timer-label">SEC</span>
+            </div>
+          </div>
+        </div>
+      {% endif %}
     </div>
-  </announcement-bar-component>
-</aside>
+  </div>
 
-{% stylesheet %}
-  .announcement-bar {
-    border-block-end: var(--border-bottom-width) solid var(--color-border);
-  }
-
-  .announcement-bar__slider {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    position: relative;
-
-    @media screen and (max-width: 749px) {
-      grid-column: 1 / -1;
+  <style>
+    .announcement-bar-wrapper {
+      background-color: {{ section.settings.bg_color }};
+      color: {{ section.settings.text_color }};
+      height: {{ section.settings.height }}px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body-family);
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      width: 100%;
     }
-  }
 
-  .announcement-bar__slides {
-    display: grid;
-    grid: [stack] auto / [stack] auto;
-    width: calc(100% - var(--button-size) * 2);
-    max-width: 680px;
-    margin-inline: auto;
-  }
-
-  .announcement-bar__slides > * {
-    grid-area: stack;
-  }
-
-  .announcement-bar__slide {
-    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
-
-    &[aria-hidden='true'] {
-      opacity: 0;
-      visibility: hidden;
+    .announcement-bar-content {
+      width: 100%;
+      max-width: 1400px;
+      padding: 0 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-  }
 
-  .announcement-bar__slider slideshow-arrows {
-    padding: 0;
-    mix-blend-mode: normal;
-  }
+    .announcement-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
 
-  .announcement-bar__slider slideshow-arrows .slideshow-control {
-    color: var(--color-foreground);
-  }
+    .announcement-text {
+      font-weight: 600;
+    }
 
-  .announcement-bar__slider .slideshow-control {
-    display: flex;
-    padding: 0;
-    width: var(--button-size);
-    height: var(--button-size);
-    align-items: center;
-    justify-content: center;
-    opacity: 1;
-    animation: none;
+    .announcement-cta {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid currentColor;
+      padding-bottom: 2px;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+    .announcement-cta:hover {
+      opacity: 0.8;
+    }
 
-    @media screen and (min-width: 750px) {
-      --slideshow-control-offset: calc((var(--button-size) - var(--icon-size-xs)) / 2);
+    .announcement-right {
+      display: flex;
+      align-items: center;
+    }
 
-      .section--page-width &.slideshow-control--previous {
-        transform: translateX(var(--slideshow-control-offset));
+    .countdown-timer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .timer-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1;
+    }
+
+    .timer-value {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .timer-label {
+      font-size: 9px;
+      margin-top: 2px;
+      opacity: 0.8;
+    }
+
+    .timer-separator {
+      font-weight: 700;
+      margin-bottom: 8px; /* Align with numbers */
+    }
+
+    @media (max-width: 768px) {
+      .announcement-bar-wrapper {
+        height: auto;
+        padding: 10px 0;
+      }
+      .announcement-bar-content {
+        flex-direction: column;
+        gap: 10px;
+        padding: 0 20px;
+        text-align: center;
+      }
+      .announcement-left {
+        flex-direction: column;
+        gap: 5px;
       }
     }
-  }
+  </style>
 
-  .announcement-bar__slider .slideshow-control .svg-wrapper {
-    width: var(--icon-size-xs);
-    height: var(--icon-size-xs);
-  }
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const timerElement = document.querySelector('#announcement-bar-{{ section.id }} .countdown-timer');
+      if (!timerElement) return;
 
-  .announcement-bar__slide {
-    place-content: center;
-  }
+      const targetDateStr = timerElement.getAttribute('data-date');
+      if (!targetDateStr) return;
 
-  .announcement-bar__text:first-child {
-    margin: 0;
-  }
+      // Parse date string (expected format: YYYY-MM-DDTHH:MM)
+      const targetDate = new Date(targetDateStr).getTime();
 
-  .announcement-bar__link {
-    position: absolute;
-    inset: 0;
-  }
-{% endstylesheet %}
+      function updateTimer() {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        if (distance < 0) {
+          timerElement.style.display = 'none';
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.querySelector('#announcement-bar-{{ section.id }} #days').innerText = days < 10 ? '0' + days : days;
+        document.querySelector('#announcement-bar-{{ section.id }} #hours').innerText = hours < 10 ? '0' + hours : hours;
+        document.querySelector('#announcement-bar-{{ section.id }} #minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
+        document.querySelector('#announcement-bar-{{ section.id }} #seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
+      }
+
+      setInterval(updateTimer, 1000);
+      updateTimer();
+    });
+  </script>
+{% endif %}
 
 {% schema %}
 {
-  "name": "t:names.announcement_bar",
-  "blocks": [
-    {
-      "type": "_announcement"
-    }
-  ],
-  "enabled_on": {
-    "groups": ["header"]
-  },
+  "name": "Premium Announcement Bar",
   "settings": [
     {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Hintergrundfarbe",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Textfarbe",
+      "default": "#ffffff"
+    },
+    {
       "type": "range",
-      "id": "speed",
-      "label": "t:settings.scroll_speed",
-      "min": 2,
-      "max": 10,
-      "default": 5,
-      "unit": "sec"
+      "id": "height",
+      "label": "Höhe (Desktop)",
+      "min": 30,
+      "max": 80,
+      "step": 1,
+      "default": 46,
+      "unit": "px"
     },
     {
-      "type": "header",
-      "content": "t:content.appearance"
+      "type": "checkbox",
+      "id": "show_timer",
+      "label": "Countdown-Timer anzeigen",
+      "default": true
     },
     {
-      "type": "select",
-      "id": "section_width",
-      "label": "t:settings.section_width",
-      "options": [
+      "type": "text",
+      "id": "timer_date",
+      "label": "Enddatum (YYYY-MM-DDTHH:MM)",
+      "default": "2025-12-31T23:59",
+      "info": "Format: 2025-12-31T23:59"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Ankündigung",
+      "limit": 1,
+      "settings": [
         {
-          "value": "page-width",
-          "label": "t:options.page"
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "SUPER SALE UP TO 40% OFF"
         },
         {
-          "value": "full-width",
-          "label": "t:options.full"
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link Text (CTA)",
+          "default": "SHOP NOW"
         }
-      ],
-      "default": "page-width"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "default": "scheme-4",
-      "label": "t:settings.color_scheme"
-    },
-    {
-      "type": "range",
-      "id": "divider_width",
-      "label": "t:settings.divider_thickness",
-      "min": 0,
-      "max": 5,
-      "step": 0.5,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "header",
-      "content": "t:content.padding"
-    },
-    {
-      "type": "range",
-      "id": "padding-block-start",
-      "label": "t:settings.top",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 15
-    },
-    {
-      "type": "range",
-      "id": "padding-block-end",
-      "label": "t:settings.bottom",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 15
+      ]
     }
   ],
   "presets": [
     {
-      "name": "t:names.announcement_bar",
-      "blocks": {
-        "announcement_1": {
-          "type": "_announcement"
+      "name": "Premium Announcement Bar",
+      "blocks": [
+        {
+          "type": "announcement"
         }
-      },
-      "block_order": ["announcement_1"]
+      ]
     }
   ]
 }
