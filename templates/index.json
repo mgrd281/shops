@@ -8,80 +8,9 @@
  * ------------------------------------------------------------
  */ {
   "sections": {
-    "hero_G7CAX9": {
-      "type": "hero",
-      "blocks": {
-        "text_KJqzT8": {
-          "type": "text",
-          "settings": {
-            "text": "<h2><em>Unsere Neueste Kollektion</em></h2>",
-            "width": "100%",
-            "max_width": "normal",
-            "alignment": "center",
-            "type_preset": "h1",
-            "font": "var(--font-primary--family)",
-            "font_size": "",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "color": "var(--color-foreground-heading)",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 16,
-            "padding-inline-end": 16
-          },
-          "blocks": {}
-        },
-        "button_cTVbXA": {
-          "type": "button",
-          "name": "Button",
-          "settings": {
-            "label": "JETZT KAUFEN",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "style_class": "link",
-            "width": "fit-content",
-            "custom_width": 100,
-            "width_mobile": "fit-content",
-            "custom_width_mobile": 100
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "text_KJqzT8",
-        "button_cTVbXA"
-      ],
-      "name": "t:names.hero",
-      "settings": {
-        "media_type_1": "image",
-        "media_type_2": "image",
-        "open_in_new_tab": false,
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment_flex_direction_column": "flex-end",
-        "gap": 16,
-        "section_width": "full-width",
-        "section_height": "medium",
-        "section_height_custom": 50,
-        "color_scheme": "scheme-6",
-        "toggle_overlay": true,
-        "overlay_color": "#00000030",
-        "overlay_style": "gradient",
-        "gradient_direction": "to top",
-        "blurred_reflection": false,
-        "reflection_opacity": 75,
-        "padding-block-start": 48,
-        "padding-block-end": 48
-      }
+    "custom_slider_section": {
+      "type": "custom-slider",
+      "settings": {}
     },
     "section": {
       "type": "section",
@@ -1143,7 +1072,7 @@
     }
   },
   "order": [
-    "hero_G7CAX9",
+    "custom_slider_section",
     "section",
     "product_list_YidTcf",
     "section_BkdmxX",
