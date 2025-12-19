@@ -162,6 +162,8 @@
       ref="cardGalleryLink"
       href="{{ product.selected_or_first_available_variant.url }}"
       aria-label="{{- product.title -}}"
+      aria-hidden="true"
+      tabindex="-1"
     >
       {% render 'slideshow',
         ref: 'slideshow',
