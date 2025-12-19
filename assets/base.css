@@ -4037,3 +4037,15 @@ text-component {
     font-size: max(1rem, 100%);
   }
 }
+
+/* Force SALE badge to black */
+.fc-badge,
+.product-badges__badge--sale,
+.badge--sale,
+.product-tag--sale,
+.card__badge,
+.card-badge {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-color: #000000 !important;
+}
