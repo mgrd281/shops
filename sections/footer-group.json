@@ -11,19 +11,25 @@
   "type": "footer",
   "name": "Footer",
   "sections": {
+    "custom_footer_i34fPm": {
+      "type": "custom-footer",
+      "name": "Custom Footer DE",
+      "settings": {}
+    },
     "section_bfa9EJ": {
       "type": "section",
       "blocks": {
         "email_signup_aMpHhb": {
           "type": "email-signup",
           "name": "t:names.email_signup",
+          "disabled": true,
           "settings": {
             "width": "fill",
             "custom_width": 100,
             "inherit_color_scheme": true,
+            "color_scheme": "scheme-4",
             "heading": "NEWSLETTER",
             "heading_preset": "h6",
-            "color_scheme": "scheme-4",
             "border_style": "underline",
             "border_width": 1,
             "border_radius": 100,
@@ -475,6 +481,7 @@
       "block_order": [
         "group_WWji7T"
       ],
+      "disabled": true,
       "settings": {
         "section_width": "page-width",
         "gap": 12,
@@ -528,6 +535,7 @@
         "policy_list",
         "social_icons"
       ],
+      "disabled": true,
       "settings": {
         "section_width": "page-width",
         "gap": 24,
@@ -539,6 +547,7 @@
     }
   },
   "order": [
+    "custom_footer_i34fPm",
     "section_bfa9EJ",
     "footer",
     "utilities"
