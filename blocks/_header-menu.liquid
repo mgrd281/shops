@@ -83,7 +83,6 @@
     {% capture children %}
       {% for link in block_settings.menu.links %}
         <li
-          role="presentation"
           class="menu-list__list-item"
           on:focus="/activate"
           on:blur="/deactivate"
@@ -136,7 +135,6 @@
       {% endfor %}
       <li
         class="menu-list__list-item"
-        role="presentation"
         slot="more"
         on:focus="/activate"
         on:blur="/deactivate"
