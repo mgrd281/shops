@@ -147,26 +147,23 @@
     const openCookieSettings = (e) => {
       e.preventDefault();
       
-      // Funktion zum Öffnen der Einstellungen
       const tryOpen = () => {
         console.log('Versuche Cookie-Einstellungen zu öffnen...');
         
-        // 1. Native Shopify Privacy & Compliance (Das im Screenshot gezeigte System)
+        // 1. Native Shopify Privacy & Compliance
         if (window.Shopify && window.Shopify.customerPrivacy) {
-            if (typeof window.Shopify.customerPrivacy.showPreferences === 'function') {
-                console.log('Shopify Customer Privacy API gefunden.');
-                window.Shopify.customerPrivacy.showPreferences();
-                return true;
-            }
+            console.log('Shopify Customer Privacy API gefunden.');
+            window.Shopify.customerPrivacy.showPreferences();
+            return true;
         }
         
-        // 2. Consentmo (GDPR/CCPA App) - Falls installiert
+        // 2. Consentmo
         if (window.Gdpr && typeof window.Gdpr.openPreferences === 'function') {
             window.Gdpr.openPreferences();
             return true;
         }
         
-        // 3. Cookiebot - Falls installiert
+        // 3. Cookiebot
         if (window.Cookiebot && typeof window.Cookiebot.show === 'function') {
             window.Cookiebot.show();
             return true;
@@ -175,16 +172,44 @@
         return false;
       };
 
-      // Erster Versuch
+      // Versuche zu öffnen
       if (!tryOpen()) {
-        // Falls API noch nicht geladen, kurz warten und erneut versuchen
-        console.log('API nicht bereit, warte...');
-        setTimeout(() => {
-            if(!tryOpen()) {
-                 console.warn('Keine Cookie-API gefunden.');
-                 alert('Das Menü für Cookie-Einstellungen konnte nicht geladen werden. Bitte stellen Sie sicher, dass der Cookie-Banner aktiv ist.');
-            }
-        }, 800);
+        console.log('API nicht bereit, versuche zu laden...');
+        
+        // Versuche explizit die Shopify Privacy Features zu laden
+        if (window.Shopify && window.Shopify.loadFeatures) {
+            window.Shopify.loadFeatures(
+                [
+                    {
+                        name: 'consent-tracking-api',
+                        version: '0.1',
+                    },
+                ],
+                function (error) {
+                    if (error) {
+                        console.error('Fehler beim Laden der Privacy API:', error);
+                        alert('Das Cookie-Menü konnte nicht geladen werden. Bitte laden Sie die Seite neu.');
+                    } else {
+                        console.log('Privacy API erfolgreich geladen.');
+                        // Kurze Verzögerung nach dem Laden
+                        setTimeout(() => {
+                             if(window.Shopify.customerPrivacy) {
+                                 window.Shopify.customerPrivacy.showPreferences();
+                             } else {
+                                 alert('Das Cookie-Menü ist momentan nicht verfügbar.');
+                             }
+                        }, 500);
+                    }
+                }
+            );
+        } else {
+             // Fallback Retry
+             setTimeout(() => {
+                if(!tryOpen()) {
+                     alert('Das Menü für Cookie-Einstellungen konnte nicht geladen werden. Bitte stellen Sie sicher, dass Sie sich in einer Region befinden, in der der Cookie-Banner aktiv ist (z.B. EU).');
+                }
+            }, 1000);
+        }
       }
     };
 
