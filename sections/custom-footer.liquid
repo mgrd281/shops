@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KARINEX - Digital & Physical Products Footer</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         .footer-modern-wrapper {
             background: #fff;
@@ -941,8 +935,7 @@
             }
         }
     </style>
-</head>
-<body>
+
     <!-- KARINEX Footer -->
     <div class="footer-modern-wrapper">
         <div class="footer-modern-content">
@@ -1017,7 +1010,7 @@
                     <li><a href="/pages/uber-uns">Über uns</a></li>
                     <li><a href="/pages/kontakt">Kontaktseite</a></li>
                     <li><a href="/pages/faq">FAQ</a></li>
-                    <li><a href="#" onclick="window.Cookiebot.show(); return false;">Cookie-Einstellungen</a></li>
+                    <li><a href="/pages/cookie-einstellungen" class="js-cookie-settings">Cookie-Einstellungen</a></li>
                     <li><a href="/pages/zahlungsarten">Zahlungsarten</a></li>
                     <li><a href="/pages/retouren">Retouren & Umtausch</a></li>
                 </ul>
@@ -1302,7 +1295,7 @@
                     <li><a href="/policies/legal-notice">Impressum</a></li>
                     <li><a href="/policies/shipping-policy">Versand</a></li>
                     <li><a href="https://www.karinex.de/policies/refund-policy">Widerrufsrecht</a></li>
-                    <li><a href="/pages/cookie-einstellungen">Cookies</a></li>
+                    <li><a href="/pages/cookie-einstellungen" class="js-cookie-settings">Cookies</a></li>
                 </ul>
             </div>
         </div>
@@ -1310,6 +1303,28 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Cookie Settings Logic
+            const openCookieSettings = (e) => {
+                e.preventDefault();
+                
+                // 1. Shopify Customer Privacy
+                if (window.Shopify && window.Shopify.customerPrivacy && typeof window.Shopify.customerPrivacy.showPreferences === 'function') {
+                    window.Shopify.customerPrivacy.showPreferences();
+                } 
+                // 2. Cookiebot
+                else if (window.Cookiebot && typeof window.Cookiebot.renew === 'function') {
+                    window.Cookiebot.renew();
+                } 
+                // 3. Fallback
+                else {
+                    window.location.href = '/pages/cookie-einstellungen';
+                }
+            };
+
+            const cookieLinks = document.querySelectorAll('.js-cookie-settings');
+            cookieLinks.forEach(link => {
+                link.addEventListener('click', openCookieSettings);
+            });
             // Mobile Collapsible Sections
             const sectionHeaders = document.querySelectorAll('.section-header');
             
@@ -1351,8 +1366,7 @@
             });
         });
     </script>
-</body>
-</html>
+
 
 {% schema %}
 {
