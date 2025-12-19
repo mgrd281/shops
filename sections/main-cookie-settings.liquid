@@ -162,75 +162,75 @@
           }
       };
       
-      const tryOpen = () => {
-        console.log('Versuche Cookie-Einstellungen zu öffnen...');
-        
-        // 1. Native Shopify Privacy & Compliance
-        if (window.Shopify && window.Shopify.customerPrivacy && typeof window.Shopify.customerPrivacy.showPreferences === 'function') {
-            console.log('Shopify Customer Privacy API gefunden.');
-            window.Shopify.customerPrivacy.showPreferences();
-            resetBtn();
-            return true;
-        }
-        
-        // 2. Consentmo
-        if (window.Gdpr && typeof window.Gdpr.openPreferences === 'function') {
-            window.Gdpr.openPreferences();
-            resetBtn();
-            return true;
-        }
-        
-        // 3. Cookiebot
-        if (window.Cookiebot && typeof window.Cookiebot.show === 'function') {
-            window.Cookiebot.show();
-            resetBtn();
-            return true;
-        }
-        
-        return false;
+      // Funktion, die prüft, ob die API bereit ist
+      const isApiReady = () => {
+          return window.Shopify && 
+                 window.Shopify.customerPrivacy && 
+                 typeof window.Shopify.customerPrivacy.showPreferences === 'function';
       };
 
-      // Versuche zu öffnen
-      if (!tryOpen()) {
-        console.log('API nicht bereit, versuche zu laden...');
-        
-        // Versuche explizit die Shopify Privacy Features zu laden
-        if (window.Shopify && window.Shopify.loadFeatures) {
-            window.Shopify.loadFeatures(
-                [
-                    {
-                        name: 'consent-tracking-api',
-                        version: '0.1',
-                    },
-                ],
-                function (error) {
-                    if (error) {
-                        console.error('Fehler beim Laden der Privacy API:', error);
-                        resetBtn();
-                        alert('Fehler: Das Cookie-Menü konnte nicht geladen werden.');
-                    } else {
-                        console.log('Privacy API erfolgreich geladen.');
-                        // Kurze Verzögerung nach dem Laden
-                        setTimeout(() => {
-                             if(window.Shopify.customerPrivacy && typeof window.Shopify.customerPrivacy.showPreferences === 'function') {
-                                 window.Shopify.customerPrivacy.showPreferences();
-                             } else {
-                                 alert('Hinweis: Das Cookie-Menü ist in Ihrer Region möglicherweise nicht verfügbar oder deaktiviert.');
-                             }
-                             resetBtn();
-                        }, 1000);
-                    }
-                }
-            );
-        } else {
-             // Fallback Retry
-             setTimeout(() => {
-                if(!tryOpen()) {
-                     resetBtn();
-                     alert('Das Menü für Cookie-Einstellungen konnte nicht geöffnet werden. Bitte stellen Sie sicher, dass Sie sich in einer Region befinden, in der der Cookie-Banner aktiv ist (z.B. EU).');
-                }
-            }, 1000);
-        }
+      // Polling Funktion: Prüft alle 500ms, ob die API da ist (max 10 Versuche = 5 Sekunden)
+      const waitForApi = (attemptsLeft) => {
+          if (isApiReady()) {
+              console.log('Shopify Customer Privacy API gefunden!');
+              window.Shopify.customerPrivacy.showPreferences();
+              resetBtn();
+              return;
+          }
+
+          if (attemptsLeft <= 0) {
+              console.warn('Timeout: API wurde nicht geladen.');
+              resetBtn();
+              alert('Das Cookie-Menü konnte nicht geladen werden. Bitte stellen Sie sicher, dass der Cookie-Banner in den Shopify-Einstellungen aktiviert ist.');
+              return;
+          }
+
+          console.log('Warte auf Cookie API... Verbleibende Versuche:', attemptsLeft);
+          setTimeout(() => waitForApi(attemptsLeft - 1), 500);
+      };
+
+      // 1. Sofort versuchen
+      if (isApiReady()) {
+          window.Shopify.customerPrivacy.showPreferences();
+          resetBtn();
+          return;
+      }
+      
+      // 2. Andere Apps prüfen (Cookiebot, etc.)
+      if (window.Cookiebot && typeof window.Cookiebot.show === 'function') {
+          window.Cookiebot.show();
+          resetBtn();
+          return;
+      }
+      if (window.Gdpr && typeof window.Gdpr.openPreferences === 'function') {
+          window.Gdpr.openPreferences();
+          resetBtn();
+          return;
+      }
+
+      // 3. Wenn nichts da ist, versuchen wir die Shopify API zu laden und warten dann
+      console.log('API nicht bereit, starte Ladevorgang...');
+      
+      if (window.Shopify && window.Shopify.loadFeatures) {
+          window.Shopify.loadFeatures(
+              [
+                  {
+                      name: 'consent-tracking-api',
+                      version: '0.1',
+                  },
+              ],
+              function (error) {
+                  if (error) {
+                      console.error('Fehler beim Laden der Features:', error);
+                      // Trotzdem versuchen zu warten, falls es parallel lädt
+                  }
+                  // Starte Polling
+                  waitForApi(10);
+              }
+          );
+      } else {
+          // Fallback Polling, falls loadFeatures nicht existiert
+          waitForApi(10);
       }
     };
 
