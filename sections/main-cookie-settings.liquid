@@ -144,28 +144,46 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('open-cookie-settings-btn');
+    const originalText = btn ? btn.innerHTML : '';
+
     const openCookieSettings = (e) => {
       e.preventDefault();
+      
+      if(btn) {
+          btn.innerHTML = '<span>Laden...</span>';
+          btn.style.opacity = '0.7';
+      }
+
+      const resetBtn = () => {
+          if(btn) {
+              btn.innerHTML = originalText;
+              btn.style.opacity = '1';
+          }
+      };
       
       const tryOpen = () => {
         console.log('Versuche Cookie-Einstellungen zu öffnen...');
         
         // 1. Native Shopify Privacy & Compliance
-        if (window.Shopify && window.Shopify.customerPrivacy) {
+        if (window.Shopify && window.Shopify.customerPrivacy && typeof window.Shopify.customerPrivacy.showPreferences === 'function') {
             console.log('Shopify Customer Privacy API gefunden.');
             window.Shopify.customerPrivacy.showPreferences();
+            resetBtn();
             return true;
         }
         
         // 2. Consentmo
         if (window.Gdpr && typeof window.Gdpr.openPreferences === 'function') {
             window.Gdpr.openPreferences();
+            resetBtn();
             return true;
         }
         
         // 3. Cookiebot
         if (window.Cookiebot && typeof window.Cookiebot.show === 'function') {
             window.Cookiebot.show();
+            resetBtn();
             return true;
         }
         
@@ -188,17 +206,19 @@
                 function (error) {
                     if (error) {
                         console.error('Fehler beim Laden der Privacy API:', error);
-                        alert('Das Cookie-Menü konnte nicht geladen werden. Bitte laden Sie die Seite neu.');
+                        resetBtn();
+                        alert('Fehler: Das Cookie-Menü konnte nicht geladen werden.');
                     } else {
                         console.log('Privacy API erfolgreich geladen.');
                         // Kurze Verzögerung nach dem Laden
                         setTimeout(() => {
-                             if(window.Shopify.customerPrivacy) {
+                             if(window.Shopify.customerPrivacy && typeof window.Shopify.customerPrivacy.showPreferences === 'function') {
                                  window.Shopify.customerPrivacy.showPreferences();
                              } else {
-                                 alert('Das Cookie-Menü ist momentan nicht verfügbar.');
+                                 alert('Hinweis: Das Cookie-Menü ist in Ihrer Region möglicherweise nicht verfügbar oder deaktiviert.');
                              }
-                        }, 500);
+                             resetBtn();
+                        }, 1000);
                     }
                 }
             );
@@ -206,14 +226,14 @@
              // Fallback Retry
              setTimeout(() => {
                 if(!tryOpen()) {
-                     alert('Das Menü für Cookie-Einstellungen konnte nicht geladen werden. Bitte stellen Sie sicher, dass Sie sich in einer Region befinden, in der der Cookie-Banner aktiv ist (z.B. EU).');
+                     resetBtn();
+                     alert('Das Menü für Cookie-Einstellungen konnte nicht geöffnet werden. Bitte stellen Sie sicher, dass Sie sich in einer Region befinden, in der der Cookie-Banner aktiv ist (z.B. EU).');
                 }
             }, 1000);
         }
       }
     };
 
-    const btn = document.getElementById('open-cookie-settings-btn');
     if (btn) {
       btn.addEventListener('click', openCookieSettings);
     }

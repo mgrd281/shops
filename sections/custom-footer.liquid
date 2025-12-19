@@ -1327,12 +1327,42 @@
                 };
 
                 if (!tryOpen()) {
-                    // Retry once after delay in case scripts are loading
-                    setTimeout(() => {
-                        if (!tryOpen()) {
-                             window.location.href = '/pages/cookie-einstellungen';
-                        }
-                    }, 500);
+                    console.log('Cookie API not ready, attempting to load...');
+                    
+                    // Attempt to load Shopify Privacy Features explicitly
+                    if (window.Shopify && window.Shopify.loadFeatures) {
+                        window.Shopify.loadFeatures(
+                            [
+                                {
+                                    name: 'consent-tracking-api',
+                                    version: '0.1',
+                                },
+                            ],
+                            function (error) {
+                                if (error) {
+                                    console.error('Error loading Privacy API:', error);
+                                    window.location.href = '/pages/cookie-einstellungen';
+                                } else {
+                                    console.log('Privacy API loaded successfully');
+                                    setTimeout(() => {
+                                         if(window.Shopify.customerPrivacy && typeof window.Shopify.customerPrivacy.showPreferences === 'function') {
+                                             window.Shopify.customerPrivacy.showPreferences();
+                                         } else {
+                                             // If still not available (e.g. wrong region), go to fallback page
+                                             window.location.href = '/pages/cookie-einstellungen';
+                                         }
+                                    }, 500);
+                                }
+                            }
+                        );
+                    } else {
+                        // Fallback if loadFeatures is not available
+                        setTimeout(() => {
+                            if (!tryOpen()) {
+                                 window.location.href = '/pages/cookie-einstellungen';
+                            }
+                        }, 500);
+                    }
                 }
             };
 
