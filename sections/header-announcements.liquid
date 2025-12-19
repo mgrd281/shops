@@ -7,10 +7,10 @@
           {% assign block = section.blocks.first %}
           <span class="announcement-text">{{ block.settings.text }}</span>
           {% if block.settings.link != blank %}
-            <a href="{{ block.settings.link }}" class="announcement-cta">{{ block.settings.link_text | default: 'SHOP NOW' }}</a>
+            <a href="{{ block.settings.link }}" class="announcement-cta">{{ block.settings.link_text | default: 'JETZT KAUFEN' }}</a>
           {% endif %}
         {% else %}
-          <span class="announcement-text">Super Sale Up to 80% off</span>
+          <span class="announcement-text">Super Sale: Bis zu 80% Rabatt</span>
         {% endif %}
       </div>
       
@@ -19,12 +19,12 @@
           <div class="countdown-timer" data-date="{{ section.settings.timer_date }}">
             <div class="timer-block">
               <span class="timer-value" id="days">00</span>
-              <span class="timer-label">DAY</span>
+              <span class="timer-label">TAGE</span>
             </div>
             <span class="timer-separator">:</span>
             <div class="timer-block">
               <span class="timer-value" id="hours">00</span>
-              <span class="timer-label">HRS</span>
+              <span class="timer-label">STD</span>
             </div>
             <span class="timer-separator">:</span>
             <div class="timer-block">
@@ -34,7 +34,7 @@
             <span class="timer-separator">:</span>
             <div class="timer-block">
               <span class="timer-value" id="seconds">00</span>
-              <span class="timer-label">SEC</span>
+              <span class="timer-label">SEK</span>
             </div>
           </div>
         </div>
@@ -230,7 +230,7 @@
           "type": "text",
           "id": "text",
           "label": "Text",
-          "default": "Super Sale Up to 80% off"
+          "default": "Super Sale: Bis zu 80% Rabatt"
         },
         {
           "type": "url",
@@ -241,7 +241,7 @@
           "type": "text",
           "id": "link_text",
           "label": "Link Text (CTA)",
-          "default": "SHOP NOW"
+          "default": "JETZT KAUFEN"
         }
       ]
     }
