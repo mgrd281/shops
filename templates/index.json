@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */ {
+ */
+{
   "sections": {
     "custom_slider_section": {
       "type": "custom-slider",
@@ -19,7 +20,7 @@
           "type": "text",
           "name": "Heading",
           "settings": {
-            "text": "<p><em>Von ausgewählten Essentials bis hin zu besonderen Einzelstücken – schaffen Sie die Basis für ein zeitloses Zuhause mit Qualität, die bleibt.</em></p>",
+            "text": "",
             "width": "fit-content",
             "max_width": "narrow",
             "alignment": "center",
@@ -61,6 +62,7 @@
         "text_jcLMz6",
         "button_ynEdzM"
       ],
+      "disabled": true,
       "name": "Pull quote",
       "settings": {
         "content_direction": "column",
@@ -192,6 +194,7 @@
                 "overlay_color": "#00000026",
                 "overlay_style": "solid",
                 "gradient_direction": "to top",
+                "link": "",
                 "open_in_new_tab": false,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
@@ -331,6 +334,7 @@
             "overlay_color": "#00000026",
             "overlay_style": "solid",
             "gradient_direction": "to top",
+            "link": "",
             "open_in_new_tab": false,
             "placeholder": "",
             "padding-block-start": 0,
@@ -452,6 +456,7 @@
         "hotspot_product_qLcTTX": {
           "type": "_hotspot-product",
           "settings": {
+            "product": "",
             "x-position": 40,
             "y-position": 40
           },
@@ -460,6 +465,7 @@
         "hotspot_product_KKDhz4": {
           "type": "_hotspot-product",
           "settings": {
+            "product": "",
             "x-position": 60,
             "y-position": 60
           },
@@ -506,7 +512,7 @@
         "gradient_direction": "to top",
         "section_width": "full-width",
         "section_height": "auto",
-        "hotspot_color": "#FFFFFF57",
+        "hotspot_color": "#ffffff57",
         "bullseye_color": "#ffffff",
         "color_scheme": "scheme-1",
         "product_title_gap": 8,
@@ -550,6 +556,7 @@
             "overlay_color": "#00000026",
             "overlay_style": "solid",
             "gradient_direction": "to top",
+            "link": "",
             "open_in_new_tab": false,
             "placeholder": "",
             "padding-block-start": 0,
@@ -685,6 +692,7 @@
       ],
       "name": "t:names.collections_bento",
       "settings": {
+        "collection_list": [],
         "layout_type": "bento",
         "carousel_on_mobile": false,
         "columns": 4,
@@ -737,6 +745,7 @@
             "overlay_color": "#00000026",
             "overlay_style": "solid",
             "gradient_direction": "to top",
+            "link": "",
             "open_in_new_tab": false,
             "placeholder": "",
             "padding-block-start": 0,
@@ -872,6 +881,7 @@
       ],
       "name": "t:names.collections_grid",
       "settings": {
+        "collection_list": [],
         "layout_type": "grid",
         "carousel_on_mobile": false,
         "columns": 5,
@@ -898,6 +908,7 @@
           "static": true,
           "settings": {
             "media_type": "image",
+            "link": "",
             "video_loop": true,
             "video_autoplay": false,
             "image_position": "cover",
@@ -971,6 +982,7 @@
                 "overlay_color": "#00000026",
                 "overlay_style": "solid",
                 "gradient_direction": "to top",
+                "link": "",
                 "open_in_new_tab": false,
                 "placeholder": "",
                 "padding-block-start": 0,
