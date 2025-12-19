@@ -3,9 +3,9 @@
   "name": "BF Slider",
   "settings": [
     { "type": "text", "id": "heading", "label": "Überschrift", "default": "Aktuelle Deals für dich" },
-    { "type": "collection", "id": "collection", "label": "Black Friday Kategorie" },
+    { "type": "collection", "id": "collection", "label": "Mega Sale Kategorie" },
     { "type": "checkbox", "id": "show_subheading", "label": "Untertitel anzeigen", "default": true },
-    { "type": "text", "id": "subheading", "label": "Untertitel", "default": "Alle Black Friday Deals auf einen Blick." },
+    { "type": "text", "id": "subheading", "label": "Untertitel", "default": "Alle Mega Sale Deals auf einen Blick." },
     { "type": "checkbox", "id": "zoom_enable", "default": true, "label": "Zoom beim Hover aktivieren" },
     {
       "type": "select",
@@ -18,7 +18,7 @@
         { "value": "1.30", "label": "Stark (1.30)" }
       ]
     },
-    { "type": "checkbox", "id": "show_badge", "default": true, "label": "BLACK FRIDAY Badge anzeigen" },
+    { "type": "checkbox", "id": "show_badge", "default": true, "label": "MEGA SALE Badge anzeigen" },
     { "type": "range", "id": "max_products", "min": 5, "max": 50, "step": 1, "default": 20, "label": "Max. Anzahl Produkte" },
     { "type": "checkbox", "id": "show_arrows", "label": "Navigationspfeile anzeigen", "default": true },
     { "type": "checkbox", "id": "show_bestseller", "label": "Bestseller-Label anzeigen", "default": true },
@@ -56,11 +56,11 @@
   </div>
 
   {% if section.settings.collection == blank %}
-    <p class="bf-message">Bitte im Theme Editor eine Black Friday Kategorie auswählen.</p>
+    <p class="bf-message">Bitte im Theme Editor eine Mega Sale Kategorie auswählen.</p>
   {% else %}
     {% assign coll = section.settings.collection %}
 
-    <div class="bf-scroller" data-bf-scroll tabindex="0" role="region" aria-label="Black Friday Produkte">
+    <div class="bf-scroller" data-bf-scroll tabindex="0" role="region" aria-label="Mega Sale Produkte">
       <div class="bf-row" data-bf-row>
         {% for product in coll.products limit: _max_products %}
           {% assign price = product.price %}
@@ -90,8 +90,8 @@
             {% if section.settings.show_badge and discount %}
               <div class="bf-bf-ribbon">
                 <div class="bf-bf-ribbon__black">
-                  <span>BLACK</span>
-                  <span>FRIDAY</span>
+                  <span>MEGA</span>
+                  <span>SALE</span>
                 </div>
                 <div class="bf-bf-ribbon__percent">
                   -{{ discount }} %
