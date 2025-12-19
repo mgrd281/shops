@@ -1223,21 +1223,102 @@
                     <span class="mobile-toggle">+</span>
                 </div>
                 <div class="mobile-collapsible">
-                    <p>Jetzt anmelden und 10 % Rabatt auf deine erste Bestellung sichern!</p>
-                    <form method="post" action="/contact#footer-newsletter" accept-charset="UTF-8">
-                        <input type="hidden" name="form_type" value="customer">
-                        <input type="hidden" name="utf8" value="✓">
-                        <input type="hidden" name="contact[tags]" value="newsletter">
-                        <input type="hidden" name="contact[accepts_marketing]" value="true">
-                        <input type="email" name="contact[email]" placeholder="Deine E-Mail-Adresse" required class="newsletter-input">
-                        <button type="submit" class="newsletter-button">Abonnieren</button>
-                    </form>
-                    <div class="newsletter-code-hint">
-                        <p>🎁 <strong>Dein Willkommensgeschenk:</strong></p>
-                        <div class="newsletter-code-box">Rabattcode: <strong>KARINEX10</strong></div>
-                        <p class="newsletter-code-text">10 % Rabatt auf deine erste Bestellung</p>
-                    </div>
-                </div>
+                    {% form 'customer', id: 'footer-newsletter', class: 'footer-newsletter-form' %}
+                        {% if form.posted_successfully? %}
+                            <div class="newsletter-success-message">
+                                <div class="newsletter-code-hint" style="display: block;">
+                                    <p class="gift-icon">🎁 <strong>Dein Willkommensgeschenk:</strong></p>
+                                    <div class="newsletter-code-box">
+                                        Rabattcode: <strong class="code-text">KARINEX10</strong>
+                                        <button type="button" class="copy-btn" onclick="navigator.clipboard.writeText('KARINEX10'); this.innerText='Kopiert!'; setTimeout(()=>this.innerText='Kopieren', 2000);">Kopieren</button>
+                                    </div>
+                                    <p class="newsletter-code-text">10 % Rabatt auf deine erste Bestellung</p>
+                                </div>
+                            </div>
+                            <script>
+                                // Scroll to newsletter on success
+                                document.addEventListener("DOMContentLoaded", function() {
+                                    const newsletterSection = document.querySelector('.newsletter-section');
+                                    if(newsletterSection) newsletterSection.scrollIntoView({behavior: 'smooth', block: 'center'});
+                                });
+                            </script>
+                        {% else %}
+                            <p>Jetzt anmelden und 10 % Rabatt auf deine erste Bestellung sichern!</p>
+                            <input type="hidden" name="contact[tags]" value="newsletter">
+                            <input type="hidden" name="contact[accepts_marketing]" value="true">
+                            <div class="newsletter-input-group">
+                                <input type="email" name="contact[email]" placeholder="Deine E-Mail-Adresse" required class="newsletter-input" value="{{ form.email }}">
+                                <button type="submit" class="newsletter-button">Abonnieren</button>
+                            </div>
+                            {% if form.errors %}
+                                <div class="newsletter-error-message">
+                                    {{ form.errors | default_errors }}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    {% endform %}
+
+                    <style>
+                        .newsletter-code-hint {
+                            margin-top: 15px;
+                            padding: 15px;
+                            border: 2px dashed #4CAF50;
+                            border-radius: 8px;
+                            background-color: #f9fff9;
+                            text-align: center;
+                        }
+                        .gift-icon {
+                            margin: 0 0 10px;
+                            font-size: 1.1em;
+                            color: #333;
+                        }
+                        .newsletter-code-box {
+                            background-color: #e8f5e9;
+                            padding: 10px 15px;
+                            border-radius: 6px;
+                            font-size: 1.1em;
+                            color: #2e7d32;
+                            margin-bottom: 8px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 10px;
+                            flex-wrap: wrap;
+                        }
+                        .code-text {
+                            font-size: 1.2em;
+                            letter-spacing: 1px;
+                        }
+                        .copy-btn {
+                            background: #fff;
+                            border: 1px solid #2e7d32;
+                            color: #2e7d32;
+                            padding: 4px 10px;
+                            border-radius: 4px;
+                            font-size: 0.8em;
+                            cursor: pointer;
+                            transition: all 0.2s;
+                        }
+                        .copy-btn:hover {
+                            background: #2e7d32;
+                            color: #fff;
+                        }
+                        .newsletter-code-text {
+                            margin: 0;
+                            font-size: 0.9em;
+                            color: #666;
+                        }
+                        .newsletter-input-group {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 10px;
+                        }
+                        @media (min-width: 768px) {
+                            .newsletter-input-group {
+                                flex-direction: row;
+                            }
+                        }
+                    </style>
             </div>
 
             <!-- 8. Social Media -->
