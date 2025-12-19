@@ -1,218 +1,266 @@
 
 
-{% if section.blocks.size > 1 %}
-  <script
-    src="{{ 'announcement-bar.js' | asset_url }}"
-    type="module"
-    fetchpriority="low"
-  ></script>
-{% endif %}
-
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
-<aside
-  class="announcement-bar spacing-style section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }}"
-  style="{% render 'spacing-padding', settings: section.settings %}; --border-bottom-width: {{ section.settings.divider_width }}px;"
->
-  {% liquid
-    assign autoplay = false
-    assign show_arrows = false
-    if section.blocks.size > 1
-      assign autoplay = true
-      assign show_arrows = true
-    endif
-  %}
-
-  <announcement-bar-component
-    class="announcement-bar__slider"
-    {% if autoplay == true %}
-      autoplay="{{ section.settings.speed }}" aria-live="polite"
-    {% endif %}
-  >
-    {% if show_arrows %}
-      {% render 'slideshow-arrows', icon_style: 'chevron' %}
-    {% endif %}
-
-    <div class="announcement-bar__slides">
-      {% content_for 'blocks' %}
+{% if section.blocks.size > 0 %}
+  <div id="announcement-bar-{{ section.id }}" class="announcement-bar-wrapper" style="display: none;">
+    <div class="announcement-bar-content">
+      {% if section.blocks.size > 1 %}
+        <div class="announcement-slider" data-autoplay="{{ section.settings.speed | times: 1000 }}">
+          {% for block in section.blocks %}
+            <div class="announcement-slide {% if forloop.first %}active{% endif %}" {{ block.shopify_attributes }}>
+              <span class="announcement-text">
+                {{ block.settings.text }}
+                {% if block.settings.link != blank %}
+                  <a href="{{ block.settings.link }}" class="announcement-cta">{{ block.settings.link_text | default: 'Jetzt shoppen →' }}</a>
+                {% endif %}
+              </span>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="announcement-single">
+          {% assign block = section.blocks.first %}
+          <span class="announcement-text">
+            {{ block.settings.text }}
+            {% if block.settings.link != blank %}
+              <a href="{{ block.settings.link }}" class="announcement-cta">{{ block.settings.link_text | default: 'Jetzt shoppen →' }}</a>
+            {% endif %}
+          </span>
+        </div>
+      {% endif %}
     </div>
-  </announcement-bar-component>
-</aside>
 
-{% stylesheet %}
-  .announcement-bar {
-    border-block-end: var(--border-bottom-width) solid var(--color-border);
-  }
+    {% if section.settings.show_close %}
+      <button type="button" class="announcement-close" aria-label="Close announcement">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 3L3 9M3 3L9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    {% endif %}
+  </div>
 
-  .announcement-bar__slider {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    position: relative;
-
-    @media screen and (max-width: 749px) {
-      grid-column: 1 / -1;
+  <style>
+    .announcement-bar-wrapper {
+      background-color: {{ section.settings.bg_color }};
+      color: {{ section.settings.text_color }};
+      height: {{ section.settings.height }}px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      z-index: 50;
+      transition: height 0.3s ease;
     }
-  }
 
-  .announcement-bar__slides {
-    display: grid;
-    grid: [stack] auto / [stack] auto;
-    width: calc(100% - var(--button-size) * 2);
-    max-width: 680px;
-    margin-inline: auto;
-  }
+    .announcement-bar-content {
+      width: 100%;
+      max-width: 1200px;
+      padding: 0 40px; /* Space for close button */
+      text-align: center;
+    }
 
-  .announcement-bar__slides > * {
-    grid-area: stack;
-  }
+    .announcement-text {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-  .announcement-bar__slide {
-    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+    .announcement-cta {
+      color: inherit;
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px solid currentColor;
+      padding-bottom: 1px;
+      margin-left: 5px;
+      transition: opacity 0.2s;
+    }
+    .announcement-cta:hover {
+      opacity: 0.8;
+    }
 
-    &[aria-hidden='true'] {
+    /* Slider Styles */
+    .announcement-slider {
+      position: relative;
+      height: 20px; /* Approximate text height */
+      overflow: hidden;
+    }
+    .announcement-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       opacity: 0;
-      visibility: hidden;
+      transform: translateY(10px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-  }
+    .announcement-slide.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
 
-  .announcement-bar__slider slideshow-arrows {
-    padding: 0;
-    mix-blend-mode: normal;
-  }
+    /* Close Button */
+    .announcement-close {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      padding: 8px;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .announcement-close:hover {
+      opacity: 1;
+    }
 
-  .announcement-bar__slider slideshow-arrows .slideshow-control {
-    color: var(--color-foreground);
-  }
-
-  .announcement-bar__slider .slideshow-control {
-    display: flex;
-    padding: 0;
-    width: var(--button-size);
-    height: var(--button-size);
-    align-items: center;
-    justify-content: center;
-    opacity: 1;
-    animation: none;
-
-    @media screen and (min-width: 750px) {
-      --slideshow-control-offset: calc((var(--button-size) - var(--icon-size-xs)) / 2);
-
-      .section--page-width &.slideshow-control--previous {
-        transform: translateX(var(--slideshow-control-offset));
+    @media (max-width: 768px) {
+      .announcement-bar-wrapper {
+        height: auto;
+        min-height: {{ section.settings.height }}px;
+        padding: 8px 0;
+      }
+      .announcement-bar-content {
+        padding: 0 30px 0 10px;
+      }
+      .announcement-text {
+        font-size: 12px;
+        line-height: 1.4;
       }
     }
-  }
+  </style>
 
-  .announcement-bar__slider .slideshow-control .svg-wrapper {
-    width: var(--icon-size-xs);
-    height: var(--icon-size-xs);
-  }
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var wrapper = document.getElementById('announcement-bar-{{ section.id }}');
+      var closeBtn = wrapper.querySelector('.announcement-close');
+      var storageKey = 'announcement-closed-{{ section.id }}';
 
-  .announcement-bar__slide {
-    place-content: center;
-  }
+      // Check localStorage
+      if (!localStorage.getItem(storageKey)) {
+        wrapper.style.display = 'flex';
+      }
 
-  .announcement-bar__text:first-child {
-    margin: 0;
-  }
+      // Close functionality
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+          wrapper.style.display = 'none';
+          localStorage.setItem(storageKey, 'true');
+        });
+      }
 
-  .announcement-bar__link {
-    position: absolute;
-    inset: 0;
-  }
-{% endstylesheet %}
+      // Slider functionality
+      var slider = wrapper.querySelector('.announcement-slider');
+      if (slider) {
+        var slides = slider.querySelectorAll('.announcement-slide');
+        var speed = parseInt(slider.getAttribute('data-autoplay')) || 5000;
+        var currentIndex = 0;
+
+        if (slides.length > 1) {
+          setInterval(function() {
+            slides[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % slides.length;
+            slides[currentIndex].classList.add('active');
+          }, speed);
+        }
+      }
+    });
+  </script>
+{% endif %}
 
 {% schema %}
 {
   "name": "t:names.announcement_bar",
-  "blocks": [
-    {
-      "type": "_announcement"
-    }
-  ],
-  "enabled_on": {
-    "groups": ["header"]
-  },
   "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Hintergrundfarbe",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Textfarbe",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "height",
+      "label": "Höhe (Desktop)",
+      "min": 30,
+      "max": 60,
+      "step": 1,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_close",
+      "label": "Schließen-Button anzeigen",
+      "default": true
+    },
     {
       "type": "range",
       "id": "speed",
-      "label": "t:settings.scroll_speed",
+      "label": "Wechselgeschwindigkeit (Sekunden)",
       "min": 2,
       "max": 10,
-      "default": 5,
-      "unit": "sec"
-    },
+      "step": 1,
+      "default": 5
+    }
+  ],
+  "blocks": [
     {
-      "type": "header",
-      "content": "t:content.appearance"
-    },
-    {
-      "type": "select",
-      "id": "section_width",
-      "label": "t:settings.section_width",
-      "options": [
+      "type": "announcement",
+      "name": "Ankündigung",
+      "settings": [
         {
-          "value": "page-width",
-          "label": "t:options.page"
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Willkommen in unserem Shop!"
         },
         {
-          "value": "full-width",
-          "label": "t:options.full"
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link Text (CTA)",
+          "default": "Jetzt shoppen →"
         }
-      ],
-      "default": "page-width"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "default": "scheme-4",
-      "label": "t:settings.color_scheme"
-    },
-    {
-      "type": "range",
-      "id": "divider_width",
-      "label": "t:settings.divider_thickness",
-      "min": 0,
-      "max": 5,
-      "step": 0.5,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "header",
-      "content": "t:content.padding"
-    },
-    {
-      "type": "range",
-      "id": "padding-block-start",
-      "label": "t:settings.top",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 15
-    },
-    {
-      "type": "range",
-      "id": "padding-block-end",
-      "label": "t:settings.bottom",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 15
+      ]
     }
   ],
   "presets": [
     {
-      "name": "t:names.announcement_bar",
-      "blocks": {
-        "announcement_1": {
-          "type": "_announcement"
+      "name": "Premium Announcement Bar",
+      "blocks": [
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "Schlafzimmer-Event – Jetzt Online!"
+          }
         }
-      },
-      "block_order": ["announcement_1"]
+      ]
     }
   ]
 }
