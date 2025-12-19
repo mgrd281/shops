@@ -13,32 +13,13 @@
   "sections": {
     "header_announcements_pbXTDf": {
       "type": "header-announcements",
-      "blocks": {
-        "announcement_KMAGKG": {
-          "type": "_announcement",
-          "settings": {
-            "text": "SCHLAFZIMMER-EVENT - JETZT ONLINE!",
-            "link": "shopify://collections/all",
-            "font": "var(--font-accent--family)",
-            "font_size": "0.75rem",
-            "weight": "",
-            "letter_spacing": "loose",
-            "case": "uppercase"
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "announcement_KMAGKG"
-      ],
       "name": "t:names.announcement_bar",
       "settings": {
-        "speed": 5,
-        "section_width": "full-width",
-        "color_scheme": "scheme-2",
-        "divider_width": 0,
-        "padding-block-start": 15,
-        "padding-block-end": 15
+        "bg_color": "#1d4739",
+        "text_color": "#ffffff",
+        "height": 36,
+        "show_timer": true,
+        "timer_date": "2025-12-31T23:59"
       }
     },
     "header_section": {
@@ -48,7 +29,7 @@
           "type": "_header-logo",
           "static": true,
           "settings": {
-            "logo": "shopify://shop_images/KARINEX-Standard-Logo.png",
+            "logo": "shopify://shop_images/karinex.logo.png",
             "logo_width": 100,
             "hide_logo_on_home_page": false,
             "padding-block-start": 0,
