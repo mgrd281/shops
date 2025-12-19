@@ -421,6 +421,7 @@
         "group_nBjX4E",
         "button_tryV8k"
       ],
+      "disabled": true,
       "name": "Hotspots heading",
       "settings": {
         "content_direction": "row",
@@ -455,6 +456,7 @@
       "blocks": {
         "hotspot_product_qLcTTX": {
           "type": "_hotspot-product",
+          "disabled": true,
           "settings": {
             "product": "",
             "x-position": 40,
@@ -464,6 +466,7 @@
         },
         "hotspot_product_KKDhz4": {
           "type": "_hotspot-product",
+          "disabled": true,
           "settings": {
             "product": "",
             "x-position": 60,
@@ -504,6 +507,7 @@
         "hotspot_product_qLcTTX",
         "hotspot_product_KKDhz4"
       ],
+      "disabled": true,
       "name": "Hotspots",
       "settings": {
         "toggle_overlay": false,
@@ -1070,6 +1074,7 @@
           ]
         }
       },
+      "disabled": true,
       "name": "t:names.media_with_text",
       "settings": {
         "media_position": "right",
