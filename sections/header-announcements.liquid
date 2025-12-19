@@ -1,13 +1,16 @@
 
 
-{% if section.blocks.size > 0 %}
   <div id="announcement-bar-{{ section.id }}" class="announcement-bar-wrapper">
     <div class="announcement-bar-content">
       <div class="announcement-left">
-        {% assign block = section.blocks.first %}
-        <span class="announcement-text">{{ block.settings.text }}</span>
-        {% if block.settings.link != blank %}
-          <a href="{{ block.settings.link }}" class="announcement-cta">{{ block.settings.link_text | default: 'SHOP NOW' }}</a>
+        {% if section.blocks.size > 0 %}
+          {% assign block = section.blocks.first %}
+          <span class="announcement-text">{{ block.settings.text }}</span>
+          {% if block.settings.link != blank %}
+            <a href="{{ block.settings.link }}" class="announcement-cta">{{ block.settings.link_text | default: 'SHOP NOW' }}</a>
+          {% endif %}
+        {% else %}
+          <span class="announcement-text">Welcome to our store</span>
         {% endif %}
       </div>
       
@@ -172,7 +175,7 @@
       updateTimer();
     });
   </script>
-{% endif %}
+
 
 {% schema %}
 {
