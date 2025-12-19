@@ -5,9 +5,19 @@
       <div class="announcement-left">
         {% if section.blocks.size > 0 %}
           {% assign block = section.blocks.first %}
-          <span class="announcement-text">{{ block.settings.text }}</span>
+          {% assign announcement_text = block.settings.text %}
+          {% if announcement_text contains 'Super Sale Up to 80% off' or announcement_text contains 'SUPER SALE UP TO 40% OFF' %}
+            {% assign announcement_text = 'Super Sale: Bis zu 80% Rabatt' %}
+          {% endif %}
+          
+          <span class="announcement-text">{{ announcement_text }}</span>
+          
           {% if block.settings.link != blank %}
-            <a href="{{ block.settings.link }}" class="announcement-cta">{{ block.settings.link_text | default: 'JETZT KAUFEN' }}</a>
+            {% assign link_text = block.settings.link_text %}
+            {% if link_text == 'SHOP NOW' or link_text == 'Shop Now' %}
+              {% assign link_text = 'JETZT KAUFEN' %}
+            {% endif %}
+            <a href="{{ block.settings.link }}" class="announcement-cta">{{ link_text | default: 'JETZT KAUFEN' }}</a>
           {% endif %}
         {% else %}
           <span class="announcement-text">Super Sale: Bis zu 80% Rabatt</span>
@@ -147,6 +157,15 @@
     document.addEventListener('DOMContentLoaded', function() {
       const timerElement = document.querySelector('#announcement-bar-{{ section.id }} .countdown-timer');
       if (!timerElement) return;
+
+      // Force German labels just in case
+      const labels = timerElement.querySelectorAll('.timer-label');
+      if(labels.length === 4) {
+        labels[0].innerText = 'TAGE';
+        labels[1].innerText = 'STD';
+        labels[2].innerText = 'MIN';
+        labels[3].innerText = 'SEK';
+      }
 
       const targetDateStr = timerElement.getAttribute('data-date');
       if (!targetDateStr) return;
