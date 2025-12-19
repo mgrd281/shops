@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARINEX - Digital & Physical Products Footer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .footer-modern-wrapper {
+            background: #fff;
+            color: #333;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            padding-top: 30px;
+            border-top: 1px solid #dcdcdc;
+            position: relative;
+        }
+
+        .footer-modern-content {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px 30px;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 30px 30px;
+            box-sizing: border-box;
+        }
+
+        .footer-section h4 {
+            font-size: 16px;
+            color: #2e7d32;
+            margin-bottom: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            position: relative;
+            padding-bottom: 4px;
+        }
+
+        .footer-section h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: linear-gradient(to right, #2e7d32, #4caf50);
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .footer-section a {
+            color: #333;
+            text-decoration: none;
+            transition: color .2s, transform .2s;
+        }
+
+        .footer-section a:hover {
+            color: #2e7d32;
+            transform: translateX(3px);
+        }
+
+        /* KARINEX Logo */
+        .karinex-logo-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .karinex-logo {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-decoration-line {
+            height: 3px;
+            background: linear-gradient(90deg, #2e7d32, rgba(76, 175, 80, 0.3));
+            margin: 6px 0;
+            border-radius: 3px;
+        }
+
+        /* Partner unter Logo */
+        .partner-area {
+            margin-top: 15px;
+        }
+
+        .partner-area h4 {
+            font-size: 14px;
+            color: #2e7d32;
+            margin-bottom: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .partner-logos {
+            max-width: 220px;
+        }
+
+        .partner-logos a {
+            display: inline-flex;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .partner-logos img {
+            display: block;
+            height: 40px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            transition: transform .2s;
+        }
+
+        .partner-logos img:hover {
+            transform: scale(1.05);
+        }
+
+        /* NEWSLETTER */
+        .newsletter-input {
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 6px;
+        }
+
+        .newsletter-button {
+            background: linear-gradient(to right, #2e7d32, #4caf50);
+            color: #fff;
+            border: none;
+            padding: 8px;
+            width: 100%;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity .2s;
+        }
+
+        .newsletter-button:hover {
+            opacity: .8;
+        }
+
+        .newsletter-code-hint {
+            border: 1px dashed #2e7d32;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .newsletter-code-box {
+            background: #e8f5e9;
+            color: #1b5e20;
+            font-weight: 700;
+            padding: 6px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 6px 0;
+            font-size: 14px;
+        }
+
+        .newsletter-code-text {
+            font-size: 13px;
+            color: #555;
+        }
+
+        /* Social Follow */
+        .social-follow {
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .follow-title {
+            color: #2e7d32;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin: 0 0 10px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .follow-title::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 50px;
+            height: 2px;
+            background: #2e7d32;
+            border-radius: 2px;
+        }
+
+        /* Footer Bottom - MIT ORIGINAL FARBEN */
+        .footer-bottom {
+            background: linear-gradient(to right, #2e7d32, #1b5e20);
+            padding: 16px 0;
+            position: relative;
+        }
+
+        .footer-bottom-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .footer-bottom-inner p {
+            color: #fff;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 18px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .footer-links li+li::before {
+            content: "|";
+            color: rgba(255, 255, 255, .6);
+            margin-right: 18px;
+        }
+
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 6px 2px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            opacity: .85;
+            transform: translateY(-1px);
+        }
+
+        /* ==================== */
+        /* MOBILE OPTIMIERUNGEN */
+        /* ==================== */
+
+        /* Mobile Collapsible Sections */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 0;
+        }
+
+        .mobile-toggle {
+            font-size: 18px;
+            font-weight: 300;
+            color: #2e7d32;
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-collapsible {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+        }
+
+        .footer-section.active .mobile-collapsible {
+            max-height: 1000px;
+            padding: 15px 0 5px 0;
+        }
+
+        .footer-section.active .mobile-toggle {
+            transform: rotate(45deg);
+        }
+
+        /* Enhanced Contact Section */
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 8px 0;
+        }
+
+        .contact-item i {
+            width: 20px;
+            color: #2e7d32;
+            font-size: 14px;
+        }
+
+        .contact-item a,
+        .contact-item span {
+            font-size: 14px;
+            color: #333;
+            flex: 1;
+        }
+
+        /* Enhanced Social Icons */
+        .follow-icons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .social-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
+
+        .social-icon i {
+            font-size: 20px;
+            color: #2e7d32;
+        }
+
+        .social-name {
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-3px);
+            background: #e8f5e9;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Mobile Quick Links - WIRD AUF MOBIL AUSGEBLENDET */
+        .mobile-quick-links {
+            display: none;
+        }
+
+        /* Mobile Icons */
+        .mobile-section-icon {
+            display: none;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .mobile-section-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: #2e7d32;
+        }
+
+        /* ==================== */
+        /* NEU: PAYMENT SECTION */
+        /* ==================== */
+        .payment-section {
+            display: none;
+            border-bottom: 1px solid #f0f0f0;
+            margin: 0 20px;
+            padding: 10px 0;
+        }
+
+        .payment-section:last-child {
+            border-bottom: none;
+        }
+
+        .payment-icons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .payment-method {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 8px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method:hover {
+            transform: translateY(-2px);
+            background: #e8f5e9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #2e7d32;
+        }
+
+        .payment-name {
+            font-size: 11px;
+            color: #555;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        /* WhatsApp Button entfernt */
+        .whatsapp-contact-wrapper {
+            display: none;
+        }
+
+        /* Payment Security Badge entfernt */
+        .payment-security {
+            display: none;
+        }
+
+        /* ==================== */
+        /* NEU: FAQ SECTION - NUR MOBILE */
+        /* ==================== */
+        .faq-section {
+            display: none;
+            border-bottom: 1px solid #f0f0f0;
+            margin: 0 20px;
+            padding: 10px 0;
+        }
+
+        .faq-item {
+            margin-bottom: 12px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
+
+        .faq-question {
+            padding: 14px 16px;
+            font-weight: 600;
+            color: #2e7d32;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: #e8f5e9;
+        }
+
+        .faq-answer {
+            padding: 0 16px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+            background: #fff;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+            padding: 0 16px 16px 16px;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(45deg);
+        }
+
+        .faq-toggle {
+            font-size: 18px;
+            font-weight: 300;
+            color: #2e7d32;
+            transition: transform 0.3s ease;
+        }
+
+        /* ==================== */
+        /* RESPONSIVE DESIGN */
+        /* ==================== */
+
+        /* Desktop - Keine Änderungen */
+        @media (min-width: 1025px) {
+            .section-header {
+                cursor: auto;
+                border-bottom: none;
+                padding: 0;
+            }
+            
+            .mobile-toggle {
+                display: none;
+            }
+            
+            .mobile-collapsible {
+                max-height: none !important;
+                overflow: visible;
+            }
+            
+            .follow-icons {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+            }
+            
+            .social-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .social-name {
+                display: none;
+            }
+            
+            .mobile-quick-links {
+                display: none;
+            }
+            
+            .mobile-section-icon {
+                display: none !important;
+            }
+            
+            .payment-section {
+                display: none !important;
+            }
+            
+            .faq-section {
+                display: none !important;
+            }
+        }
+
+        /* Tablet */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .footer-modern-content {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 25px;
+                padding: 0 25px 30px;
+            }
+            
+            .follow-icons {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            
+            .mobile-quick-links {
+                display: none;
+            }
+            
+            .mobile-section-icon {
+                display: none;
+            }
+            
+            .payment-section {
+                display: none !important;
+            }
+            
+            .faq-section {
+                display: none !important;
+            }
+        }
+
+        /* Mobile - MIT ICONS */
+        @media (max-width: 768px) {
+            .footer-modern-content {
+                grid-template-columns: 1fr;
+                gap: 0;
+                padding: 0;
+            }
+            
+            .footer-section {
+                border-bottom: 1px solid #f0f0f0;
+                margin: 0 20px;
+                padding: 10px 0;
+            }
+            
+            .footer-section:last-child {
+                border-bottom: none;
+            }
+            
+            .section-header {
+                margin-bottom: 0;
+                padding: 12px 0;
+                align-items: center;
+            }
+            
+            .footer-section h4 {
+                margin-bottom: 0;
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+                flex: 1;
+            }
+            
+            .footer-section h4::after {
+                display: none;
+            }
+            
+            /* Mobile Icons anzeigen */
+            .mobile-section-icon {
+                display: inline-block;
+            }
+            
+            /* Logo Section Bleibt Offen */
+            .footer-section:first-child .section-header {
+                cursor: auto;
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+            
+            .footer-section:first-child .mobile-toggle {
+                display: none;
+            }
+            
+            .footer-section:first-child .mobile-collapsible {
+                max-height: none;
+                padding: 15px 0 0 0;
+            }
+            
+            /* Verbesserte Mobile Darstellung */
+            .karinex-logo {
+                font-size: 28px;
+            }
+            
+            .partner-logos {
+                max-width: 200px;
+            }
+            
+            .contact-item {
+                padding: 10px 0;
+                margin-bottom: 8px;
+            }
+            
+            /* MOBILE NEWSLETTER VERBESSERUNGEN */
+            .newsletter-input {
+                padding: 12px;
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+            
+            .newsletter-button {
+                padding: 12px;
+                font-size: 16px;
+                font-weight: 600;
+            }
+            
+            .newsletter-code-hint {
+                padding: 15px;
+                margin-top: 12px;
+            }
+            
+            .newsletter-code-box {
+                padding: 10px 15px;
+                font-size: 15px;
+            }
+            
+            .newsletter-code-text {
+                font-size: 14px;
+                margin: 8px 0 0 0;
+            }
+            
+            .follow-icons {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            
+            .social-icon {
+                padding: 15px 10px;
+            }
+            
+            /* Mobile Quick Links - WIRD AUF MOBIL AUSGEBLENDET */
+            .mobile-quick-links {
+                display: none !important;
+            }
+            
+            /* NEU: PAYMENT SECTION AUF MOBIL ANZEIGEN */
+            .payment-section {
+                display: block !important;
+            }
+            
+            .payment-icons {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            
+            .payment-method {
+                padding: 10px 6px;
+            }
+            
+            .payment-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 22px;
+            }
+            
+            .payment-name {
+                font-size: 10px;
+            }
+            
+            /* NEU: FAQ SECTION AUF MOBIL ANZEIGEN - KORRIGIERT */
+            .faq-section {
+                display: block !important;
+            }
+            
+            /* FOOTER BOTTOM MOBILE - TEXT-LINKS OHNE HINTERGRUND */
+            .footer-bottom {
+                background: linear-gradient(to right, #2e7d32, #1b5e20);
+                padding: 30px 0 25px;
+            }
+            
+            .footer-bottom-inner {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+                padding: 0 20px;
+            }
+            
+            .footer-bottom-inner p {
+                font-size: 15px;
+                color: #fff;
+                order: 2;
+                font-weight: 400;
+                line-height: 1.5;
+                opacity: 0.95;
+            }
+            
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+                order: 1;
+                margin-bottom: 10px;
+            }
+            
+            .footer-links li {
+                margin: 0;
+            }
+            
+            .footer-links li+li::before {
+                display: none;
+            }
+            
+            .footer-links a {
+                font-size: 14px;
+                color: #fff;
+                font-weight: 400;
+                padding: 0;
+                background: transparent !important;
+                backdrop-filter: none !important;
+                border-radius: 0;
+                transition: all 0.3s ease;
+                position: relative;
+            }
+            
+            .footer-links a:hover {
+                background: transparent !important;
+                transform: none;
+                box-shadow: none;
+                opacity: 0.8;
+            }
+            
+            .footer-links a::after {
+                content: "";
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                width: 0;
+                height: 1px;
+                background: #fff;
+                transition: width 0.3s ease;
+            }
+            
+            .footer-links a:hover::after {
+                width: 100%;
+            }
+        }
+
+        /* Kleine Mobile Geräte */
+        @media (max-width: 480px) {
+            .footer-section {
+                margin: 0 15px;
+            }
+            
+            .karinex-logo {
+                font-size: 24px;
+            }
+            
+            .newsletter-input {
+                padding: 14px;
+            }
+            
+            .newsletter-button {
+                padding: 14px;
+            }
+            
+            .contact-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .contact-item i {
+                margin-bottom: 2px;
+            }
+            
+            /* Payment Section für kleine Geräte */
+            .payment-icons {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            
+            .payment-method {
+                padding: 8px 4px;
+            }
+            
+            .payment-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 20px;
+            }
+            
+            .payment-name {
+                font-size: 9px;
+            }
+            
+            /* FAQ Section für kleine Geräte */
+            .faq-question {
+                padding: 12px 14px;
+                font-size: 14px;
+            }
+            
+            .faq-answer {
+                font-size: 13px;
+            }
+            
+            /* Footer Bottom für kleine Geräte */
+            .footer-bottom {
+                padding: 25px 0 20px;
+            }
+            
+            .footer-bottom-inner {
+                padding: 0 15px;
+                gap: 15px;
+            }
+            
+            .footer-bottom-inner p {
+                font-size: 14px;
+            }
+            
+            .footer-links {
+                gap: 15px;
+            }
+            
+            .footer-links a {
+                font-size: 13px;
+            }
+            
+            .mobile-section-icon {
+                width: 18px;
+                height: 18px;
+                margin-right: 8px;
+            }
+        }
+
+        /* Sehr kleine Geräte */
+        @media (max-width: 360px) {
+            .footer-bottom-inner {
+                padding: 0 12px;
+            }
+            
+            .footer-bottom-inner p {
+                font-size: 13px;
+            }
+            
+            .footer-links {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 12px;
+                justify-content: center;
+            }
+            
+            .footer-links a {
+                font-size: 12px;
+                white-space: nowrap;
+            }
+            
+            .mobile-section-icon {
+                width: 16px;
+                height: 16px;
+                margin-right: 6px;
+            }
+            
+            .payment-icons {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .payment-method {
+                padding: 10px 6px;
+            }
+            
+            .payment-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 18px;
+            }
+            
+            .payment-name {
+                font-size: 9px;
+            }
+            
+            .faq-question {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+            
+            .faq-answer {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- KARINEX Footer -->
+    <div class="footer-modern-wrapper">
+        <div class="footer-modern-content">
+
+            <!-- 1. Logo -->
+            <div class="footer-section">
+                <div class="karinex-logo-wrapper">
+                    <span class="karinex-logo">KARINEX</span>
+                    <div class="logo-decoration-line"></div>
+                </div>
+
+                <!-- Unsere Partner direkt unter Logo -->
+                <div class="partner-area">
+                    <h4>Unsere Partner</h4>
+                    <div class="partner-logos">
+                        <a href="https://www.idealo.de/preisvergleich/Shop/335018.html#i" target="_blank" rel="noopener">
+                            <img src="https://img.idealo.com/badges/335018/da7da720-100e-4347-a31d-04ff65faaf52" 
+                                 loading="lazy" 
+                                 alt="idealo - Top-Marken vergleichen und Bestpreise entdecken bei Deutschlands Nr.1 im Preisvergleich"/>
+                        </a>
+                        <a href="https://www.trustedshops.de/bewertung/karinex.de" target="_blank" rel="noopener">
+                            <img src="https://cdn.shopify.com/s/files/1/0917/5328/3851/files/trustedshops-karinex-logo.webp?v=1763387030" 
+                                 loading="lazy" 
+                                 alt="Trusted Shops - Geprüfte Qualität und Käuferschutz"/>
+                        </a>
+                        <a href="https://www.trustami.com/erfahrung/6829f06d7e78cde07a8b4568-bewertung" target="_blank" rel="noopener">
+                            <img src="https://cdn.shopify.com/s/files/1/0917/5328/3851/files/trustami-karinex-logo.webp?v=1763387256" 
+                                 loading="lazy" 
+                                 alt="Trustami - Kundenbewertungen und Erfahrungen"/>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Rechtliches -->
+            <div class="footer-section">
+                <div class="section-header">
+                    <h4>
+                        <span class="mobile-section-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                            </svg>
+                        </span>
+                        Rechtliches
+                    </h4>
+                    <span class="mobile-toggle">+</span>
+                </div>
+                <ul class="mobile-collapsible">
+                    <li><a href="/policies/privacy-policy">Datenschutz</a></li>
+                    <li><a href="https://www.karinex.de/policies/refund-policy">Widerrufsrecht</a></li>
+                    <li><a href="/policies/legal-notice">Impressum</a></li>
+                    <li><a href="/policies/terms-of-service">AGB</a></li>
+                    <li><a href="/policies/shipping-policy">Versand</a></li>
+                    <li><a href="/pages/rechtliche-hinweise">Rechtliche Hinweise</a></li>
+                </ul>
+            </div>
+
+            <!-- 3. Hilfe & Infos -->
+            <div class="footer-section">
+                <div class="section-header">
+                    <h4>
+                        <span class="mobile-section-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                            </svg>
+                        </span>
+                        Hilfe &amp; Infos
+                    </h4>
+                    <span class="mobile-toggle">+</span>
+                </div>
+                <ul class="mobile-collapsible">
+                    <li><a href="/pages/uber-uns">Über uns</a></li>
+                    <li><a href="/pages/kontakt">Kontaktseite</a></li>
+                    <li><a href="/pages/faq">FAQ</a></li>
+                    <li><a href="#" onclick="window.Cookiebot.show(); return false;">Cookie-Einstellungen</a></li>
+                    <li><a href="/pages/zahlungsarten">Zahlungsarten</a></li>
+                    <li><a href="/pages/retouren">Retouren & Umtausch</a></li>
+                </ul>
+            </div>
+
+            <!-- 4. Kontakt -->
+            <div class="footer-section">
+                <div class="section-header">
+                    <h4>
+                        <span class="mobile-section-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                            </svg>
+                        </span>
+                        Kontakt
+                    </h4>
+                    <span class="mobile-toggle">+</span>
+                </div>
+                <ul class="footer-contact mobile-collapsible">
+                    <li class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <a href="tel:015563133956">01556 / 3133956</a>
+                    </li>
+                    <li class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:shop@karinex.de">shop@karinex.de</a>
+                    </li>
+                    <li class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Hamburg Deutschland</span>
+                    </li>
+                    <li class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Mo.–So. 09:00–23:00 Uhr</span>
+                    </li>
+                    <li class="contact-item">
+                        <i class="fas fa-comments"></i>
+                        <a href="/pages/live-chat">Live-Chat Support</a>
+                    </li>
+                    <li class="contact-item">
+                        <i class="fab fa-whatsapp"></i>
+                        <a href="https://wa.me/4915227322222">WhatsApp Business</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 5. NEU: Zahlungsarten (Nur Mobile) -->
+            <div class="footer-section payment-section">
+                <div class="section-header">
+                    <h4>
+                        <span class="mobile-section-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                            </svg>
+                        </span>
+                        Zahlungsarten
+                    </h4>
+                    <span class="mobile-toggle">+</span>
+                </div>
+                <div class="mobile-collapsible">
+                    <div class="payment-icons">
+                        <div class="payment-method">
+                            <div class="payment-icon">
+                                <i class="fab fa-cc-visa"></i>
+                            </div>
+                            <span class="payment-name">Visa</span>
+                        </div>
+                        <div class="payment-method">
+                            <div class="payment-icon">
+                                <i class="fab fa-cc-mastercard"></i>
+                            </div>
+                            <span class="payment-name">Mastercard</span>
+                        </div>
+                        <div class="payment-method">
+                            <div class="payment-icon">
+                                <i class="fab fa-cc-apple-pay"></i>
+                            </div>
+                            <span class="payment-name">Apple Pay</span>
+                        </div>
+                        <div class="payment-method">
+                            <div class="payment-icon">
+                                <i class="fab fa-google-pay"></i>
+                            </div>
+                            <span class="payment-name">Google Pay</span>
+                        </div>
+                        <div class="payment-method">
+                            <div class="payment-icon">
+                                <i class="fas fa-file-invoice"></i>
+                            </div>
+                            <span class="payment-name">Rechnung</span>
+                        </div>
+                        <div class="payment-method">
+                            <div class="payment-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <span class="payment-name">Vorkasse</span>
+                        </div>
+                        <div class="payment-method">
+                            <div class="payment-icon">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <span class="payment-name">Klarna</span>
+                        </div>
+                        <div class="payment-method">
+                            <div class="payment-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <span class="payment-name">SOFORT</span>
+                        </div>
+                        <div class="payment-method">
+                            <div class="payment-icon">
+                                <i class="fab fa-cc-amex"></i>
+                            </div>
+                            <span class="payment-name">American Express</span>
+                        </div>
+                        <div class="payment-method">
+                            <div class="payment-icon">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <span class="payment-name">Shop Pay</span>
+                        </div>
+                        <div class="payment-method">
+                            <div class="payment-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <span class="payment-name">UnionPay</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. NEU: Häufige Fragen (Nur Mobile) -->
+            <div class="footer-section faq-section">
+                <div class="section-header">
+                    <h4>
+                        <span class="mobile-section-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+                            </svg>
+                        </span>
+                        Häufige Fragen
+                    </h4>
+                    <span class="mobile-toggle">+</span>
+                </div>
+                <div class="mobile-collapsible">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Wie schnell erhalte ich meine digitalen Produkte?
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Digitale Produkte erhalten Sie sofort nach dem Kauf per E-Mail oder als direkten Download - ohne Wartezeit!
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Wie lange dauert der Versand bei physischen Produkten?
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            In der Regel versenden wir Ihre physische Bestellung innerhalb von 1-2 Werktagen. Die Lieferzeit beträgt dann 2-4 Werktage innerhalb Deutschlands.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Kann ich meine Bestellung zurückgeben?
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Ja! Für digitale Produkte haben Sie 100 Tage Rückgaberecht, für physische Produkte 30 Tage. Die Rücksendung ist für Sie kostenlos.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Welche Zahlungsmethoden akzeptieren Sie?
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Wir akzeptieren alle gängigen Zahlungsmethoden wie Kreditkarte, PayPal, Rechnung, SOFORT Überweisung und viele mehr - sicher und geschützt.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Bieten Sie Support für alle Produkte an?
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Ja, wir bieten umfassenden Support für alle unsere Produkte - sowohl digital als auch physisch. Kontaktieren Sie uns bei Fragen jederzeit!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. Newsletter -->
+            <div class="footer-section newsletter-section">
+                <div class="section-header">
+                    <h4>
+                        <span class="mobile-section-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/>
+                            </svg>
+                        </span>
+                        Newsletter
+                    </h4>
+                    <span class="mobile-toggle">+</span>
+                </div>
+                <div class="mobile-collapsible">
+                    <p>Jetzt anmelden und 10 % Rabatt auf deine erste Bestellung sichern!</p>
+                    <form method="post" action="/contact#footer-newsletter" accept-charset="UTF-8">
+                        <input type="hidden" name="form_type" value="customer">
+                        <input type="hidden" name="utf8" value="✓">
+                        <input type="hidden" name="contact[tags]" value="newsletter">
+                        <input type="hidden" name="contact[accepts_marketing]" value="true">
+                        <input type="email" name="contact[email]" placeholder="Deine E-Mail-Adresse" required class="newsletter-input">
+                        <button type="submit" class="newsletter-button">Abonnieren</button>
+                    </form>
+                    <div class="newsletter-code-hint">
+                        <p>🎁 <strong>Dein Willkommensgeschenk:</strong></p>
+                        <div class="newsletter-code-box">Rabattcode: <strong>KARINEX10</strong></div>
+                        <p class="newsletter-code-text">10 % Rabatt auf deine erste Bestellung</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. Social Media -->
+            <div class="footer-section social-follow">
+                <div class="section-header">
+                    <h4 class="follow-title">
+                        <span class="mobile-section-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+                            </svg>
+                        </span>
+                        FOLGE UNS
+                    </h4>
+                    <span class="mobile-toggle">+</span>
+                </div>
+                <div class="mobile-collapsible">
+                    <div class="follow-icons">
+                        <a href="https://www.linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn" class="social-icon">
+                            <i class="fab fa-linkedin-in"></i>
+                            <span class="social-name">LinkedIn</span>
+                        </a>
+                        <a href="https://www.instagram.com" target="_blank" rel="noopener" aria-label="Instagram" class="social-icon">
+                            <i class="fab fa-instagram"></i>
+                            <span class="social-name">Instagram</span>
+                        </a>
+                        <a href="https://x.com" target="_blank" rel="noopener" aria-label="Twitter" class="social-icon">
+                            <i class="fab fa-twitter"></i>
+                            <span class="social-name">Twitter</span>
+                        </a>
+                        <a href="https://www.facebook.com" target="_blank" rel="noopener" aria-label="Facebook" class="social-icon">
+                            <i class="fab fa-facebook-f"></i>
+                            <span class="social-name">Facebook</span>
+                        </a>
+                        <a href="https://www.youtube.com" target="_blank" rel="noopener" aria-label="YouTube" class="social-icon">
+                            <i class="fab fa-youtube"></i>
+                            <span class="social-name">YouTube</span>
+                        </a>
+                        <a href="https://www.tiktok.com" target="_blank" rel="noopener" aria-label="TikTok" class="social-icon">
+                            <i class="fab fa-tiktok"></i>
+                            <span class="social-name">TikTok</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer Bottom - MIT TEXT-LINKS -->
+        <div class="footer-bottom">
+            <div class="footer-bottom-inner">
+                <p class="copyright">© 2025 KARINEX – Alle Rechte vorbehalten</p>
+
+                <ul class="footer-links">
+                    <li><a href="/policies/privacy-policy">Datenschutz</a></li>
+                    <li><a href="/policies/terms-of-service">AGB</a></li>
+                    <li><a href="/policies/legal-notice">Impressum</a></li>
+                    <li><a href="/policies/shipping-policy">Versand</a></li>
+                    <li><a href="https://www.karinex.de/policies/refund-policy">Widerrufsrecht</a></li>
+                    <li><a href="/pages/cookie-einstellungen">Cookies</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Collapsible Sections
+            const sectionHeaders = document.querySelectorAll('.section-header');
+            
+            sectionHeaders.forEach(header => {
+                // Skip the first section (logo) from being collapsible
+                if (header.closest('.footer-section').querySelector('.karinex-logo-wrapper')) {
+                    return;
+                }
+                
+                header.addEventListener('click', function() {
+                    const section = this.closest('.footer-section');
+                    section.classList.toggle('active');
+                });
+            });
+
+            // FAQ Accordion Functionality - KORRIGIERT
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', function(e) {
+                    e.stopPropagation(); // منع انتشار الحدث إلى الأقسام الأخرى
+                    
+                    const faqItem = this.closest('.faq-item');
+                    
+                    // افتح/أغلق العنصر الحالي فقط
+                    faqItem.classList.toggle('active');
+                });
+            });
+
+            // Enhanced touch interactions for mobile
+            document.querySelectorAll('.footer-section a').forEach(link => {
+                link.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                
+                link.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+{% schema %}
+{
+  "name": "Custom Footer DE",
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Custom Footer DE"
+    }
+  ]
+}
+{% endschema %}
