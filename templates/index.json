@@ -766,6 +766,7 @@
             "text_kW34Li": {
               "type": "text",
               "name": "t:names.text",
+              "disabled": true,
               "settings": {
                 "text": "<p>COMPLETE YOUR HOME WITH</p>",
                 "width": "fit-content",
@@ -792,6 +793,7 @@
             "text_zjYTMm": {
               "type": "text",
               "name": "t:names.text",
+              "disabled": true,
               "settings": {
                 "text": "<h3><em>Accessories</em></h3>",
                 "width": "100%",
@@ -824,6 +826,7 @@
         "static-collection-card": {
           "type": "_collection-card",
           "name": "t:names.collection_card",
+          "disabled": true,
           "static": true,
           "settings": {
             "placement": "below_image",
@@ -841,6 +844,7 @@
             "collection_title_kkgEBG": {
               "type": "collection-title",
               "name": "t:names.collection_title",
+              "disabled": true,
               "settings": {
                 "width": "fit-content",
                 "max_width": "normal",
@@ -865,6 +869,7 @@
             },
             "collection-card-image": {
               "type": "_collection-card-image",
+              "disabled": true,
               "static": true,
               "settings": {
                 "image_ratio": "square",
@@ -888,6 +893,7 @@
       "block_order": [
         "group_JWrF3Q"
       ],
+      "disabled": true,
       "name": "t:names.collections_grid",
       "settings": {
         "collection_list": [],
