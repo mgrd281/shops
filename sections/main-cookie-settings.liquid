@@ -144,24 +144,53 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    const openCookieSettings = (e) => {
+      e.preventDefault();
+      
+      // Funktion zum Öffnen der Einstellungen
+      const tryOpen = () => {
+        console.log('Versuche Cookie-Einstellungen zu öffnen...');
+        
+        // 1. Native Shopify Privacy & Compliance (Das im Screenshot gezeigte System)
+        if (window.Shopify && window.Shopify.customerPrivacy) {
+            if (typeof window.Shopify.customerPrivacy.showPreferences === 'function') {
+                console.log('Shopify Customer Privacy API gefunden.');
+                window.Shopify.customerPrivacy.showPreferences();
+                return true;
+            }
+        }
+        
+        // 2. Consentmo (GDPR/CCPA App) - Falls installiert
+        if (window.Gdpr && typeof window.Gdpr.openPreferences === 'function') {
+            window.Gdpr.openPreferences();
+            return true;
+        }
+        
+        // 3. Cookiebot - Falls installiert
+        if (window.Cookiebot && typeof window.Cookiebot.show === 'function') {
+            window.Cookiebot.show();
+            return true;
+        }
+        
+        return false;
+      };
+
+      // Erster Versuch
+      if (!tryOpen()) {
+        // Falls API noch nicht geladen, kurz warten und erneut versuchen
+        console.log('API nicht bereit, warte...');
+        setTimeout(() => {
+            if(!tryOpen()) {
+                 console.warn('Keine Cookie-API gefunden.');
+                 alert('Das Menü für Cookie-Einstellungen konnte nicht geladen werden. Bitte stellen Sie sicher, dass der Cookie-Banner aktiv ist.');
+            }
+        }, 800);
+      }
+    };
+
     const btn = document.getElementById('open-cookie-settings-btn');
     if (btn) {
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        // 1. Shopify Customer Privacy
-        if (window.Shopify && window.Shopify.customerPrivacy && typeof window.Shopify.customerPrivacy.showPreferences === 'function') {
-            window.Shopify.customerPrivacy.showPreferences();
-        } 
-        // 2. Cookiebot
-        else if (window.Cookiebot && typeof window.Cookiebot.renew === 'function') {
-            window.Cookiebot.renew();
-        } 
-        // 3. Fallback
-        else {
-            alert('Das Cookie-Einstellungs-Fenster konnte nicht geöffnet werden. Bitte überprüfen Sie, ob ein Ad-Blocker aktiv ist.');
-        }
-      });
+      btn.addEventListener('click', openCookieSettings);
     }
   });
 </script>

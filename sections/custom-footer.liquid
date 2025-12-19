@@ -1307,17 +1307,32 @@
             const openCookieSettings = (e) => {
                 e.preventDefault();
                 
-                // 1. Shopify Customer Privacy
-                if (window.Shopify && window.Shopify.customerPrivacy && typeof window.Shopify.customerPrivacy.showPreferences === 'function') {
-                    window.Shopify.customerPrivacy.showPreferences();
-                } 
-                // 2. Cookiebot
-                else if (window.Cookiebot && typeof window.Cookiebot.renew === 'function') {
-                    window.Cookiebot.renew();
-                } 
-                // 3. Fallback
-                else {
-                    window.location.href = '/pages/cookie-einstellungen';
+                const tryOpen = () => {
+                    // 1. Shopify Customer Privacy API
+                    if (window.Shopify && window.Shopify.customerPrivacy && typeof window.Shopify.customerPrivacy.showPreferences === 'function') {
+                        window.Shopify.customerPrivacy.showPreferences();
+                        return true;
+                    } 
+                    // 2. Cookiebot
+                    else if (window.Cookiebot && typeof window.Cookiebot.renew === 'function') {
+                        window.Cookiebot.renew();
+                        return true;
+                    }
+                    // 3. Consentmo / GDPR App
+                    else if (window.Gdpr && typeof window.Gdpr.openPreferences === 'function') {
+                        window.Gdpr.openPreferences();
+                        return true;
+                    }
+                    return false;
+                };
+
+                if (!tryOpen()) {
+                    // Retry once after delay in case scripts are loading
+                    setTimeout(() => {
+                        if (!tryOpen()) {
+                             window.location.href = '/pages/cookie-einstellungen';
+                        }
+                    }, 500);
                 }
             };
 
