@@ -6,7 +6,7 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */ {
   "sections": {
     "hero_G7CAX9": {
       "type": "hero",
@@ -14,7 +14,7 @@
         "text_KJqzT8": {
           "type": "text",
           "settings": {
-            "text": "<h2><em>Our Newest Collection</em></h2>",
+            "text": "<h2><em>Unsere Neueste Kollektion</em></h2>",
             "width": "100%",
             "max_width": "normal",
             "alignment": "center",
@@ -40,7 +40,7 @@
           "type": "button",
           "name": "Button",
           "settings": {
-            "label": "SHOP NOW",
+            "label": "JETZT KAUFEN",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
             "style_class": "link",
@@ -90,7 +90,7 @@
           "type": "text",
           "name": "Heading",
           "settings": {
-            "text": "<p><em>From curated essentials to thoughtfully edited statement pieces, create the foundation for a timeless home with heirloom-quality goods.</em></p>",
+            "text": "<p><em>Von ausgewählten Essentials bis hin zu besonderen Einzelstücken – schaffen Sie die Basis für ein zeitloses Zuhause mit Qualität, die bleibt.</em></p>",
             "width": "fit-content",
             "max_width": "narrow",
             "alignment": "center",
@@ -116,7 +116,7 @@
           "type": "button",
           "name": "Button",
           "settings": {
-            "label": "LEARN MORE",
+            "label": "MEHR ERFAHREN",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
             "style_class": "link",
@@ -414,7 +414,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<p>Elevated Essentials</p>",
+                "text": "<p>Gehobene Essentials</p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -440,7 +440,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<h3><em>Shop the look</em></h3>",
+                "text": "<h3><em>Den Look shoppen</em></h3>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -472,7 +472,7 @@
           "type": "button",
           "name": "t:names.button",
           "settings": {
-            "label": "VIEW ALL",
+            "label": "ALLE ANSEHEN",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
             "style_class": "link",
@@ -542,7 +542,7 @@
           "disabled": true,
           "static": true,
           "settings": {
-            "text": "<p>Shop the look</p>",
+            "text": "<p>Den Look shoppen</p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -633,7 +633,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<p>SHOP BY</p>",
+                "text": "<p>EINKAUFEN NACH</p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -659,7 +659,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<h3><em>Collection</em></h3>",
+                "text": "<h3><em>Kollektion</em></h3>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
