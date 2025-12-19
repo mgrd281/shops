@@ -1,115 +1,243 @@
 <style>
-  .template-404 .title + .subtext {
-    margin-top: 1rem;
+  .template-404-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    padding: 4rem 1.5rem;
+    background-color: #f9fafb; /* Very light gray for premium feel */
   }
 
-  .template-404 .button {
-    margin-top: 3rem;
-  }
-  
-  .template-404 {
+  .template-404-card {
+    background: #ffffff;
+    padding: 3.5rem 3rem;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.06);
     text-align: center;
-    padding: 6rem 1.5rem;
+    max-width: 640px;
+    width: 100%;
+    border: 1px solid rgba(0,0,0,0.03);
+    animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
-  
-  .template-404 h1 {
-    font-size: 4rem;
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .error-code {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2e7d32;
     margin-bottom: 1rem;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .template-404-card h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: #1a1a1a;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  .template-404-card p {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+  }
+
+  .search-404 {
+    margin-bottom: 2.5rem;
+    position: relative;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .search-404 input {
+    width: 100%;
+    padding: 14px 24px;
+    padding-right: 50px;
+    border: 1px solid #e5e5e5;
+    border-radius: 50px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #fcfcfc;
+  }
+
+  .search-404 input:focus {
+    border-color: #2e7d32;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.1);
+    outline: none;
+  }
+
+  .search-404 button {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #2e7d32;
+    padding: 8px;
+    transition: transform 0.2s;
   }
   
-  .template-404 p {
-    font-size: 1.2rem;
-    color: rgba(var(--color-foreground), 0.75);
+  .search-404 button:hover {
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+
+  .btn-404 {
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 1rem;
+  }
+
+  .btn-primary {
+    background: #2e7d32;
+    color: white;
+    border: 2px solid #2e7d32;
+    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
+  }
+
+  .btn-primary:hover {
+    background: #1b5e20;
+    border-color: #1b5e20;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: #2e7d32;
+    border: 2px solid #e0e0e0;
+  }
+
+  .btn-secondary:hover {
+    border-color: #2e7d32;
+    background: #f0fdf4;
+    transform: translateY(-2px);
+  }
+
+  .popular-links {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 2rem;
+  }
+
+  .popular-links h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #999;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+
+  .links-grid {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .quick-link {
+    color: #444;
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 8px 20px;
+    background: #f5f5f5;
+    border-radius: 100px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+  }
+
+  .quick-link:hover {
+    background: #2e7d32;
+    color: white;
+    transform: translateY(-1px);
+  }
+  
+  @media (max-width: 600px) {
+    .template-404-card {
+      padding: 2.5rem 1.5rem;
+    }
+    .template-404-card h1 {
+      font-size: 2rem;
+    }
+    .btn-group {
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .btn-404 {
+      width: 100%;
+    }
   }
 </style>
 
-<div class="template-404 page-width center">
-  {%- for block in section.blocks -%}
-    {%- case block.type -%}
-      {%- when 'text' -%}
-        <div class="rte" {{ block.shopify_attributes }}>
-          {{ block.settings.text }}
-        </div>
-      {%- when 'button' -%}
-        <a href="{{ block.settings.link | default: routes.all_products_collection_url }}" class="button">
-          {{ block.settings.label | default: 'Continue shopping' }}
-        </a>
-    {%- endcase -%}
-  {%- endfor -%}
-  
-  {%- if section.blocks.size == 0 -%}
-    <p>
-      {{ 'templates.404.subtext' | t }}
-    </p>
-    <h1 class="title">
-      {{ 'templates.404.title' | t }}
-    </h1>
-    <a href="{{ routes.all_products_collection_url }}" class="button">
-      {{ 'general.continue_shopping' | t }}
-    </a>
-  {%- endif -%}
+<div class="template-404-wrapper">
+  <div class="template-404-card">
+    <span class="error-code">404 Fehler</span>
+    <h1>Seite nicht gefunden</h1>
+    <p>Die Seite, die Sie suchen, existiert nicht oder wurde verschoben. Vielleicht hilft Ihnen die Suche weiter?</p>
+
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-404">
+      <input
+        type="text"
+        name="q"
+        value="{{ search.terms | escape }}"
+        placeholder="Suchen Sie nach Produkten..."
+      >
+      <button type="submit" aria-label="Search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </button>
+    </form>
+
+    <div class="btn-group">
+      <a href="{{ routes.all_products_collection_url }}" class="btn-404 btn-primary">
+        Weiter shoppen
+      </a>
+      <a href="{{ routes.root_url }}" class="btn-404 btn-secondary">
+        Zur Startseite
+      </a>
+    </div>
+
+    <div class="popular-links">
+      <h3>Beliebte Kategorien</h3>
+      <div class="links-grid">
+        <a href="/collections/all" class="quick-link">Alle Produkte</a>
+        <a href="/collections/bestseller" class="quick-link">Bestseller</a>
+        <a href="/collections/neuheiten" class="quick-link">Neuheiten</a>
+        <a href="/pages/kontakt" class="quick-link">Hilfe & Kontakt</a>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% schema %}
 {
-  "name": "t:names.404",
-  "tag": "section",
-  "class": "section",
-  "settings": [
+  "name": "404 Page",
+  "settings": [],
+  "presets": [
     {
-      "type": "header",
-      "content": "t:content.padding"
-    },
-    {
-      "type": "range",
-      "id": "padding_top",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "t:settings.top",
-      "default": 36
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "t:settings.bottom",
-      "default": 36
-    }
-  ],
-  "blocks": [
-    {
-      "type": "text",
-      "name": "Text",
-      "settings": [
-        {
-          "type": "richtext",
-          "id": "text",
-          "label": "Text",
-          "default": "<h1>Page not found</h1><p>The page you were looking for does not exist.</p>"
-        }
-      ]
-    },
-    {
-      "type": "button",
-      "name": "Button",
-      "settings": [
-        {
-          "type": "text",
-          "id": "label",
-          "label": "Button Label",
-          "default": "Continue shopping"
-        },
-        {
-          "type": "url",
-          "id": "link",
-          "label": "Button Link"
-        }
-      ]
+      "name": "404 Page"
     }
   ]
 }
