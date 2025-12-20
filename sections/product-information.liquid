@@ -1517,14 +1517,6 @@ nav[aria-label="Breadcrumb"],
      <!-- Produktinfo -->
             <div class="product-info">
 
-                                <!-- Brand Logo above Title -->
-                                {% assign vendor_handle = product.vendor | handleize %}
-                                {% if vendor_handle == 'microsoft' %}
-                                  <div class="brand-header-logo" style="margin-bottom: 6px;">
-                                    <img src="{{ 'brand-microsoft.svg' | asset_url }}" alt="Microsoft" style="width: 130px; height: auto;">
-                                  </div>
-                                {% endif %}
-
                                 <h1 class="product-title" style="margin-bottom: 8px;">{{ product.title }}</h1> 
 {% assign __avg = product.metafields.ddreviews.content.average_star | default: 5.0 %}
 {% assign __avg_fmt = __avg | times: 10 | round | divided_by: 10.0 %}
