@@ -94,7 +94,7 @@
                         <img
                           class="mcr-card__img"
                           src="{{ product.featured_image | img_url: '600x' }}"
-                          alt="{{ product.title | escape | default: shop.name }}"
+                          alt="{{ product.title | escape }}"
                           loading="lazy"
                         >
                       {% else %}
