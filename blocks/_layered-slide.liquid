@@ -28,25 +28,36 @@
         assign height = preview_image.width | divided_by: preview_image.aspect_ratio | round
         assign sizes = '100vw'
         assign widths = '832, 1200, 1600, 1920, 2560, 3840'
+        
         assign loading = 'lazy'
+        assign fetchpriority = 'auto'
+        if block_index == 0
+          assign loading = 'eager'
+          assign fetchpriority = 'high'
+        endif
       -%}
+
+      {%- if block_index == 0 -%}
+        <link rel="preload" as="image" href="{{ block.settings.image_1 | image_url: width: 1600, format: 'webp' }}" fetchpriority="high">
+      {%- endif -%}
 
       {%- if block.settings.media_type_1 == 'image' -%}
         {{
           block.settings.image_1
-          | image_url: width: 3840
-          | image_tag: height: height, sizes: sizes, widths: widths, class: 'layered-slideshow__image', loading: loading
+          | image_url: width: 3840, format: 'webp'
+          | image_tag: height: height, sizes: sizes, widths: widths, class: 'layered-slideshow__image', loading: loading, fetchpriority: fetchpriority
         }}
       {%- else -%}
         {%- if block.settings.video_1.preview_image -%}
           {{
             block.settings.video_1.preview_image
-            | image_url: width: 3840
+            | image_url: width: 3840, format: 'webp'
             | image_tag:
               height: height,
               sizes: sizes,
               widths: widths,
               loading: loading,
+              fetchpriority: fetchpriority,
               class: 'layered-slideshow__video-poster'
           }}
         {%- endif -%}

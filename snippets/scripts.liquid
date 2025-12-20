@@ -198,7 +198,7 @@
 <script
   src="{{ 'layered-slideshow.js' | asset_url }}"
   type="module"
-  fetchpriority="low"
+  {% if template.name == 'index' %}fetchpriority="high"{% else %}fetchpriority="low"{% endif %}
 ></script>
 <script
   src="{{ 'anchored-popover.js' | asset_url }}"
