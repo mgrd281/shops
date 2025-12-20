@@ -20,6 +20,12 @@
       id="view-transition-render-blocker"
     >
 
+    {%- if template.name == 'index' -%}
+      <link rel="preload" as="image" href="https://cdn.shopify.com/s/files/1/0917/5328/3851/files/mgrdegh.png?v=1761674227&width=1600&format=webp" fetchpriority="high">
+    {%- endif -%}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     {%- render 'meta-tags' -%}
     
     {%- comment -%} SEO: Website Schema for search functionality {%- endcomment -%}
