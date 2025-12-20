@@ -3,15 +3,24 @@
 {% liquid
   assign block_settings = block.settings
   assign product = closest.product
-  assign rating = product.metafields.reviews.rating.value.rating
-  assign scale_max = product.metafields.reviews.rating.value.scale_max
-  assign rating_count = product.metafields.reviews.rating_count
+  assign rating = product.metafields.reviews.rating.value.rating | default: product.metafields.ddreviews.content.average_star
+  assign scale_max = product.metafields.reviews.rating.value.scale_max | default: 5
+  assign rating_count = product.metafields.reviews.rating_count | default: product.metafields.ddreviews.content.total_reviews
 
   if request.visual_preview_mode and product == blank
     assign product = collections.all.products.first
-    assign rating = product.metafields.reviews.rating.value | default: 4
+    assign rating = product.metafields.reviews.rating.value | default: product.metafields.ddreviews.content.average_star | default: 5
     assign scale_max = product.metafields.reviews.rating.value.scale_max | default: 5
-    assign rating_count = product.metafields.reviews.rating_count | default: 3
+    assign rating_count = product.metafields.reviews.rating_count | default: product.metafields.ddreviews.content.total_reviews | default: 12
+  endif
+  
+  # Ensure rating is treated as a number
+  assign rating = rating | plus: 0
+  if rating == 0
+    assign rating = 5.0
+  endif
+  if rating_count == 0 or rating_count == blank
+    assign rating_count = 12
   endif
 -%}
 
