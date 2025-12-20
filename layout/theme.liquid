@@ -28,20 +28,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     {%- render 'meta-tags' -%}
     
-    {%- comment -%} SEO: Website Schema for search functionality {%- endcomment -%}
-    {%- if template.name == 'index' -%}
-      {%- render 'schema-website' -%}
-    {%- endif -%}
-    
-    {%- comment -%} Performance: Resource hints and preconnect {%- endcomment -%}
-    {%- render 'performance-hints' -%}
-    
     {%- render 'stylesheets' -%}
     {%- render 'fonts' -%}
     {%- render 'scripts' -%}
+
     
-    {%- comment -%} Accessibility: Color Contrast Fixes for WCAG 2.1 Compliance {%- endcomment -%}
-    <link rel="stylesheet" href="{{ 'accessibility-contrast-fixes.css' | asset_url }}" media="all">
 
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-schemes' -%}
@@ -51,7 +42,6 @@
     {% endif %}
 
     {{ content_for_header }}
-  {% include 'dadao_reviews_core.liquid' %}
 
     <script src="https://invoice-production-8cd6.up.railway.app/review-widget.js" async></script>
 
