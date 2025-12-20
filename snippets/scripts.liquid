@@ -1,4 +1,3 @@
-
 <script type="importmap">
   {
     "imports": {
@@ -30,54 +29,258 @@
   }
 </script>
 
-{%- comment -%} Non-blocking View Transitions with Browser Check {%- endcomment -%}
-<script>
-  if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches && 'startViewTransition' in document) {
-    const script = document.createElement('script');
-    script.src = "{{ 'view-transitions.js' | asset_url }}";
-    script.defer = true;
-    document.head.appendChild(script);
-  }
-</script>
+<script
+  src="{{ 'view-transitions.js' | asset_url }}"
+  async
+></script>
 
-{%- comment -%} Core Critical Preloads {%- endcomment -%}
-<link rel="modulepreload" href="{{ 'utilities.js' | asset_url }}" fetchpriority="low">
-<link rel="modulepreload" href="{{ 'component.js' | asset_url }}" fetchpriority="low">
-<link rel="modulepreload" href="{{ 'section-hydration.js' | asset_url }}" fetchpriority="low">
+<link
+  rel="modulepreload"
+  href="{{ 'utilities.js' | asset_url }}"
+  fetchpriority="low"
+>
+<link
+  rel="modulepreload"
+  href="{{ 'component.js' | asset_url }}"
+  fetchpriority="low"
+>
+<link
+  rel="modulepreload"
+  href="{{ 'section-renderer.js' | asset_url }}"
+  fetchpriority="low"
+>
+<link
+  rel="modulepreload"
+  href="{{ 'section-hydration.js' | asset_url }}"
+  fetchpriority="low"
+>
+<link
+  rel="modulepreload"
+  href="{{ 'morph.js' | asset_url }}"
+  fetchpriority="low"
+>
 
-{%- comment -%} Template-Specific Assets {%- endcomment -%}
 {% if template.name == 'collection' or template.name == 'search' %}
-  <link rel="modulepreload" href="{{ 'paginated-list-aspect-ratio.js' | asset_url }}" fetchpriority="low">
-  <link rel="modulepreload" href="{{ 'paginated-list.js' | asset_url }}" fetchpriority="low">
-  <script src="{{ 'product-price.js' | asset_url }}" type="module" fetchpriority="low"></script>
+  <link
+    rel="modulepreload"
+    href="{{ 'paginated-list-aspect-ratio.js' | asset_url }}"
+    fetchpriority="low"
+  >
+  <link
+    rel="modulepreload"
+    href="{{ 'paginated-list.js' | asset_url }}"
+    fetchpriority="low"
+  >
+
+  <link
+    rel="modulepreload"
+    href="{{ 'product-title-truncation.js' | asset_url }}"
+    fetchpriority="low"
+  >
 {% endif %}
 
-{% if template.name == 'product' or request.page_type == 'product' %}
-  <link rel="modulepreload" href="{{ 'media-gallery.js' | asset_url }}" fetchpriority="low">
-  <link rel="modulepreload" href="{{ 'variant-picker.js' | asset_url }}" fetchpriority="low">
-  <script src="{{ 'variant-picker.js' | asset_url }}" type="module" fetchpriority="low"></script>
-  <script src="{{ 'media-gallery.js' | asset_url }}" type="module" fetchpriority="low"></script>
-  <script src="{{ 'product-form.js' | asset_url }}" type="module" fetchpriority="low"></script>
-  <script src="{{ 'product-inventory.js' | asset_url }}" type="module" fetchpriority="low"></script>
-  <script src="{{ 'sticky-add-to-cart.js' | asset_url }}" type="module" fetchpriority="low"></script>
-{% endif %}
-
-{% if template.name == 'index' %}
-  <script src="{{ 'slideshow.js' | asset_url }}" type="module" fetchpriority="low"></script>
-  <script src="{{ 'layered-slideshow.js' | asset_url }}" type="module" fetchpriority="low"></script>
-{% endif %}
-
-{%- comment -%} Lazy-Loaded Global Components {%- endcomment -%}
-<script src="{{ 'dialog.js' | asset_url }}" type="module" fetchpriority="low"></script>
-<script src="{{ 'overflow-list.js' | asset_url }}" type="module" fetchpriority="low"></script>
-<script src="{{ 'quick-add.js' | asset_url }}" type="module" fetchpriority="low"></script>
-<script src="{{ 'video-background.js' | asset_url }}" type="module" fetchpriority="low"></script>
-
+<link
+  rel="modulepreload"
+  href="{{ 'focus.js' | asset_url }}"
+  fetchpriority="low"
+>
+<link
+  rel="modulepreload"
+  href="{{ 'recently-viewed-products.js' | asset_url }}"
+  fetchpriority="low"
+>
+<link
+  rel="modulepreload"
+  href="{{ 'scrolling.js' | asset_url }}"
+  fetchpriority="low"
+>
+<link
+  rel="modulepreload"
+  href="{{ 'events.js' | asset_url }}"
+  fetchpriority="low"
+>
+<script
+  src="{{ 'popover-polyfill.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'overflow-list.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'quick-add.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
 {% if settings.show_add_discount_code %}
-  <script src="{{ 'cart-discount.js' | asset_url }}" type="module" fetchpriority="low"></script>
+  <script
+    src="{{ 'cart-discount.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
 {% endif %}
 
-{%- comment -%} Global Theme Config {%- endcomment -%}
+<script
+  src="{{ 'dialog.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'variant-picker.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'product-card.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'product-form.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'fly-to-cart.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'accordion-custom.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'disclosure-custom.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'media.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'product-price.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'product-sku.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'product-title-truncation.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'product-inventory.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'show-more.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'slideshow.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'layered-slideshow.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'anchored-popover.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'floating-panel.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'video-background.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'component-quantity-selector.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'media-gallery.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'rte-formatter.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'volume-pricing.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'price-per-item.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'volume-pricing-info.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+
+{% if localization.available_countries.size > 1 or localization.available_languages.size > 1 %}
+  <script
+    src="{{ 'localization.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+{% endif %}
+
+{% if template == 'product' or template.name == 'product' or request.page_type == 'product' %}
+  <script
+    src="{{ 'fly-to-cart.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'sticky-add-to-cart.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script type="module">
+    import { RecentlyViewed } from '@theme/recently-viewed-products';
+    RecentlyViewed.addProduct('{{ product.id }}');
+  </script>
+{% endif %}
+
+{% if settings.transition_to_main_product %}
+  <script
+    src="{{ 'product-card-link.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+{% endif %}
+
+<script
+  src="{{ 'auto-close-details.js' | asset_url }}"
+  defer="defer"
+></script>
+
 <script>
   const Theme = {
     translations: {
@@ -90,7 +293,7 @@
       items_added_to_cart_other: `{{ 'content.items_added_to_cart.other' | t }}`,
     },
     routes: {
-      cart_add_url: '{{ routes.cart_add_url | append: ".js" }}',
+      cart_add_url: '{{ routes.cart_add_url | append: '.js' }}',
       cart_change_url: '{{ routes.cart_change_url }}',
       cart_update_url: '{{ routes.cart_update_url }}',
       cart_url: '{{ routes.cart_url }}',
@@ -99,6 +302,6 @@
     },
     template: {
       name: '{{ template }}',
-    }
+    },
   };
 </script>
