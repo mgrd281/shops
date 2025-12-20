@@ -2245,32 +2245,38 @@ document.addEventListener("DOMContentLoaded", function () {
       document.querySelectorAll('#add-to-cart-form input[name="id"], #buy-now-form input[name="id"]').forEach(el => el.value = String(variantId));
     }
     function renderMainPrice(variant){
-      var priceBox = document.querySelector('.price-box');
+      var priceBox = document.querySelector('.price-container');
       if(!priceBox || !variant) return;
       var curEl  = priceBox.querySelector('.current-price');
       var oldEl  = priceBox.querySelector('.old-price');
-      var saveEl = priceBox.querySelector('.savings-badge');
-      var saveAmtEl = priceBox.querySelector('.savings-badge .savings-amount');
-      var bubbleEl = priceBox.querySelector('.discount-bubble');
+      // New structure elements
+      var subRow = priceBox.querySelector('.price-sub-row');
+      var saveTextEl = priceBox.querySelector('.savings-text .amount'); // We will add a span for amount if needed, or regex replace? Simpler to just rebuild string
+      var saveFullTextEl = priceBox.querySelector('.savings-text');
+      var pillEl = priceBox.querySelector('.discount-pill-simple');
+
       var price = Number(variant.price);
       var cap   = Number(variant.compare_at_price || 0);
+
       if(curEl) curEl.textContent = moneyFormat(price);
+      
       if(cap && cap > price){
-        if(oldEl){ oldEl.textContent = moneyFormat(cap); oldEl.style.display = ''; }
+        // Show discount UI
+        if(subRow) subRow.style.display = 'flex';
+        if(oldEl) oldEl.textContent = moneyFormat(cap);
+        
         var save = cap - price;
-        if(saveAmtEl){ saveAmtEl.textContent = moneyFormat(save); }
-        if(saveEl){ saveEl.style.display = ''; }
-        if(bubbleEl){
+        if(saveFullTextEl) saveFullTextEl.textContent = 'Du sparst: ' + moneyFormat(save);
+        
+        if(pillEl){
           var pct = Math.round(((cap - price) / cap) * 100);
-          var txt = '-' + pct + '%';
-          bubbleEl.textContent = txt;
-          bubbleEl.setAttribute('data-len', String(txt.length));
-          bubbleEl.style.display = '';
+          pillEl.textContent = '-' + pct + '%';
+          pillEl.style.display = 'inline-block';
         }
-      }else{
-        if(oldEl)  oldEl.style.display  = 'none';
-        if(saveEl) saveEl.style.display = 'none';
-        if(bubbleEl) bubbleEl.style.display = 'none';
+      } else {
+        // Hide discount UI
+        if(subRow) subRow.style.display = 'none';
+        if(pillEl) pillEl.style.display = 'none';
       }
     }
     document.addEventListener('variant:change', function(e){
@@ -4525,27 +4531,31 @@ document.addEventListener('DOMContentLoaded', function () {
 .price-container {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 0; /* Remove gap */
+    margin-bottom: 4px; /* Move slightly up */
 }
 .price-main-row {
     display: flex;
-    align-items: center;
+    align-items: center; /* Center align items vertically */
     gap: 12px;
+    height: 40px; /* Fixed height for consistency */
 }
 .current-price {
     font-size: 32px;
     font-weight: 800;
-    color: #d32f2f; /* Premium red for price */
-    line-height: 1;
+    color: #d32f2f;
+    line-height: normal; /* Fix line-height */
+    transform: translateY(-2px); /* Slight lift */
 }
 .discount-pill-simple {
     background: #d32f2f;
     color: #fff;
     font-weight: 700;
     font-size: 14px;
-    padding: 4px 8px;
+    padding: 3px 7px;
     border-radius: 4px;
     letter-spacing: 0.5px;
+    transform: translateY(-1px); /* Alien with price optical center */
 }
 .price-sub-row {
     display: flex;
