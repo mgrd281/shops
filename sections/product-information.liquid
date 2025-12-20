@@ -4386,3 +4386,135 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 </script>
 <!-- FULLSCREEN LIGHTBOX END -->
+
+<!-- GALLERY DOTS AND NAVIGATION START -->
+<style>
+  .lightbox-nav-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 100000;
+  }
+  .lightbox-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ccc;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  .lightbox-dot.active {
+    background: #e6b800; /* Gold/Yellow color like reference */
+  }
+  .lightbox-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 100000;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .lightbox-arrow:hover {
+    background: #fff;
+    transform: translateY(-50%) scale(1.1);
+  }
+  .lightbox-arrow.prev { left: 20px; }
+  .lightbox-arrow.next { right: 20px; }
+  .lightbox-arrow svg {
+    width: 24px;
+    height: 24px;
+    fill: #333;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const lightbox = document.getElementById('fullscreen-lightbox');
+    const lightboxImg = document.getElementById('lightbox-image');
+    let currentIndex = 0;
+    
+    // Get all product images
+    // Assuming thumbnails have data-src or src attribute we can use
+    const thumbs = document.querySelectorAll('.thumb-item img');
+    const images = Array.from(thumbs).map(img => img.src.replace(/_200x/, '').replace(/_crop_center/, '').replace(/width=200/, 'width=2000')); // Try to get high res
+    
+    if(images.length <= 1) return; // No need for dots if only 1 image
+
+    // Create Dots container
+    const dotsContainer = document.createElement('div');
+    dotsContainer.className = 'lightbox-nav-dots';
+    lightbox.appendChild(dotsContainer);
+
+    // Create Arrows
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'lightbox-arrow prev';
+    prevBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>';
+    lightbox.appendChild(prevBtn);
+
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'lightbox-arrow next';
+    nextBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>';
+    lightbox.appendChild(nextBtn);
+
+    // Initialize Dots
+    images.forEach((_, index) => {
+      const dot = document.createElement('div');
+      dot.className = 'lightbox-dot';
+      if(index === 0) dot.classList.add('active');
+      dot.addEventListener('click', (e) => {
+        e.stopPropagation();
+        updateImage(index);
+      });
+      dotsContainer.appendChild(dot);
+    });
+
+    function updateImage(index) {
+      currentIndex = index;
+      lightboxImg.src = images[currentIndex];
+      
+      // Update Dots
+      document.querySelectorAll('.lightbox-dot').forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === currentIndex);
+      });
+      
+      // Reset zoom
+      lightboxImg.style.transform = 'scale(1)';
+      lightboxImg.style.transformOrigin = 'center center';
+    }
+
+    // Arrow Events
+    prevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      let newIndex = currentIndex - 1;
+      if(newIndex < 0) newIndex = images.length - 1;
+      updateImage(newIndex);
+    });
+
+    nextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      let newIndex = currentIndex + 1;
+      if(newIndex >= images.length) newIndex = 0;
+      updateImage(newIndex);
+    });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if(lightbox.style.display !== 'none' && lightbox.classList.contains('active')) {
+        if(e.key === 'ArrowLeft') prevBtn.click();
+        if(e.key === 'ArrowRight') nextBtn.click();
+      }
+    });
+  });
+</script>
+<!-- GALLERY DOTS AND NAVIGATION END -->
