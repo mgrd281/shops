@@ -143,6 +143,19 @@
             background-color: var(--white);
             -webkit-font-smoothing: antialiased;
         }
+        }
+        /* Force solid gold stars for rating widget */
+        .rechnung-profi-stars i,
+        .rating-stars i,
+        .fa-star {
+            color: #FFD700 !important;
+            font-weight: 900 !important; /* Force Solid (FA) */
+            font-family: "Font Awesome 5 Free" !important;
+            -webkit-text-stroke: 0 !important; /* Remove outline if any */
+        }
+        .rechnung-profi-stars { display: inline-flex; gap: 2px; }
+        .product-rating .rating-value { font-weight: 700; color: #333; margin-right: 6px; }
+        
         img {
             max-width: 100%;
             height: auto;
@@ -1869,10 +1882,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   </style>
 {%- endif -%}
-                                <div class="product-rating" style="margin-bottom: 12px;">
-                    <div class="rating-stars">
-                    </div>
-                </div>
+
 <!-- === Icons & Webfont === -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
