@@ -14,19 +14,18 @@
     {% render 'text', fallback_text: product_title, block: block %}
   </a>
   {% liquid
-    assign avg_rating = closest.product.metafields.ddreviews.content.average_star | default: 5.0 | plus: 0
-    
-    # Calculate a deterministic but varied review count based on product ID
-    assign id_seed = closest.product.id | modulo: 15
-    assign review_count = closest.product.metafields.ddreviews.content.total_reviews | default: 0
-    if review_count == 0
-       assign review_count = id_seed | plus: 16
-    endif
+    assign avg_rating = closest.product.metafields.ddreviews.content.average_star | default: 5.0
+    assign avg_rating_fmt = avg_rating | times: 10 | round | divided_by: 10.0 | replace: '.', ','
+    assign review_count = closest.product.metafields.ddreviews.content.total_reviews | default: 1
   %}
-  <div class="product-card__rating">
-    <div class="rating-stars">
+  <div class="product-rating">
+    <span class="rating-value">{{ avg_rating_fmt }}</span>
+    <div class="rechnung-profi-stars" data-product-id="{{ closest.product.id }}">
+      {% liquid
+        assign avg_val = avg_rating | plus: 0
+      %}
       {% for i in (1..5) %}
-        {% if i <= avg_rating %}
+        {% if i <= avg_val %}
           <i class="fa-solid fa-star"></i>
         {% else %}
           <i class="fa-regular fa-star"></i>
@@ -38,27 +37,37 @@
 {% endif %}
 
 <style>
-  .product-card__rating {
+  .product-rating {
     display: flex;
     align-items: center;
     gap: 5px;
     margin-top: 4px;
     margin-bottom: 2px;
   }
-  .rating-stars {
+
+  .rating-value {
+    font-weight: 700;
+    font-size: 11px;
+    color: #333;
+    margin-right: 2px;
+  }
+
+  .rechnung-profi-stars {
     color: #FFB800;
     display: flex;
     gap: 1.5px;
     font-size: 11px;
   }
-  .rating-stars i {
+
+  .rechnung-profi-stars i {
     color: #FFB800 !important;
     font-weight: 900 !important;
     font-family: "Font Awesome 6 Free" !important;
   }
+
   .rating-count {
     font-size: 11px;
-    color: rgba(0,0,0,0.5);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
   }
 </style>
 
