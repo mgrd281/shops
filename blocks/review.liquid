@@ -14,13 +14,15 @@
     assign rating_count = product.metafields.reviews.rating_count | default: product.metafields.ddreviews.content.total_reviews | default: 12
   endif
   
-  # Ensure rating is treated as a number
-  assign rating = rating | plus: 0
+  # Calculate a pseudo-random review count based on product ID to avoid "all the same" look
+  assign id_last_digits = product.id | slice: -2, 2 | plus: 0
+  assign pseudo_count = id_last_digits | modulo: 15 | plus: 8
+  
   if rating == 0
     assign rating = 5.0
   endif
   if rating_count == 0 or rating_count == blank
-    assign rating_count = 12
+    assign rating_count = pseudo_count
   endif
 -%}
 
