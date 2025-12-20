@@ -2335,7 +2335,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <div class="price-sub-row">
           <span class="old-price">{{ cap | money }}</span>
           <span class="price-sep">•</span>
-          <span class="savings-text">Du sparst: {{ cap | minus: cur | money }}</span>
+          <span class="savings-text">Du sparst: <strong>{{ cap | minus: cur | money }}</strong></span>
         </div>
       {% endif %}
     </div>
@@ -4585,6 +4585,17 @@ document.addEventListener('DOMContentLoaded', function () {
     text-decoration: line-through;
     color: #757575;
     font-size: 15px;
+    color: #757575;
+    font-size: 15px;
+}
+.savings-text {
+    font-weight: 700;
+    color: #388e3c;
+}
+.price-meta {
+    font-size: 12px;
+    color: #888;
+    margin-top: 2px;
 }
 .savings-text {
     color: #1D4739;
