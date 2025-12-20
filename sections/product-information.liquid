@@ -1517,13 +1517,16 @@ nav[aria-label="Breadcrumb"],
      <!-- Produktinfo -->
             <div class="product-info">
 
-                                <!-- Brand Logo above Title -->
+                                <!-- Brand Logo above Title (Generic) -->
                                 {% assign vendor_handle = product.vendor | handleize %}
-                                {% if vendor_handle == 'microsoft' %}
-                                  <div class="brand-header-logo" style="margin-bottom: 6px;">
-                                    <img src="{{ 'brand-microsoft.svg' | asset_url }}" alt="Microsoft" style="width: 130px; height: auto;">
-                                  </div>
-                                {% endif %}
+                                {% capture brand_logo_filename %}brand-{{ vendor_handle }}.svg{% endcapture %}
+                                <!-- Check if we can display it (assumes file exists if you uploaded it) -->
+                                <div class="brand-header-logo" style="margin-bottom: 6px;">
+                                  <img src="{{ brand_logo_filename | asset_url }}" 
+                                       alt="{{ product.vendor }}" 
+                                       style="width: 130px; height: auto; max-height: 50px; object-fit: contain; display: block;"
+                                       onerror="this.style.display='none'">
+                                </div>
 
                                 <h1 class="product-title" style="margin-bottom: 8px;">{{ product.title }}</h1> 
 {% assign __avg = product.metafields.ddreviews.content.average_star | default: 5.0 %}
