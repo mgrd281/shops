@@ -893,19 +893,15 @@
         }
         /* Countdown Timer */
         .countdown-timer {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background-color: #1d4739;
-            color: #fff;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-weight: 600;
-            font-size: 13px;
+            display: flex;
+            gap: var(--space-sm);
+            background-color: var(--primary);
+            color: var(--white);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-sm);
+            font-weight: 700;
             margin-bottom: var(--space-md);
-            justify-content: flex-start;
-            width: auto;
-            letter-spacing: 0.3px;
+            justify-content: center;
         }
         /* Responsive */
         @media (max-width: 992px) {
