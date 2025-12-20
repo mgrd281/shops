@@ -1533,7 +1533,8 @@ nav[aria-label="Breadcrumb"],
                              decoding="async"
                              fetchpriority="high"
                              width="900"
-                             height="900">
+                             height="900"
+                             id="zoom-image">
                         <video class="main-video" playsinline muted autoplay preload="auto"></video>
                         <iframe class="main-iframe" title="Produktvideo" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="border:0;"></iframe>
 
@@ -4312,3 +4313,48 @@ document.addEventListener('DOMContentLoaded', function () {
   })();
 </script>
 <div id="rechnung-profi-reviews-widget" data-product-id="{{ product.id }}"></div>
+
+<!-- ZOOM FUNCTIONALITY START -->
+<style>
+  .main-image-container {
+    overflow: hidden;
+    cursor: zoom-in;
+    position: relative;
+  }
+  .main-image {
+    transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform-origin: center center;
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  /* Disable zoom on touch devices */
+  @media (hover: none) {
+    .main-image-container { cursor: default; }
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.main-image-container');
+    const image = document.getElementById('zoom-image');
+
+    if (container && image) {
+      if (window.matchMedia('(hover: hover)').matches) {
+        container.addEventListener('mousemove', function(e) {
+          const rect = container.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const xPercent = (x / rect.width) * 100;
+          const yPercent = (y / rect.height) * 100;
+          image.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+          image.style.transform = 'scale(2)';
+        });
+        container.addEventListener('mouseleave', function() {
+          image.style.transformOrigin = 'center center';
+          image.style.transform = 'scale(1)';
+        });
+      }
+    }
+  });
+</script>
+<!-- ZOOM FUNCTIONALITY END -->
