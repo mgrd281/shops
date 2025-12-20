@@ -684,6 +684,16 @@
             transform: translateY(0);
             box-shadow: var(--shadow-sm);
         }
+        .buy-btn i {
+            width: 20px;
+            text-align: center;
+            display: inline-block;
+        }
+        .buy-btn .btn-text {
+            min-width: 145px; /* Fixed width to align icons */
+            text-align: left;
+            display: inline-block;
+        }
         /* Secondary Action: Buy Now (Outline Style) */
         .buy-btn.buy-now {
             background-color: #fff; 
@@ -2373,15 +2383,15 @@ document.addEventListener("DOMContentLoaded", function () {
 <!-- In den Warenkorb Button -->
 <form method="post" action="/cart/add" id="add-to-cart-form">
   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-  <button type="submit" class="buy-btn pulse">
-    <i class="fas fa-shopping-cart"></i> In den Warenkorb
+   <button type="submit" class="buy-btn pulse">
+    <i class="fas fa-shopping-cart"></i> <span class="btn-text">In den Warenkorb</span>
   </button>
 </form>
 <!-- Jetzt kaufen Button -->
 <form method="post" action="/cart/add" id="buy-now-form">
   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
   <button type="submit" class="buy-btn buy-now">
-    <i class="fas fa-rocket"></i> Jetzt kaufen
+    <i class="fas fa-rocket"></i> <span class="btn-text">Jetzt kaufen</span>
   </button>
 </form>
 <script>
