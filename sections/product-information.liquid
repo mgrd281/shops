@@ -1555,9 +1555,7 @@ nav[aria-label="Breadcrumb"],
                         {% assign badge_text = '' %}
                         {% if cap > cur and cap > 0 %}
                           {% assign disc_pct = cap | minus: cur | times: 100 | divided_by: cap %}
-                          {% if disc_pct > 30 %}
-                            {% assign badge_text = 'Sehr beliebt' %}
-                          {% elsif disc_pct >= 10 %}
+                          {% if disc_pct >= 10 %}
                             {% assign badge_text = 'MEGA DEAL' %}
                           {% endif %}
                         {% endif %}
