@@ -85,9 +85,8 @@ class CartDiscount extends Component {
       }
 
       const newHtml = data.sections[this.dataset.sectionId];
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = newHtml;
-      const section = tempDiv.querySelector(`#shopify-section-${this.dataset.sectionId}`);
+      const parsedHtml = new DOMParser().parseFromString(newHtml, 'text/html');
+      const section = parsedHtml.getElementById(`shopify-section-${this.dataset.sectionId}`);
       const discountCodes = section?.querySelectorAll('.cart-discount__pill') || [];
       if (section) {
         const codes = Array.from(discountCodes)
@@ -126,11 +125,9 @@ class CartDiscount extends Component {
     event.preventDefault();
     event.stopPropagation();
 
-    const isEnter = event instanceof KeyboardEvent && event.key === 'Enter';
-    const isClick = event instanceof MouseEvent;
-
     if (
-      (!isEnter && !isClick) ||
+      (event instanceof KeyboardEvent && event.key !== 'Enter') ||
+      !(event instanceof MouseEvent) ||
       !(event.target instanceof HTMLElement) ||
       typeof this.dataset.sectionId !== 'string'
     ) {
