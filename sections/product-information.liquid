@@ -4447,7 +4447,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // Get all product images
     // Assuming thumbnails have data-src or src attribute we can use
     const thumbs = document.querySelectorAll('.thumb-item img');
-    const images = Array.from(thumbs).map(img => img.src.replace(/_200x/, '').replace(/_crop_center/, '').replace(/width=200/, 'width=2000')); // Try to get high res
+    // Remove all query params and size suffixes to get original master image
+    const images = Array.from(thumbs).map(img => {
+      let src = img.src.split('?')[0]; // Remove query params
+      src = src.replace(/_\d+x(\d+)?/, ''); // Remove _200x, _crop_center etc
+      src = src.replace('_crop_center', '');
+      return src; 
+    });
     
     if(images.length <= 1) return; // No need for dots if only 1 image
 
