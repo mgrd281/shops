@@ -112,7 +112,7 @@
                   <img
                     class="bf-card__img"
                     src="{{ product.featured_image | img_url: '400x' }}"
-                    alt="{{ product.title | escape }}"
+                    alt="{{ product.title | escape | default: shop.name }}"
                     loading="lazy"
                   >
                 {% else %}
@@ -123,7 +123,7 @@
               <div class="bf-card__body">
                 {% if section.settings.show_bestseller %}
                   <div class="bf-meta">
-                    <span class="bf-pill">Bestseller</span>
+                    <span class="bf-pill">BESTSELLER</span>
                     {% if coll.title %}
                       <span class="bf-meta__cat">in {{ coll.title }}</span>
                     {% endif %}
@@ -306,11 +306,12 @@
   font-size:11px;
 }
 #bf-{{ section.id }} .bf-pill{
-  background:#2563eb;
+  background:#1D4739;
   color:#fff;
   padding:2px 7px;
   border-radius:999px;
   font-weight:600;
+  text-transform:uppercase;
 }
 #bf-{{ section.id }} .bf-meta__cat{
   color:#6b7280;
@@ -365,13 +366,13 @@
   flex-wrap:wrap;
 }
 #bf-{{ section.id }} .bf-price-compare{
-  color:#9ca3af;
+  color:#4b5563;
   font-size:.85rem;
 }
 #bf-{{ section.id }} .bf-price-main{
   font-weight:700;
   font-size:1.05rem;
-  color:#f97316;
+  color:#c2410c;
 }
 
 /* BLACK FRIDAY Ribbon */
@@ -397,7 +398,7 @@
 }
 #bf-{{ section.id }} .bf-bf-ribbon__percent{
   background:#f97316;
-  color:#fff;
+  color:#000000;
   padding:4px 10px;
   font-weight:800;
   font-size:13px;
