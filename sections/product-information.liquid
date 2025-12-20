@@ -1610,7 +1610,7 @@ nav[aria-label="Breadcrumb"],
 {% if title_l contains 'windows' or tags_l contains 'windows' or type_l contains 'windows' %}{% assign is_win = true %}{% endif %}
 {% if title_l contains 'mac' or title_l contains 'macos' or tags_l contains 'mac' or tags_l contains 'macos' or type_l contains 'mac' %}{% assign is_mac = true %}{% endif %}
 {% if digital %}
-  <p class="product-subtitle" style="margin-bottom: 6px;">
+  <p class="product-subtitle" style="margin-bottom: 0;">
     {% if is_win and is_mac == false %}Dauerlizenz für Windows – Kein Abo – Sofort per E-Mail
     {% elsif is_mac and is_win == false %}Dauerlizenz für macOS – Kein Abo – Sofort per E-Mail
     {% elsif is_win and is_mac %}Dauerlizenz für Windows & macOS – Kein Abo – Sofort per E-Mail
@@ -1805,7 +1805,7 @@ und zeigt die Shipping-Card nur, wenn die Bedingungen erfüllt sind.
 .verkaufs-box {
   display: flex;
   align-items: center;
-  margin: 6px 0;
+  margin: 12px 0;
   font-family: 'Inter', sans-serif;
   flex-wrap: wrap;
   gap: 10px;
