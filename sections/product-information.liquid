@@ -1,6 +1,6 @@
 
 <!-- SEO Meta Tags -->
-
+    <meta name="description" content="{{ product.description | strip_html | truncate: 160 }}">
     <meta name="keywords" content="{{ product.title }}, kaufen, Shop, Premium">
     <!-- Schema.org Structured Data for SEO -->
     <script type="application/ld+json">
@@ -143,19 +143,6 @@
             background-color: var(--white);
             -webkit-font-smoothing: antialiased;
         }
-        }
-        /* Force solid gold stars for rating widget */
-        .rechnung-profi-stars i,
-        .rating-stars i,
-        .fa-star {
-            color: #FFD700 !important;
-            font-weight: 900 !important; /* Force Solid (FA) */
-            font-family: "Font Awesome 5 Free" !important;
-            -webkit-text-stroke: 0 !important; /* Remove outline if any */
-        }
-        .rechnung-profi-stars { display: inline-flex; gap: 2px; }
-        .product-rating .rating-value { font-weight: 700; color: #333; margin-right: 6px; }
-        
         img {
             max-width: 100%;
             height: auto;
@@ -249,27 +236,21 @@
         .thumb-item {
             width: var(--thumb-size);
             height: var(--thumb-size);
-            border: 1px solid transparent; /* Hidden by default */
+            border: 2px solid var(--medium-gray);
             border-radius: var(--radius-sm);
             overflow: hidden;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: var(--transition);
             position: relative;
-            opacity: 0.8; /* Slightly dimmed when inactive */
         }
-        .thumb-item:hover {
-            opacity: 1;
-        }
+        .thumb-item:hover, 
         .thumb-item.active {
-            border-color: #333; /* Dark clean border for active */
-            opacity: 1;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Subtle premium shadow */
+            border-color: var(--primary);
         }
         .thumb-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* mix-blend-mode: multiply; Optional: if backgrounds are not perfectly white */
         }
         /* Badges auf Thumbnails */
         .thumb-badge {
@@ -340,7 +321,126 @@
         }
         
         
-
+        /* Enhanced Image Zoom Lightbox */
+        .zoom-lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            cursor: zoom-out;
+            animation: fadeIn 0.3s ease;
+        }
+        .zoom-lightbox.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .zoom-lightbox-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: grab;
+        }
+        .zoom-lightbox-image:active {
+            cursor: grabbing;
+        }
+        .zoom-lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .zoom-lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+        .zoom-lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .zoom-lightbox-nav:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .zoom-lightbox-nav.prev {
+            left: 20px;
+        }
+        .zoom-lightbox-nav.next {
+            right: 20px;
+        }
+        .zoom-lightbox-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: white;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Mobile Touch Zoom */
+        @media (max-width: 768px) {
+            .zoom-lightbox-image {
+                max-width: 100%;
+                max-height: 100%;
+                touch-action: pinch-zoom pan-x pan-y;
+            }
+            .zoom-lightbox-close {
+                top: 10px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+            .zoom-lightbox-nav {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+            .zoom-lightbox-nav.prev {
+                left: 10px;
+            }
+            .zoom-lightbox-nav.next {
+                right: 10px;
+            }
+        }
         /* Bildzähler */
         .image-counter {
             position: absolute;
@@ -697,33 +797,6 @@
         .buy-btn:active {
             transform: translateY(0);
             box-shadow: var(--shadow-sm);
-        }
-        .buy-btn i {
-            width: 20px;
-            text-align: center;
-            display: inline-block;
-        }
-        .buy-btn .btn-text {
-            min-width: 145px; /* Fixed width to align icons */
-            text-align: left;
-            display: inline-block;
-        }
-        /* Secondary Action: Buy Now (Outline Style) */
-        .buy-btn.buy-now {
-            background-color: #fff; 
-            color: #000; /* Pure black text */
-            border: 1.5px solid #000; /* Solid black border */
-            margin-bottom: 0px; 
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .buy-btn.buy-now:hover {
-            background-color: #f9f9f9; 
-            color: #000;
-            border-color: #999;
-        }
-        /* Ensure primary button has margin since buy-now follows it */
-        .buy-btn.pulse {
-           margin-bottom: 12px;
         }
         /* Zahlungsmethoden */
         .payment-methods {
@@ -1461,8 +1534,7 @@ nav[aria-label="Breadcrumb"],
                              decoding="async"
                              fetchpriority="high"
                              width="900"
-                             height="900"
-                             id="zoom-image">
+                             height="900">
                         <video class="main-video" playsinline muted autoplay preload="auto"></video>
                         <iframe class="main-iframe" title="Produktvideo" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="border:0;"></iframe>
 
@@ -1520,7 +1592,7 @@ nav[aria-label="Breadcrumb"],
      <!-- Produktinfo -->
             <div class="product-info">
 
-                                <h1 class="product-title" style="margin-bottom: 8px;">{{ product.title }}</h1> 
+                                <h1 class="product-title">{{ product.title }}</h1> 
 {% assign __avg = product.metafields.ddreviews.content.average_star | default: 5.0 %}
 {% assign __avg_fmt = __avg | times: 10 | round | divided_by: 10.0 %}
 <div class="product-rating">
@@ -1541,7 +1613,7 @@ nav[aria-label="Breadcrumb"],
 {% if title_l contains 'windows' or tags_l contains 'windows' or type_l contains 'windows' %}{% assign is_win = true %}{% endif %}
 {% if title_l contains 'mac' or title_l contains 'macos' or tags_l contains 'mac' or tags_l contains 'macos' or type_l contains 'mac' %}{% assign is_mac = true %}{% endif %}
 {% if digital %}
-  <p class="product-subtitle" style="margin-bottom: 0;">
+  <p class="product-subtitle">
     {% if is_win and is_mac == false %}Dauerlizenz für Windows – Kein Abo – Sofort per E-Mail
     {% elsif is_mac and is_win == false %}Dauerlizenz für macOS – Kein Abo – Sofort per E-Mail
     {% elsif is_win and is_mac %}Dauerlizenz für Windows & macOS – Kein Abo – Sofort per E-Mail
@@ -1736,8 +1808,7 @@ und zeigt die Shipping-Card nur, wenn die Bedingungen erfüllt sind.
 .verkaufs-box {
   display: flex;
   align-items: center;
-  margin-top: 20px;
-  margin-bottom: 10px;
+  margin: 12px 0;
   font-family: 'Inter', sans-serif;
   flex-wrap: wrap;
   gap: 10px;
@@ -1962,7 +2033,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   </style>
 {%- endif -%}
-
+                                <div class="product-rating">
+                    <div class="rating-stars">
+                    </div>
+                </div>
 <!-- === Icons & Webfont === -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1984,15 +2058,13 @@ document.addEventListener("DOMContentLoaded", function () {
   .info-pair{display:inline-flex;align-items:baseline;gap:6px}
   .info-pair strong{font-weight:600;margin:0}
   .info-value{margin:0;padding:0}
-  /* Standard icons (EAN, Brand, Truck) -> Brand Green */
-  .product-info-line i { color: #1d4739; min-width: 20px; text-align: center; }
-  .product-brand-link{color:#1d4739;text-decoration:none;font-weight:600;}
-  .product-brand-link:hover{text-decoration:underline;color:#000;}
+  .product-brand-link{color:#1a73e8;text-decoration:none;font-weight:500}
+  .product-brand-link:hover{text-decoration:underline}
   .in-stock{color:#1d7a34;font-weight:600}
   .out-of-stock{color:#c00;font-weight:600}
-  .highlights-list{list-style:none;padding-left:0;margin:0;display:grid;grid-template-columns:1fr;gap:0;margin-bottom:8px;}
-  .highlights-list li{display:flex;align-items:center;gap:8px;font-size:13px;color:#222;margin:0;padding: calc(var(--row-gap)/2) 0;line-height:1.35;}
-  .highlights-list i{min-width:18px;font-size:16px;line-height:1;margin:0;text-align:center;}
+  .highlights-list{list-style:none;padding-left:0;margin:0;display:grid;grid-template-columns:1fr;gap:0;margin-bottom:18px;}
+  .highlights-list li{display:flex;align-items:center;gap:6px;font-size:13px;color:#222;margin:0;padding: calc(var(--row-gap)/2) 0;line-height:1.35;}
+  .highlights-list i{color:var(--brand);min-width:16px;font-size:15px;line-height:1;margin:0}
   .highlights-list li>*{margin:0}
   .highlights-list a.open-return-drawer{text-decoration:none;text-underline-offset:2px;color:#1a1a1a}
   .highlights-list a.open-return-drawer:hover{opacity:.85}
@@ -2151,22 +2223,24 @@ document.addEventListener("DOMContentLoaded", function () {
 <!-- ===== H I G H L I G H T S ===== -->
 <ul class="highlights-list">
   {%- if is_digital -%}
-    <li><i class="fas fa-check-circle" style="color:#1D4739;"></i> Einmalige Zahlung – keine Folgekosten</li>
-    <li><i class="fas fa-envelope" style="color:#1D4739;"></i> Lizenzschlüssel sofort per E-Mail</li>
-    <li><i class="fas fa-file-alt" style="color:#1D4739;"></i> Inklusive Download-Anleitung</li>
-    <li><i class="fas fa-shield-alt" style="color:#1D4739;"></i> DSGVO-konform & rechtlich geprüft</li>
-    <li><i class="fas fa-credit-card" style="color:#1D4739;"></i> Sicher bezahlen (Klarna, Kreditkarte, Überweisung u. m.)</li>
-    <li><i class="fas fa-headset" style="color:#1D4739;"></i> Deutscher Support & kompetente Beratung</li>
+    <li><i class="fas fa-check-circle"></i> Einmalige Zahlung – keine Folgekosten</li>
+    <li><i class="fas fa-envelope"></i> Lizenzschlüssel sofort per E-Mail</li>
+    <li><i class="fas fa-file-alt"></i> Inklusive Download-Anleitung</li>
+    <li><i class="fas fa-shield-alt"></i> DSGVO-konform & rechtlich geprüft</li>
+    <li><i class="fas fa-credit-card"></i> Sicher bezahlen (Klarna, Kreditkarte, Überweisung u. m.)</li>
+    <li><i class="fas fa-headset"></i> Deutscher Support & kompetente Beratung
+</li>
   {%- else -%}
-    <li><i class="fas fa-box" style="color:#1D4739;"></i> Original Neuware im Karton</li>
-    <li><i class="fas fa-shipping-fast" style="color:#1D4739;"></i> Schneller & kostenloser Versand aus DE</li>
-    <li><i class="fas fa-undo-alt" style="color:#1D4739;"></i>
-      <a href="#" class="open-return-drawer" aria-haspopup="dialog" aria-controls="returnPolicyDrawer" aria-expanded="false" style="color:#222; text-decoration: underline;">
+    <li><i class="fas fa-box"></i> Original Neuware im Karton</li>
+    <li><i class="fas fa-shipping-fast"></i> Schneller & kostenloser Versand aus DE</li>
+    <li><i class="fas fa-undo-alt"></i>
+      <a href="#" class="open-return-drawer" aria-haspopup="dialog" aria-controls="returnPolicyDrawer" aria-expanded="false">
         100 Tage Widerrufsrecht & kostenfreie Retoure
       </a>
     </li>
-    <li><i class="fas fa-credit-card" style="color:#1D4739;"></i> Sicher bezahlen (Rechnung, Kreditkarte u. m.)</li>
-    <li><i class="fas fa-headset" style="color:#1D4739;"></i> Deutscher Support & kompetente Beratung</li>
+    <li><i class="fas fa-credit-card"></i> Sicher bezahlen (Rechnung, Kreditkarte u. m.)</li>
+    <li><i class="fas fa-headset"></i> Deutscher Support & kompetente Beratung
+</li>
   {%- endif -%}
 </ul>
 <!-- ===== V A R I A N T E N (nur wenn >= 2 Varianten existieren) ===== -->
@@ -2368,38 +2442,32 @@ document.addEventListener("DOMContentLoaded", function () {
       document.querySelectorAll('#add-to-cart-form input[name="id"], #buy-now-form input[name="id"]').forEach(el => el.value = String(variantId));
     }
     function renderMainPrice(variant){
-      var priceBox = document.querySelector('.price-container');
+      var priceBox = document.querySelector('.price-box');
       if(!priceBox || !variant) return;
       var curEl  = priceBox.querySelector('.current-price');
       var oldEl  = priceBox.querySelector('.old-price');
-      // New structure elements
-      var subRow = priceBox.querySelector('.price-sub-row');
-      var saveTextEl = priceBox.querySelector('.savings-text .amount'); // We will add a span for amount if needed, or regex replace? Simpler to just rebuild string
-      var saveFullTextEl = priceBox.querySelector('.savings-text');
-      var pillEl = priceBox.querySelector('.discount-pill-simple');
-
+      var saveEl = priceBox.querySelector('.savings-badge');
+      var saveAmtEl = priceBox.querySelector('.savings-badge .savings-amount');
+      var bubbleEl = priceBox.querySelector('.discount-bubble');
       var price = Number(variant.price);
       var cap   = Number(variant.compare_at_price || 0);
-
       if(curEl) curEl.textContent = moneyFormat(price);
-      
       if(cap && cap > price){
-        // Show discount UI
-        if(subRow) subRow.style.display = 'flex';
-        if(oldEl) oldEl.textContent = moneyFormat(cap);
-        
+        if(oldEl){ oldEl.textContent = moneyFormat(cap); oldEl.style.display = ''; }
         var save = cap - price;
-        if(saveFullTextEl) saveFullTextEl.textContent = 'Du sparst: ' + moneyFormat(save);
-        
-        if(pillEl){
+        if(saveAmtEl){ saveAmtEl.textContent = moneyFormat(save); }
+        if(saveEl){ saveEl.style.display = ''; }
+        if(bubbleEl){
           var pct = Math.round(((cap - price) / cap) * 100);
-          pillEl.textContent = '-' + pct + '%';
-          pillEl.style.display = 'inline-block';
+          var txt = '-' + pct + '%';
+          bubbleEl.textContent = txt;
+          bubbleEl.setAttribute('data-len', String(txt.length));
+          bubbleEl.style.display = '';
         }
-      } else {
-        // Hide discount UI
-        if(subRow) subRow.style.display = 'none';
-        if(pillEl) pillEl.style.display = 'none';
+      }else{
+        if(oldEl)  oldEl.style.display  = 'none';
+        if(saveEl) saveEl.style.display = 'none';
+        if(bubbleEl) bubbleEl.style.display = 'none';
       }
     }
     document.addEventListener('variant:change', function(e){
@@ -2442,48 +2510,45 @@ document.addEventListener("DOMContentLoaded", function () {
     {% endif %}
     {% assign pct_string = pct | prepend: '-' | append: '%' %}
 
-    <div class="price-container">
-      <div class="price-main-row">
-        <span class="current-price">{{ cur | money }}</span>
-        {% if cap and cap > cur %}
-          <span class="discount-pill-simple">-{{ pct }}%</span>
-        {% endif %}
-      </div>
-      
+    <div class="price-left">
+      <span class="current-price">{{ cur | money }}</span>
       {% if cap and cap > cur %}
-        <div class="price-sub-row">
-          <span class="old-price">{{ cap | money }}</span>
-          <span class="price-sep">•</span>
-          <span class="savings-text">Du sparst: <strong>{{ cap | minus: cur | money }}</strong></span>
-        </div>
+        <span class="discount-bubble" data-len="{{ pct_string | size }}" aria-hidden="true">{{ pct_string }}</span>
+      {% endif %}
+    </div>
+
+    {% if cap and cap > cur %}
+      <span class="savings-badge">
+        <span class="label">Sie sparen:</span>
+        <strong class="savings-amount">{{ cap | minus: cur | money }}</strong>
+        <span class="bang"></span>
+      </span>
+    {% endif %}
+
+    <div class="price-right">
+      {% if cap and cap > cur %}
+        <span class="old-price">{{ cap | money }}</span>
       {% endif %}
     </div>
   </div>
   {% if is_digital %}
-    <div class="price-meta" style="margin-top:2px;">inkl. MwSt.</div>
+    <div class="price-meta">inkl. MwSt.</div>
   {% else %}
-    <div class="price-meta" style="margin-top:2px;">inkl. MwSt. zzgl. Versandkosten</div>
+    <div class="price-meta">inkl. MwSt. zzgl. Versandkosten</div>
   {% endif %}
 </div>
-<style>
-  .price-box {
-    display: flex;
-    flex-direction: column;
-    margin-top: 10px;
-  }
-</style>
 <!-- In den Warenkorb Button -->
 <form method="post" action="/cart/add" id="add-to-cart-form">
   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-   <button type="submit" class="buy-btn pulse">
-    <i class="fas fa-shopping-cart"></i> <span class="btn-text">In den Warenkorb</span>
+  <button type="submit" class="buy-btn pulse">
+    <i class="fas fa-shopping-cart"></i> In den Warenkorb
   </button>
 </form>
 <!-- Jetzt kaufen Button -->
 <form method="post" action="/cart/add" id="buy-now-form">
   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
   <button type="submit" class="buy-btn buy-now">
-    <i class="fas fa-rocket"></i> <span class="btn-text">Jetzt kaufen</span>
+    <i class="fas fa-rocket"></i> Jetzt kaufen
   </button>
 </form>
 <script>
@@ -2826,7 +2891,6 @@ document.addEventListener("DOMContentLoaded", function () {
   background:none;border:none;cursor:pointer;
   display:inline-flex;align-items:center;gap:.55rem;
   color:#444;font:600 16px/1.2 Inter,system-ui,Arial,sans-serif;
-  margin-top: 12px;
 }
 .frage-btn .icon-q{display:block}
 .frage-btn:hover{color:#0a7cc7}
@@ -4327,401 +4391,3 @@ document.addEventListener('DOMContentLoaded', function () {
   })();
 </script>
 <div id="rechnung-profi-reviews-widget" data-product-id="{{ product.id }}"></div>
-
-<!-- ZOOM FUNCTIONALITY START -->
-<style>
-  .main-image-container {
-    overflow: hidden;
-    cursor: zoom-in;
-    position: relative;
-  }
-  .main-image {
-    transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    transform-origin: center center;
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-  /* Disable zoom on touch devices */
-  @media (hover: none) {
-    .main-image-container { cursor: default; }
-  }
-</style>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const container = document.querySelector('.main-image-container');
-    const image = document.getElementById('zoom-image');
-
-    if (container && image) {
-      if (window.matchMedia('(hover: hover)').matches) {
-        container.addEventListener('mousemove', function(e) {
-          const rect = container.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          const xPercent = (x / rect.width) * 100;
-          const yPercent = (y / rect.height) * 100;
-          image.style.transformOrigin = `${xPercent}% ${yPercent}%`;
-          image.style.transform = 'scale(2)';
-        });
-        container.addEventListener('mouseleave', function() {
-          image.style.transformOrigin = 'center center';
-          image.style.transform = 'scale(1)';
-        });
-      }
-    }
-  });
-</script>
-<!-- ZOOM FUNCTIONALITY END -->
-
-<!-- FULLSCREEN LIGHTBOX START -->
-<div id="fullscreen-lightbox" style="display:none;">
-  <button id="lightbox-close" aria-label="Close"></button>
-  <div class="lightbox-content">
-    <img id="lightbox-image" src="" alt="Zoom Preview">
-  </div>
-</div>
-<style>
-  #fullscreen-lightbox {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: #ffffff;
-    z-index: 99999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-  #fullscreen-lightbox.active {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  #fullscreen-lightbox .lightbox-content {
-    width: 90vw;
-    height: 90vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden; /* For zoom clipping */
-    position: relative;
-    cursor: zoom-in;
-  }
-  #lightbox-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    transition: transform 0.1s ease-out; /* Smooth follow */
-    transform-origin: center center;
-  }
-  #lightbox-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    z-index: 100000;
-  }
-  #lightbox-close::before, #lightbox-close::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 24px;
-    height: 2px;
-    background: #000;
-  }
-  #lightbox-close::before { transform: translate(-50%, -50%) rotate(45deg); }
-  #lightbox-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
-</style>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const lightbox = document.getElementById('fullscreen-lightbox');
-    const lightboxImg = document.getElementById('lightbox-image');
-    const closeBtn = document.getElementById('lightbox-close');
-    const lightboxContent = lightbox.querySelector('.lightbox-content');
-    
-    // Open Lightbox
-    const mainContainer = document.querySelector('.main-image-container');
-    if(mainContainer) {
-      mainContainer.addEventListener('click', function(e) {
-        // Only open if we are not already interacting with something else
-        if(e.target.tagName === 'IMG' || e.target.classList.contains('main-image-container')) {
-           const currentSrc = document.getElementById('zoom-image').src;
-           // Use a higher res image if available, otherwise current
-           lightboxImg.src = currentSrc.replace('900x', '2000x'); // Try to guess Shopify URL structure for higher res
-           lightbox.style.display = 'flex';
-           // Small timeout to allow display:flex to apply before adding opacity class
-           setTimeout(() => lightbox.classList.add('active'), 10);
-           document.body.style.overflow = 'hidden'; // Prevent scrolling
-        }
-      });
-    }
-
-    // Close Lightbox
-    function closeLightbox() {
-      lightbox.classList.remove('active');
-      setTimeout(() => {
-        lightbox.style.display = 'none';
-        lightboxImg.style.transform = 'scale(1)'; // Reset zoom
-      }, 300);
-      document.body.style.overflow = '';
-    }
-
-    closeBtn.addEventListener('click', closeLightbox);
-    
-    // Close on background click (optional, if user clicks outside image area)
-    lightbox.addEventListener('click', function(e) {
-      if(e.target === lightbox) closeLightbox();
-    });
-
-    // Zoom Logic inside Lightbox
-    // Click to toggle zoom mode
-    let isZoomed = false;
-
-    lightboxContent.addEventListener('click', function(e) {
-      // Don't close if clicking content
-      e.stopPropagation(); 
-      
-      if(!isZoomed) {
-        isZoomed = true;
-        lightboxContent.style.cursor = 'zoom-out';
-        // Initial zoom to mouse position
-        moveZoom(e);
-      } else {
-        isZoomed = false;
-        lightboxContent.style.cursor = 'zoom-in';
-        lightboxImg.style.transform = 'scale(1)';
-        lightboxImg.style.transformOrigin = 'center center';
-      }
-    });
-
-    function moveZoom(e) {
-      if(!isZoomed) return;
-      const rect = lightboxContent.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      const xPercent = (x / rect.width) * 100;
-      const yPercent = (y / rect.height) * 100;
-
-      lightboxImg.style.transformOrigin = `${xPercent}% ${yPercent}%`;
-      lightboxImg.style.transform = 'scale(2.5)';
-    }
-
-    lightboxContent.addEventListener('mousemove', moveZoom);
-  });
-</script>
-<!-- FULLSCREEN LIGHTBOX END -->
-
-<!-- GALLERY DOTS AND NAVIGATION START -->
-<style>
-  .lightbox-nav-dots {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 8px;
-    z-index: 100000;
-  }
-  .lightbox-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #ccc;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  .lightbox-dot.active {
-    background: #e6b800; /* Gold/Yellow color like reference */
-  }
-  .lightbox-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.8);
-    border: none;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    z-index: 100000;
-    transition: background 0.2s, transform 0.2s;
-  }
-  .lightbox-arrow:hover {
-    background: #fff;
-    transform: translateY(-50%) scale(1.1);
-  }
-  .lightbox-arrow.prev { left: 20px; }
-  .lightbox-arrow.next { right: 20px; }
-  .lightbox-arrow svg {
-    width: 24px;
-    height: 24px;
-    fill: #333;
-  }
-</style>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const lightbox = document.getElementById('fullscreen-lightbox');
-    const lightboxImg = document.getElementById('lightbox-image');
-    let currentIndex = 0;
-    
-    // Get all product images
-    // Assuming thumbnails have data-src or src attribute we can use
-    const thumbs = document.querySelectorAll('.thumb-item img');
-    // Remove all query params and size suffixes to get original master image
-    const images = Array.from(thumbs).map(img => {
-      let src = img.src.split('?')[0]; // Remove query params
-      src = src.replace(/_\d+x(\d+)?/, ''); // Remove _200x, _crop_center etc
-      src = src.replace('_crop_center', '');
-      return src; 
-    });
-    
-    if(images.length <= 1) return; // No need for dots if only 1 image
-
-    // Create Dots container
-    const dotsContainer = document.createElement('div');
-    dotsContainer.className = 'lightbox-nav-dots';
-    lightbox.appendChild(dotsContainer);
-
-    // Create Arrows
-    const prevBtn = document.createElement('button');
-    prevBtn.className = 'lightbox-arrow prev';
-    prevBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>';
-    lightbox.appendChild(prevBtn);
-
-    const nextBtn = document.createElement('button');
-    nextBtn.className = 'lightbox-arrow next';
-    nextBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>';
-    lightbox.appendChild(nextBtn);
-
-    // Initialize Dots
-    images.forEach((_, index) => {
-      const dot = document.createElement('div');
-      dot.className = 'lightbox-dot';
-      if(index === 0) dot.classList.add('active');
-      dot.addEventListener('click', (e) => {
-        e.stopPropagation();
-        updateImage(index);
-      });
-      dotsContainer.appendChild(dot);
-    });
-
-    function updateImage(index) {
-      currentIndex = index;
-      lightboxImg.src = images[currentIndex];
-      
-      // Update Dots
-      document.querySelectorAll('.lightbox-dot').forEach((dot, idx) => {
-        dot.classList.toggle('active', idx === currentIndex);
-      });
-      
-      // Reset zoom
-      lightboxImg.style.transform = 'scale(1)';
-      lightboxImg.style.transformOrigin = 'center center';
-    }
-
-    // Arrow Events
-    prevBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      let newIndex = currentIndex - 1;
-      if(newIndex < 0) newIndex = images.length - 1;
-      updateImage(newIndex);
-    });
-
-    nextBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      let newIndex = currentIndex + 1;
-      if(newIndex >= images.length) newIndex = 0;
-      updateImage(newIndex);
-    });
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-      if(lightbox.style.display !== 'none' && lightbox.classList.contains('active')) {
-        if(e.key === 'ArrowLeft') prevBtn.click();
-        if(e.key === 'ArrowRight') nextBtn.click();
-      }
-    });
-  });
-</script>
-<!-- GALLERY DOTS AND NAVIGATION END -->
-
-<style>
-/* Updated Price Display */
-.price-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0; /* Remove gap */
-    margin-bottom: 4px; /* Move slightly up */
-}
-.price-main-row {
-    display: flex;
-    align-items: center; /* Center align items vertically */
-    gap: 12px;
-    height: 40px; /* Fixed height for consistency */
-}
-.current-price {
-    font-size: 32px;
-    font-weight: 800;
-    color: #d32f2f;
-    line-height: normal; /* Fix line-height */
-    transform: translateY(-2px); /* Slight lift */
-}
-.discount-pill-simple {
-    background: #d32f2f;
-    color: #fff;
-    font-weight: 700;
-    font-size: 14px;
-    padding: 3px 7px;
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-    transform: translateY(-1px); /* Alien with price optical center */
-}
-.price-sub-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #555;
-    margin-top: 2px;
-}
-.price-sep {
-    color: #ccc;
-    font-size: 10px;
-}
-.old-price {
-    text-decoration: line-through;
-    color: #757575;
-    font-size: 15px;
-    color: #757575;
-    font-size: 15px;
-}
-.savings-text {
-    font-weight: 700;
-    color: #388e3c;
-}
-.price-meta {
-    font-size: 12px;
-    color: #888;
-    margin-top: 2px;
-}
-.savings-text {
-    color: #1D4739;
-    font-weight: 600;
-    /* Clean text only design */
-    background: none; 
-    padding: 0;
-}
-</style>
