@@ -1842,7 +1842,84 @@ document.addEventListener("DOMContentLoaded", function () {
   setInterval(updateTimeText, 60000); // jede Minute aktualisieren
 });
 </script>
-
+{% assign stock = product.selected_or_first_available_variant.inventory_quantity | default: 0 %}
+{% assign max_stock = 30 %}
+{% assign percentage = stock | times: 100 | divided_by: max_stock | at_most: 100 | round %}
+{% assign fill_color = '#4CAF50' %}
+{% assign icon = '✔️' %}
+{% assign message = 'Sofort lieferbar' %}
+{% if stock <= 20 and stock > 10 %}
+  {% assign fill_color = '#555' %}
+  {% assign icon = '📦' %}
+  {% assign message = 'Begrenzte Stückzahl' %}
+{% elsif stock <= 10 and stock > 5 %}
+  {% assign fill_color = '#FFA500' %}
+  {% assign icon = '⚠️' %}
+  {% assign message = 'Fast ausverkauft!' %}
+{% elsif stock <= 5 and stock > 0 %}
+  {% assign fill_color = '#E53935' %}
+  {% assign icon = '🔥' %}
+  {% assign message = 'Letzte Stücke!' %}
+{% elsif stock <= 0 %}
+  {% assign fill_color = '#222' %}
+  {% assign icon = '❌' %}
+  {% assign message = 'Nicht verfügbar' %}
+{% endif %}
+<style>
+  .stock-status-bar {
+    width: 100%; max-width: 560px; margin: 2rem 0 1.5rem 0;
+    font-family: 'Montserrat', Arial, sans-serif; font-size: 1.09rem;
+  }
+  .stock-status-row {
+    display: flex; align-items: center; gap: 0.6rem; margin-bottom: 9px;
+    font-weight: 500; color: #232323;
+  }
+  .stock-status-icon {
+    font-size: 1.45em; line-height: 1; 
+  }
+  .stock-status-message {
+    font-size: 1em; font-weight: 600;
+  }
+  .stock-status-bar-outer {
+    width: 100%; background: #ededed; border-radius: 8px; height: 13px;
+    position: relative; overflow: hidden; margin-top: 2px;
+  }
+  .stock-status-bar-fill {
+    width: 0; height: 100%; border-radius: 8px;
+    background: {{ fill_color }};
+    transition: width 1.2s cubic-bezier(.36,1,.6,1);
+    will-change: width;
+    position: absolute; left: 0; top: 0;
+  }
+  .stock-status-bar-percent {
+    position: absolute; right: 11px; top: 0; height: 100%;
+    display: flex; align-items: center; font-size: 0.96em; font-weight: 700;
+    color: #fff; text-shadow: 0 1px 6px #2225;
+    pointer-events: none;
+  }
+  @media (max-width: 650px){
+    .stock-status-bar { max-width: 97vw; font-size: 0.97rem;}
+    .stock-status-bar-outer{height:9px;}
+    .stock-status-bar-percent{font-size:0.89em;}
+  }
+</style>
+<div class="stock-status-bar">
+  <div class="stock-status-row">
+    <span class="stock-status-icon">{{ icon }}</span>
+    <span class="stock-status-message">{{ message }}</span>
+    <span style="margin-left:auto;">{{ stock }} Stück</span>
+  </div>
+  <div class="stock-status-bar-outer">
+    <div class="stock-status-bar-fill" id="stock-bar-fill"></div>
+    <span class="stock-status-bar-percent">{{ percentage }}%</span>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+    var el = document.getElementById('stock-bar-fill');
+    if (el) { el.style.width = "{{ percentage }}%"; }
+  });
+</script>
 {%- if product.title contains " " or product.title contains "LEGO" -%}
   <!-- Countdown Timer -->
   <div class="countdown-timer">
