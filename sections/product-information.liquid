@@ -2324,7 +2324,8 @@ document.addEventListener("DOMContentLoaded", function () {
       {% if cap and cap > cur %}
         <div class="price-sub-row">
           <span class="old-price">{{ cap | money }}</span>
-          <span class="savings-text">Sie sparen: {{ cap | minus: cur | money }}</span>
+          <span class="price-sep">•</span>
+          <span class="savings-text">Du sparst: {{ cap | minus: cur | money }}</span>
         </div>
       {% endif %}
     </div>
@@ -4549,21 +4550,25 @@ document.addEventListener('DOMContentLoaded', function () {
 .price-sub-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     font-size: 14px;
-    color: #666;
+    color: #555;
+    margin-top: 2px;
+}
+.price-sep {
+    color: #ccc;
+    font-size: 10px;
 }
 .old-price {
     text-decoration: line-through;
-    color: #999;
-    font-size: 16px;
-    font-weight: 500;
+    color: #757575;
+    font-size: 15px;
 }
 .savings-text {
-    color: #1D4739; /* Brand green */
+    color: #1D4739;
     font-weight: 600;
-    background: rgba(29, 71, 57, 0.08); /* Careful subtle background */
-    padding: 2px 6px;
-    border-radius: 4px;
+    /* Clean text only design */
+    background: none; 
+    padding: 0;
 }
 </style>
