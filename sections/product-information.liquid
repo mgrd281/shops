@@ -1904,6 +1904,8 @@ document.addEventListener("DOMContentLoaded", function () {
   .info-pair{display:inline-flex;align-items:baseline;gap:6px}
   .info-pair strong{font-weight:600;margin:0}
   .info-value{margin:0;padding:0}
+  /* Standard icons (EAN, Brand, Truck) -> Brand Green */
+  .product-info-line i { color: #1d4739; min-width: 20px; text-align: center; }
   .product-brand-link{color:#1d4739;text-decoration:none;font-weight:600;}
   .product-brand-link:hover{text-decoration:underline;color:#000;}
   .in-stock{color:#1d7a34;font-weight:600}
@@ -2069,22 +2071,22 @@ document.addEventListener("DOMContentLoaded", function () {
 <!-- ===== H I G H L I G H T S ===== -->
 <ul class="highlights-list">
   {%- if is_digital -%}
-    <li><i class="fas fa-check-circle" style="color:#2e7d32;"></i> Einmalige Zahlung – keine Folgekosten</li>
-    <li><i class="fas fa-envelope" style="color:#1976d2;"></i> Lizenzschlüssel sofort per E-Mail</li>
-    <li><i class="fas fa-file-alt" style="color:#f57c00;"></i> Inklusive Download-Anleitung</li>
-    <li><i class="fas fa-shield-alt" style="color:#7b1fa2;"></i> DSGVO-konform & rechtlich geprüft</li>
-    <li><i class="fas fa-credit-card" style="color:#0097a7;"></i> Sicher bezahlen (Klarna, Kreditkarte, Überweisung u. m.)</li>
-    <li><i class="fas fa-headset" style="color:#d81b60;"></i> Deutscher Support & kompetente Beratung</li>
+    <li><i class="fas fa-check-circle" style="color:#555;"></i> Einmalige Zahlung – keine Folgekosten</li>
+    <li><i class="fas fa-envelope" style="color:#555;"></i> Lizenzschlüssel sofort per E-Mail</li>
+    <li><i class="fas fa-file-alt" style="color:#555;"></i> Inklusive Download-Anleitung</li>
+    <li><i class="fas fa-shield-alt" style="color:#555;"></i> DSGVO-konform & rechtlich geprüft</li>
+    <li><i class="fas fa-credit-card" style="color:#555;"></i> Sicher bezahlen (Klarna, Kreditkarte, Überweisung u. m.)</li>
+    <li><i class="fas fa-headset" style="color:#555;"></i> Deutscher Support & kompetente Beratung</li>
   {%- else -%}
-    <li><i class="fas fa-box" style="color:#8d6e63;"></i> Original Neuware im Karton</li>
-    <li><i class="fas fa-shipping-fast" style="color:#2e7d32;"></i> Schneller & kostenloser Versand aus DE</li>
-    <li><i class="fas fa-undo-alt" style="color:#1976d2;"></i>
-      <a href="#" class="open-return-drawer" aria-haspopup="dialog" aria-controls="returnPolicyDrawer" aria-expanded="false">
+    <li><i class="fas fa-box" style="color:#555;"></i> Original Neuware im Karton</li>
+    <li><i class="fas fa-shipping-fast" style="color:#555;"></i> Schneller & kostenloser Versand aus DE</li>
+    <li><i class="fas fa-undo-alt" style="color:#555;"></i>
+      <a href="#" class="open-return-drawer" aria-haspopup="dialog" aria-controls="returnPolicyDrawer" aria-expanded="false" style="color:#222; text-decoration: underline;">
         100 Tage Widerrufsrecht & kostenfreie Retoure
       </a>
     </li>
-    <li><i class="fas fa-credit-card" style="color:#0097a7;"></i> Sicher bezahlen (Rechnung, Kreditkarte u. m.)</li>
-    <li><i class="fas fa-headset" style="color:#d81b60;"></i> Deutscher Support & kompetente Beratung</li>
+    <li><i class="fas fa-credit-card" style="color:#555;"></i> Sicher bezahlen (Rechnung, Kreditkarte u. m.)</li>
+    <li><i class="fas fa-headset" style="color:#555;"></i> Deutscher Support & kompetente Beratung</li>
   {%- endif -%}
 </ul>
 <!-- ===== V A R I A N T E N (nur wenn >= 2 Varianten existieren) ===== -->
