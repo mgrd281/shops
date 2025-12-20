@@ -93,11 +93,9 @@
                       {% if product.featured_image %}
                         <img
                           class="mcr-card__img"
-                          src="{{ product.featured_image | image_url: width: 600 }}"
+                          src="{{ product.featured_image | img_url: '600x' }}"
                           alt="{{ product.title | escape | default: shop.name }}"
                           loading="lazy"
-                          width="600"
-                          height="600"
                         >
                       {% else %}
                         {{ 'product-1' | placeholder_svg_tag: 'mcr-card__img' }}
