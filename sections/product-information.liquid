@@ -482,45 +482,7 @@
           .discount-pill[data-len="4"],
           .discount-pill[data-len="5"]{ font-size: clamp(12px, 3.5vw, 16px); }
         }
-        /* Vollbild-Modus */
-        .fullscreen-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .fullscreen-modal.active {
-            display: flex;
-        }
-        .fullscreen-content {
-            max-width: 90%;
-            max-height: 90%;
-            position: relative;
-        }
-        .fullscreen-content img,
-        .fullscreen-content video {
-            max-width: 100%;
-            max-height: 90vh;
-            object-fit: contain;
-        }
-        .close-fullscreen {
-            position: absolute;
-            top: var(--space-lg);
-            right: var(--space-lg);
-            color: var(--white);
-            font-size: 2rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .close-fullscreen:hover {
-            color: var(--primary);
-        }
+
         /* Produktinfo */
         .product-info {
             flex: 1;
@@ -1182,7 +1144,7 @@
   <!-- DIGITALER VERSAND -->
   <div class="shipping-info border-digital">
     <span class="icon-container" role="img" aria-label="Download">
-      <i class="fas fa-download" aria-hidden="true"></i>
+      <i class="fa-solid fa-download" aria-hidden="true"></i>
     </span>
     <span class="text">
       <strong class="ship-claim">Blitzversand per E-Mail</strong>
@@ -1246,7 +1208,7 @@
   {% assign delivery_iso = found_ts | date: '%Y-%m-%d' %}
   <div class="shipping-info border-physisch">
     <span class="icon-container" role="img" aria-label="Lieferung">
-      <i class="fas fa-truck" aria-hidden="true"></i>
+      <i class="fa-solid fa-truck" aria-hidden="true"></i>
     </span>
     <span class="text">
       <strong class="return-claim">Kostenlose Rückgabe innerhalb von 100 Tagen</strong>
@@ -1373,7 +1335,7 @@ nav[aria-label="Breadcrumb"],
                 <!-- Thumbnail-Spalte (vertikal) -->
                 <div class="thumbs-rail {% if images_count > 5 %}is-scroll{% else %}is-static{% endif %}">
                 {% if images_count > 5 %}
-                <button type="button" class="thumbs-scroll-btn thumbs-scroll-btn--up" aria-label="Scroll up"><i class="fas fa-chevron-up"></i></button>
+                <button type="button" class="thumbs-scroll-btn thumbs-scroll-btn--up" aria-label="Scroll up"><i class="fa-solid fa-chevron-up"></i></button>
                 {% endif %}
                 <div class="gallery-thumbs{% if images_count > 5 %} gallery-thumbs--scroll{% endif %}">
      {% assign media_index = 0 %}
@@ -1403,7 +1365,7 @@ nav[aria-label="Breadcrumb"],
              <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center' }}"
                   alt="{{ media.alt | default: product.title }} - Video"
                   loading="lazy">
-             <span class="thumb-badge" aria-label="Video"><i class="fas fa-play"></i></span>
+             <span class="thumb-badge" aria-label="Video"><i class="fa-solid fa-play"></i></span>
            </div>
            {% assign media_index = media_index | plus: 1 %}
          {% when 'external_video' %}
@@ -1425,7 +1387,7 @@ nav[aria-label="Breadcrumb"],
              <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center' }}"
                   alt="{{ media.alt | default: product.title }} - Video"
                   loading="lazy">
-             <span class="thumb-badge" aria-label="Video"><i class="fas fa-play"></i></span>
+             <span class="thumb-badge" aria-label="Video"><i class="fa-solid fa-play"></i></span>
            </div>
            {% assign media_index = media_index | plus: 1 %}
          {% when 'model' %}
@@ -1444,7 +1406,7 @@ nav[aria-label="Breadcrumb"],
      {% endfor %}
                 </div>
                 {% if images_count > 5 %}
-                <button type="button" class="thumbs-scroll-btn thumbs-scroll-btn--down" aria-label="Scroll down"><i class="fas fa-chevron-down"></i></button>
+                <button type="button" class="thumbs-scroll-btn thumbs-scroll-btn--down" aria-label="Scroll down"><i class="fa-solid fa-chevron-down"></i></button>
                 {% endif %}
                 </div>
    <!-- Hauptbild-Bereich -->
@@ -1465,7 +1427,7 @@ nav[aria-label="Breadcrumb"],
 
                         <!-- Video-Indikator (nur bei Videos sichtbar) -->
                         <div class="video-indicator" style="display: none;">
-                            <i class="fas fa-play"></i> Video
+                            <i class="fa-solid fa-play"></i> Video
                         </div>
                         {% assign selv = product.selected_or_first_available_variant %}
                         {% assign cap = selv.compare_at_price | default: 0 %}
@@ -1500,14 +1462,14 @@ nav[aria-label="Breadcrumb"],
                     </div>
                     <!-- Mobile-only dots indicator -->
                     <div class="carousel-dots" id="carousel-dots" aria-hidden="true"></div>
->
+
                         <!-- Navigationsbuttons -->
                     <div class="gallery-nav">
                         <button class="nav-btn prev-btn" disabled>
-                            <i class="fas fa-chevron-left"></i>
+                            <i class="fa-solid fa-chevron-left"></i>
                         </button>
                         <button class="nav-btn next-btn">
-                            <i class="fas fa-chevron-right"></i>
+                            <i class="fa-solid fa-chevron-right"></i>
                         </button>
                     </div>
                 </div>
@@ -2014,7 +1976,7 @@ document.addEventListener("DOMContentLoaded", function () {
   <div class="product-info-line usk-info" style="align-items: center;">
     <span class="usk-badge usk-{{ usk_age }}">USK {{ usk_age }}</span>
     {%- if usk_age == '18' -%}
-      <span class="usk-warning"><i class="fas fa-exclamation-triangle"></i> Altersprüfung erforderlich</span>
+      <span class="usk-warning"><i class="fa-solid fa-exclamation-triangle"></i> Altersprüfung erforderlich</span>
     {%- endif -%}
   </div>
   <style>
@@ -2043,19 +2005,19 @@ document.addEventListener("DOMContentLoaded", function () {
 <!-- ===== Produktinfos (Barcode, Marke, Versanddatum, Lieferbar) ===== -->
 {% if product.selected_or_first_available_variant.barcode != blank %}
   <div class="product-info-line">
-    <i class="fas fa-barcode"></i>
+    <i class="fa-solid fa-barcode"></i>
     <span class="info-pair"><strong>EAN:</strong><span id="eanValue" class="info-value">{{ product.selected_or_first_available_variant.barcode }}</span></span>
   </div>
 {% endif %}
 {% if product.vendor != blank %}
   <div class="product-info-line">
-    <i class="fas fa-tag"></i>
+    <i class="fa-solid fa-tag"></i>
     <span class="info-pair"><strong>Marke:</strong><span class="info-value"><a class="product-brand-link" href="/collections/vendors?q={{ product.vendor | url_encode }}">{{ product.vendor }}</a></span></span>
   </div>
 {% endif %}
 {% if ship_dt != blank %}
   <div class="product-info-line">
-    <i class="fas fa-calendar-alt"></i>
+    <i class="fa-solid fa-calendar-alt"></i>
     <span class="info-pair"><strong>Versanddatum / Angebotsende:</strong><span id="shippingDateValue" class="info-value">{{ ship_dt | date: "%-d. %B %Y" }}</span></span>
   </div>
 {% endif %}
@@ -2083,22 +2045,22 @@ document.addEventListener("DOMContentLoaded", function () {
 <!-- ===== H I G H L I G H T S ===== -->
 <ul class="highlights-list">
   {%- if is_digital -%}
-    <li><i class="fas fa-check-circle" style="color:#1D4739;"></i> Einmalige Zahlung – keine Folgekosten</li>
-    <li><i class="fas fa-envelope" style="color:#1D4739;"></i> Lizenzschlüssel sofort per E-Mail</li>
-    <li><i class="fas fa-file-alt" style="color:#1D4739;"></i> Inklusive Download-Anleitung</li>
-    <li><i class="fas fa-shield-alt" style="color:#1D4739;"></i> DSGVO-konform & rechtlich geprüft</li>
-    <li><i class="fas fa-credit-card" style="color:#1D4739;"></i> Sicher bezahlen (Klarna, Kreditkarte, Überweisung u. m.)</li>
-    <li><i class="fas fa-headset" style="color:#1D4739;"></i> Deutscher Support & kompetente Beratung</li>
+    <li><i class="fa-solid fa-check-circle" style="color:#1D4739;"></i> Einmalige Zahlung – keine Folgekosten</li>
+    <li><i class="fa-solid fa-envelope" style="color:#1D4739;"></i> Lizenzschlüssel sofort per E-Mail</li>
+    <li><i class="fa-solid fa-file-alt" style="color:#1D4739;"></i> Inklusive Download-Anleitung</li>
+    <li><i class="fa-solid fa-shield-alt" style="color:#1D4739;"></i> DSGVO-konform & rechtlich geprüft</li>
+    <li><i class="fa-solid fa-credit-card" style="color:#1D4739;"></i> Sicher bezahlen (Klarna, Kreditkarte, Überweisung u. m.)</li>
+    <li><i class="fa-solid fa-headset" style="color:#1D4739;"></i> Deutscher Support & kompetente Beratung</li>
   {%- else -%}
-    <li><i class="fas fa-box" style="color:#1D4739;"></i> Original Neuware im Karton</li>
-    <li><i class="fas fa-shipping-fast" style="color:#1D4739;"></i> Schneller & kostenloser Versand aus DE</li>
-    <li><i class="fas fa-undo-alt" style="color:#1D4739;"></i>
+    <li><i class="fa-solid fa-box" style="color:#1D4739;"></i> Original Neuware im Karton</li>
+    <li><i class="fa-solid fa-shipping-fast" style="color:#1D4739;"></i> Schneller & kostenloser Versand aus DE</li>
+    <li><i class="fa-solid fa-undo-alt" style="color:#1D4739;"></i>
       <a href="#" class="open-return-drawer" aria-haspopup="dialog" aria-controls="returnPolicyDrawer" aria-expanded="false" style="color:#222; text-decoration: underline;">
         100 Tage Widerrufsrecht & kostenfreie Retoure
       </a>
     </li>
-    <li><i class="fas fa-credit-card" style="color:#1D4739;"></i> Sicher bezahlen (Rechnung, Kreditkarte u. m.)</li>
-    <li><i class="fas fa-headset" style="color:#1D4739;"></i> Deutscher Support & kompetente Beratung</li>
+    <li><i class="fa-solid fa-credit-card" style="color:#1D4739;"></i> Sicher bezahlen (Rechnung, Kreditkarte u. m.)</li>
+    <li><i class="fa-solid fa-headset" style="color:#1D4739;"></i> Deutscher Support & kompetente Beratung</li>
   {%- endif -%}
 </ul>
 <!-- ===== V A R I A N T E N (nur wenn >= 2 Varianten existieren) ===== -->
@@ -2408,14 +2370,14 @@ document.addEventListener("DOMContentLoaded", function () {
 <form method="post" action="/cart/add" id="add-to-cart-form">
   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
    <button type="submit" class="buy-btn pulse">
-    <i class="fas fa-shopping-cart"></i> <span class="btn-text">In den Warenkorb</span>
+    <i class="fa-solid fa-shopping-cart"></i> <span class="btn-text">In den Warenkorb</span>
   </button>
 </form>
 <!-- Jetzt kaufen Button -->
 <form method="post" action="/cart/add" id="buy-now-form">
   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
   <button type="submit" class="buy-btn buy-now">
-    <i class="fas fa-rocket"></i> <span class="btn-text">Jetzt kaufen</span>
+    <i class="fa-solid fa-rocket"></i> <span class="btn-text">Jetzt kaufen</span>
   </button>
 </form>
 <script>
@@ -2498,7 +2460,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <strong id="fbt-total-price">{{ product.selected_or_first_available_variant.price | money }}</strong>
         </div>
         <button type="button" class="buy-btn fbt-add-btn" id="fbt-add-all">
-          <i class="fas fa-shopping-cart"></i> Alle in den Warenkorb
+          <i class="fa-solid fa-shopping-cart"></i> Alle in den Warenkorb
         </button>
       </div>
     </div>
@@ -2666,7 +2628,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (items.length === 0) return;
           
           addAllBtn.disabled = true;
-          addAllBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Wird hinzugefügt...';
+          addAllBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Wird hinzugefügt...';
           
           fetch('/cart/add.js', {
             method: 'POST',
@@ -2675,14 +2637,14 @@ document.addEventListener("DOMContentLoaded", function () {
           })
           .then(response => response.json())
           .then(data => {
-            addAllBtn.innerHTML = '<i class="fas fa-check"></i> Hinzugefügt!';
+            addAllBtn.innerHTML = '<i class="fa-solid fa-check"></i> Hinzugefügt!';
             setTimeout(() => {
               window.location.href = '/cart';
             }, 500);
           })
           .catch(error => {
             addAllBtn.disabled = false;
-            addAllBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Alle in den Warenkorb';
+            addAllBtn.innerHTML = '<i class="fa-solid fa-shopping-cart"></i> Alle in den Warenkorb';
             alert('Fehler beim Hinzufügen. Bitte versuchen Sie es erneut.');
           });
         });
@@ -2735,7 +2697,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <a href="/policies/privacy-policy">Bitte beachten Sie unsere Datenschutzerklärung</a>
         </p>
         <button type="submit" class="frage-submit">
-          <i class="fas fa-paper-plane"></i> Frage abschicken
+          <i class="fa-solid fa-paper-plane"></i> Frage abschicken
         </button>
       </form>
     </div>
@@ -2899,15 +2861,15 @@ document.addEventListener("DOMContentLoaded", function () {
 </style>
                 <div class="trust-badges">
                     <a class="trust-badge" href="/pages/zahlungsarten" aria-label="Sicherer Einkauf">
-                        <i class="fas fa-lock" aria-hidden="true"></i>
+                        <i class="fa-solid fa-lock" aria-hidden="true"></i>
                         <span>Sicherer Einkauf</span>
                     </a>
                     <a class="trust-badge" href="/policies/refund-policy" aria-label="100 Tage Rückgabe">
-                        <i class="fas fa-undo-alt" aria-hidden="true"></i>
+                        <i class="fa-solid fa-undo-alt" aria-hidden="true"></i>
                         <span>100 Tage Rückgabe</span>
                     </a>
                     <a class="trust-badge" href="/pages/kontakt" aria-label="Deutscher Support">
-                        <i class="fas fa-headset" aria-hidden="true"></i>
+                        <i class="fa-solid fa-headset" aria-hidden="true"></i>
                         <span>Deutscher Support</span>
                     </a>
                 </div>
@@ -2919,19 +2881,19 @@ document.addEventListener("DOMContentLoaded", function () {
     <h3 style="margin-bottom: var(--space-md); color: var(--primary);">Hauptfunktionen</h3>
     <ul class="feature-list" style="list-style: none; padding-left: 0;">
         <li style="margin-bottom: 1rem; display: flex; align-items: center;">
-            <i class="fas fa-file-alt" style="margin-right: 0.75rem; color: var(--primary);"></i>
+            <i class="fa-solid fa-file-alt" style="margin-right: 0.75rem; color: var(--primary);"></i>
             Professionelle Textverarbeitung
         </li>
         <li style="margin-bottom: 1rem; display: flex; align-items: center;">
-            <i class="fas fa-table" style="margin-right: 0.75rem; color: var(--primary);"></i>
+            <i class="fa-solid fa-table" style="margin-right: 0.75rem; color: var(--primary);"></i>
             Leistungsstarke Tabellenkalkulation
         </li>
         <li style="margin-bottom: 1rem; display: flex; align-items: center;">
-            <i class="fas fa-chart-line" style="margin-right: 0.75rem; color: var(--primary);"></i>
+            <i class="fa-solid fa-chart-line" style="margin-right: 0.75rem; color: var(--primary);"></i>
             Beeindruckende Präsentationen
         </li>
         <li style="margin-bottom: 1rem; display: flex; align-items: center;">
-            <i class="fas fa-envelope-open-text" style="margin-right: 0.75rem; color: var(--primary);"></i>
+            <i class="fa-solid fa-envelope-open-text" style="margin-right: 0.75rem; color: var(--primary);"></i>
             Effizientes E-Mail-Management
         </li>
     </ul>
@@ -3053,23 +3015,23 @@ document.addEventListener("DOMContentLoaded", function () {
   <div class="benefits-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:var(--space-lg);margin-top:var(--space-xl);">
     {%- if is_digital -%}
       <div class="benefit-item" style="background:var(--light);padding:var(--space-lg);border-radius:var(--radius-md);text-align:center;">
-        <i class="fas fa-money-bill-wave" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
+        <i class="fa-solid fa-money-bill-wave" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
         <h3 style="margin-bottom:var(--space-xs);">Kein Abo</h3>
         <p style="color:var(--text-light);">Einmalige Zahlung, keine versteckten Kosten</p>
       </div>
       <div class="benefit-item" style="background:var(--light);padding:var(--space-lg);border-radius:var(--radius-md);text-align:center;">
-        <i class="fas fa-bolt" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
+        <i class="fa-solid fa-bolt" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
         <h3 style="margin-bottom:var(--space-xs);">Sofortiger Download</h3>
         <p style="color:var(--text-light);">Direkt nach Kauf verfügbar</p>
       </div>
     {%- else -%}
       <div class="benefit-item" style="background:var(--light);padding:var(--space-lg);border-radius:var(--radius-md);text-align:center;">
-        <i class="fas fa-truck" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
+        <i class="fa-solid fa-truck" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
         <h3 style="margin-bottom:var(--space-xs);">Kostenloser Versand</h3>
         <p style="color:var(--text-light);">Schneller Versand aus Deutschland</p>
       </div>
       <div class="benefit-item" style="background:var(--light);padding:var(--space-lg);border-radius:var(--radius-md);text-align:center;">
-        <i class="fas fa-undo-alt" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
+        <i class="fa-solid fa-undo-alt" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
         <h3 style="margin-bottom:var(--space-xs);">100 Tage Rückgabe</h3>
         <p style="color:var(--text-light);">Widerrufsrecht &amp; einfacher Rückversand</p>
       </div>
@@ -3271,37 +3233,37 @@ document.addEventListener("DOMContentLoaded", function () {
   {%- if is_digital -%}
   <div class="faq-item">
     <button class="faq-question">Ist dies eine Einmalzahlung oder ein Abonnement?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Einmalzahlung – Dauerlizenz, keine Folgekosten.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Wie erhalte ich den Download?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Download-Link & Lizenzschlüssel kommen automatisch per E-Mail – meist in Sekunden.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Wie schnell erfolgt die Lieferung?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Digital sofort nach Zahlungseingang (E-Mail-Zustellung).</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Welche Zahlungsmethoden gibt es?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Kreditkarte (Visa, Mastercard, American Express, UnionPay), Apple Pay, Google Pay, Klarna, Rechnung, Vorkasse/Banküberweisung u. a.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Sind wir ein zertifiziertes/seriöses Unternehmen?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Ja, wir sind ein in Deutschland registriertes Unternehmen und erfüllen alle gesetzlichen Anforderungen der EU. Zudem sind wir ein zertifizierter Microsoft‑Partner, was unsere Glaubwürdigkeit und die Qualität unserer Dienstleistungen zusätzlich bestätigt.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Wie schnell beantworten wir Kundenanfragen?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Wir legen großen Wert auf schnelle Reaktionszeiten – in der Regel beantworten wir Kundenanfragen innerhalb von weniger als einer Stunde und gewährleisten damit einen verlässlichen und prompten Service.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Welche Vorteile habe ich hier?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer">
       <ul style="list-style:none; padding-left:0; margin:0;">
         <li><span class="faq-check">✔</span>Sofortiger Download per E-Mail</li>
@@ -3314,32 +3276,32 @@ document.addEventListener("DOMContentLoaded", function () {
   {%- else -%}
   <div class="faq-item">
     <button class="faq-question">Wie erfolgt die Lieferung?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Versand aus DE mit DHL inkl. Sendungsverfolgung.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Wie lange ist die Lieferzeit?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>In der Regel 1–3 Werktage. Bestellungen bis 12&nbsp;Uhr meist noch am selben Tag.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Fallen Versandkosten an?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Innerhalb Deutschlands <strong>kostenloser Versand</strong> (Express ggf. gegen Aufpreis).</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Rückgabe & Widerruf?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p><strong>100 Tage Widerrufsrecht.</strong> Rücksendung unkompliziert – wir helfen beim Label.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Ist der Artikel original & neu?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Ja, originale Neuware im unbeschädigten Karton – ideal als Geschenk.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Erhalte ich eine Rechnung mit MwSt.?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Ja, automatisch per E-Mail mit ausgewiesener Mehrwertsteuer.</p></div>
   </div>
   {%- endif -%}
@@ -3408,7 +3370,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
             <button id="write-review" class="buy-btn" style="margin-top: var(--space-lg);">
-                <i class="fas fa-pen"></i> Bewertung schreiben
+                <i class="fa-solid fa-pen"></i> Bewertung schreiben
             </button>
             <div id="review-form" class="review-form">
                 <h3 style="margin-bottom: var(--space-lg);">Ihre Bewertung</h3>
@@ -3416,11 +3378,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div style="margin-bottom: var(--space-md);">
                         <label style="display: block; margin-bottom: var(--space-xs);">Ihre Bewertung</label>
                         <div class="stars" style="color: #F9C100; font-size: 1.5rem;">
-                            <i class="far fa-star" data-rating="1"></i>
-                            <i class="far fa-star" data-rating="2"></i>
-                            <i class="far fa-star" data-rating="3"></i>
-                            <i class="far fa-star" data-rating="4"></i>
-                            <i class="far fa-star" data-rating="5"></i>
+                            <i class="fa-regular fa-star" data-rating="1"></i>
+                            <i class="fa-regular fa-star" data-rating="2"></i>
+                            <i class="fa-regular fa-star" data-rating="3"></i>
+                            <i class="fa-regular fa-star" data-rating="4"></i>
+                            <i class="fa-regular fa-star" data-rating="5"></i>
                         </div>
                         <input type="hidden" name="rating" id="review-rating" value="0">
                     </div>
@@ -3433,7 +3395,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <textarea style="width: 100%; padding: var(--space-sm); border: 1px solid var(--medium-gray); border-radius: var(--radius-sm); min-height: 100px;"></textarea>
                     </div>
                     <button type="submit" class="buy-btn">
-                        <i class="fas fa-paper-plane"></i> Bewertung absenden
+                        <i class="fa-solid fa-paper-plane"></i> Bewertung absenden
                     </button>
                 </form>
             </div>
@@ -3450,28 +3412,11 @@ document.addEventListener('DOMContentLoaded', function () {
                                                 <p style="margin-bottom: var(--space-lg); max-width: 600px; margin-left: auto; margin-right: auto;">Jetzt {{ product.title }} sicher kaufen und sofort loslegen! 100 Tage Geld-zurück-Garantie.</p>
 <div data-shop-id="{{shop.id}}" product-id="{{product.id }}" data-page="{{request.page_type}}" class="ddreview-star"></div>
                         <a href="/cart/add?id={{ product.variants.first.id }}" class="buy-btn" style="background-color: var(--white); color: var(--primary); max-width: 300px; margin: 0 auto;">
-                <i class="fas fa-rocket"></i> Jetzt kaufen
+                <i class="fa-solid fa-rocket"></i> Jetzt kaufen
             </a>
         </section>
     </main>
-    <!-- Sticky Kauf-Button -->
-    <div class="sticky-buy">
-        <div>
-                        <div style="font-size: 0.875rem; color: var(--text-light);">{{ product.title }}</div>
-<div data-shop-id="{{shop.id}}" product-id="{{product.id }}" data-page="{{request.page_type}}" class="ddreview-star"></div>
-            <div class="price">{{ product.price | money }}</div>
-        </div>
-        <a href="/cart/add?id={{ product.variants.first.id }}" class="buy-btn" style="max-width: 200px;">
-            <i class="fas fa-shopping-cart"></i> Kaufen
-        </a>
-    </div>
-    <!-- Vollbild-Modus -->
-    <div class="fullscreen-modal">
-        <span class="close-fullscreen"><i class="fas fa-times"></i></span>
-        <div class="fullscreen-content">
-            <img src="" alt="Vollbildansicht">
-        </div>
-    </div>
+
     <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -3487,9 +3432,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const prevBtn = document.querySelector('.prev-btn');
             const nextBtn = document.querySelector('.next-btn');
             const videoIndicator = document.querySelector('.video-indicator');
-            const fullscreenModal = document.querySelector('.fullscreen-modal');
-            const fullscreenContent = document.querySelector('.fullscreen-content img');
-            const closeFullscreen = document.querySelector('.close-fullscreen');
             const modelContainersRoot = document.getElementById('model-containers');
 
             // Benutzerdefinierte Galerie-Daten mit Fallback auf img.src
@@ -3507,7 +3449,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             let currentIndex = 0;
-            let isZoomed = false;
+
 
             // Dots (mobile only)
             const dotsWrap = document.getElementById('carousel-dots');
@@ -3660,9 +3602,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 renderDots();
                 updateUnderlineLine();
 
-                // Zoom zurücksetzen
-                isZoomed = false;
-                mainImage.classList.remove('zoom-active');
+
             }
 
             // Thumbnail-Klick
@@ -3676,32 +3616,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 mainImage.addEventListener('load', updateUnderlineLine, { passive: true });
             }
 
-            // Zoom-Toggle
-            mainImage.addEventListener('click', function() {
-                if (galleryItems[currentIndex].type === 'image') {
-                    isZoomed = !isZoomed;
-                    this.classList.toggle('zoom-active');
-                }
-            });
-
-            // Vollbild öffnen
-            function openFullscreen() {
-                const item = galleryItems[currentIndex];
-                if (item.type !== 'image') return;
-                fullscreenContent.src = item.zoom || item.src;
-                fullscreenContent.alt = item.alt;
-                fullscreenModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-
-            // Doppelklick für Vollbild
-            mainImageContainer.addEventListener('dblclick', openFullscreen);
-
-            // Vollbild schließen
-            closeFullscreen.addEventListener('click', function() {
-                fullscreenModal.classList.remove('active');
-                document.body.style.overflow = '';
-            });
+            // Vollbild / Zoom wird durch das unified ProductLightbox am Ende der Datei gehandhabt.
 
             // Navigation
             prevBtn.addEventListener('click', () => {
@@ -3713,19 +3628,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Tastatur-Navigation
             document.addEventListener('keydown', (e) => {
-                if (fullscreenModal.classList.contains('active')) {
-                    if (e.key === 'Escape') {
-                        fullscreenModal.classList.remove('active');
-                        document.body.style.overflow = '';
-                    }
-                    return;
-                }
+                const lb = document.getElementById('ProductLightbox');
+                if (lb && lb.getAttribute('aria-hidden') === 'false') return; // Lightbox handles its own keys
+
                 if (e.key === 'ArrowLeft') {
                     if (currentIndex > 0) updateMainImage(currentIndex - 1);
                 } else if (e.key === 'ArrowRight') {
                     if (currentIndex < galleryItems.length - 1) updateMainImage(currentIndex + 1);
-                } else if (e.key === 'Enter' || e.key === ' ') {
-                    openFullscreen();
                 }
             });
 
@@ -3733,8 +3642,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const writeReviewBtn = document.getElementById('write-review');
             const reviewForm = document.getElementById('review-form');
             if (writeReviewBtn && reviewForm) {
-                const openLabel = '<i class="fas fa-pen"></i> Bewertung schreiben';
-                const closeLabel = '<i class="fas fa-times"></i> Bewertung verbergen';
+                const openLabel = '<i class="fa-solid fa-pen"></i> Bewertung schreiben';
+                const closeLabel = '<i class="fa-solid fa-times"></i> Bewertung verbergen';
                 writeReviewBtn.addEventListener('click', function(e){
                     e.preventDefault();
                     const willOpen = !reviewForm.classList.contains('active');
@@ -3801,8 +3710,8 @@ document.addEventListener('DOMContentLoaded', function () {
             function getStars(){ return Array.from(document.querySelectorAll('.review-form .stars i')); }
             function paintStars(n){
                 getStars().forEach((el, i) => {
-                    if (i < n) { el.classList.add('fas'); el.classList.remove('far'); }
-                    else { el.classList.add('far'); el.classList.remove('fas'); }
+                    if (i < n) { el.classList.add('fa-solid'); el.classList.remove('fa-regular'); }
+                    else { el.classList.add('fa-regular'); el.classList.remove('fa-solid'); }
                 });
             }
             // Initial paint
@@ -3951,194 +3860,125 @@ document.addEventListener('DOMContentLoaded', function () {
   })();
 </script>
 
-<!-- Image Zoom Lightbox -->
-<div class="zoom-lightbox" id="zoomLightbox">
-    <button class="zoom-lightbox-close" id="zoomClose" aria-label="Schließen">
-        <i class="fas fa-times"></i>
-    </button>
-    <button class="zoom-lightbox-nav prev" id="zoomPrev" aria-label="Vorheriges Bild">
-        <i class="fas fa-chevron-left"></i>
-    </button>
-    <button class="zoom-lightbox-nav next" id="zoomNext" aria-label="Nächstes Bild">
-        <i class="fas fa-chevron-right"></i>
-    </button>
-    <img class="zoom-lightbox-image" id="zoomImage" alt="Vergrößertes Produktbild">
-    <div class="zoom-lightbox-counter" id="zoomCounter"></div>
+<div id="ProductLightbox" class="product-lightbox" aria-hidden="true" role="dialog">
+    <div class="product-lightbox__backdrop"></div>
+    <div class="product-lightbox__content">
+        <button class="product-lightbox__close" aria-label="Schließen">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <button class="product-lightbox__nav product-lightbox__nav--prev" aria-label="Vorheriges Bild">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <div class="product-lightbox__image-wrapper">
+            <img class="product-lightbox__image" src="" alt="Produktbild vergrößert">
+        </div>
+        <button class="product-lightbox__nav product-lightbox__nav--next" aria-label="Nächstes Bild">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <div class="product-lightbox__counter"></div>
+    </div>
 </div>
 
+<style>
+.product-lightbox { position: fixed; inset: 0; z-index: 10000; display: none; align-items: center; justify-content: center; }
+.product-lightbox[aria-hidden="false"] { display: flex; }
+.product-lightbox__backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(5px); transition: opacity 0.3s ease; }
+.product-lightbox__content { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.product-lightbox__image-wrapper { max-width: 90vw; max-height: 90vh; display: flex; align-items: center; justify-content: center; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.product-lightbox__image { max-width: 100%; max-height: 100%; object-fit: contain; user-select: none; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+.product-lightbox__close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: none; color: #fff; font-size: 24px; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+.product-lightbox__close:hover { background: rgba(255,255,255,0.2); }
+.product-lightbox__nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255, 255, 255, 0.1); border: none; color: #fff; font-size: 24px; width: 60px; height: 60px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 10; }
+.product-lightbox__nav:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-50%) scale(1.1); }
+.product-lightbox__nav[disabled] { opacity: 0.3; cursor: not-allowed; }
+.product-lightbox__nav--prev { left: 20px; }
+.product-lightbox__nav--next { right: 20px; }
+.product-lightbox__counter { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 14px; font-weight: 600; background: rgba(0,0,0,0.4); padding: 4px 12px; border-radius: 20px; letter-spacing: 0.5px; }
+@media (max-width: 768px) {
+    .product-lightbox__nav { width: 44px; height: 44px; font-size: 18px; }
+    .product-lightbox__nav--prev { left: 10px; }
+    .product-lightbox__nav--next { right: 10px; }
+    .product-lightbox__close { top: 10px; right: 10px; width: 36px; height: 36px; font-size: 18px; }
+}
+</style>
+
 <script>
-// Enhanced Image Zoom Functionality
 (function() {
-    const lightbox = document.getElementById('zoomLightbox');
-    const lightboxImage = document.getElementById('zoomImage');
-    const lightboxClose = document.getElementById('zoomClose');
-    const lightboxPrev = document.getElementById('zoomPrev');
-    const lightboxNext = document.getElementById('zoomNext');
-    const lightboxCounter = document.getElementById('zoomCounter');
-    const mainImage = document.querySelector('.main-image');
+    const lightbox = document.getElementById('ProductLightbox');
+    const lbImage = lightbox.querySelector('.product-lightbox__image');
+    const lbCounter = lightbox.querySelector('.product-lightbox__counter');
+    const lbClose = lightbox.querySelector('.product-lightbox__close');
+    const lbPrev = lightbox.querySelector('.product-lightbox__nav--prev');
+    const lbNext = lightbox.querySelector('.product-lightbox__nav--next');
+    const mainImg = document.querySelector('.main-image');
     
-    if (!lightbox || !mainImage) return;
-    
-    let currentZoomIndex = 0;
-    let zoomImages = [];
-    
-    // Collect all product images
-    function collectImages() {
-        zoomImages = [];
+    let currentLbIndex = 0;
+    let lbItems = [];
+
+    function collectLbItems() {
+        lbItems = [];
         const thumbItems = document.querySelectorAll('.thumb-item[data-type="image"]');
-        thumbItems.forEach((thumb, index) => {
-            const zoomSrc = thumb.getAttribute('data-zoom') || thumb.getAttribute('data-src');
-            const alt = thumb.querySelector('img')?.alt || 'Produktbild';
-            if (zoomSrc) {
-                zoomImages.push({ src: zoomSrc, alt: alt, index: index });
-            }
+        thumbItems.forEach((thumb, idx) => {
+            lbItems.push({
+                src: thumb.getAttribute('data-zoom') || thumb.getAttribute('data-src'),
+                alt: thumb.querySelector('img')?.alt || 'Produktbild'
+            });
         });
     }
-    
-    // Open lightbox
-    function openLightbox(index = 0) {
-        collectImages();
-        if (zoomImages.length === 0) return;
+
+    function updateLightbox() {
+        if (!lbItems[currentLbIndex]) return;
+        const item = lbItems[currentLbIndex];
         
-        currentZoomIndex = index;
-        updateLightboxImage();
-        lightbox.classList.add('active');
+        lbImage.style.opacity = '0';
+        const img = new Image();
+        img.onload = () => {
+            lbImage.src = item.src;
+            lbImage.alt = item.alt;
+            lbImage.style.opacity = '1';
+        };
+        img.src = item.src;
+        
+        lbCounter.textContent = `${currentLbIndex + 1} / ${lbItems.length}`;
+        lbPrev.disabled = currentLbIndex === 0;
+        lbNext.disabled = currentLbIndex === lbItems.length - 1;
+    }
+
+    function openLightbox(startIdx = 0) {
+        collectLbItems();
+        if (lbItems.length === 0) return;
+        currentLbIndex = startIdx;
+        updateLightbox();
+        lightbox.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
     }
-    
-    // Close lightbox
+
     function closeLightbox() {
-        lightbox.classList.remove('active');
+        lightbox.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
     }
-    
-    // Update lightbox image
-    function updateLightboxImage() {
-        if (zoomImages.length === 0) return;
-        
-        const current = zoomImages[currentZoomIndex];
-        lightboxImage.src = current.src;
-        lightboxImage.alt = current.alt;
-        lightboxCounter.textContent = `${currentZoomIndex + 1} / ${zoomImages.length}`;
-        
-        // Update navigation buttons
-        lightboxPrev.style.opacity = currentZoomIndex === 0 ? '0.3' : '1';
-        lightboxPrev.style.pointerEvents = currentZoomIndex === 0 ? 'none' : 'auto';
-        lightboxNext.style.opacity = currentZoomIndex === zoomImages.length - 1 ? '0.3' : '1';
-        lightboxNext.style.pointerEvents = currentZoomIndex === zoomImages.length - 1 ? 'none' : 'auto';
+
+    if (mainImg) {
+        mainImg.style.cursor = 'zoom-in';
+        mainImg.addEventListener('click', () => {
+            const activeThumb = document.querySelector('.thumb-item.active');
+            let idx = activeThumb ? parseInt(activeThumb.getAttribute('data-index')) : 0;
+            openLightbox(idx);
+        });
     }
-    
-    // Navigate to previous image
-    function prevImage() {
-        if (currentZoomIndex > 0) {
-            currentZoomIndex--;
-            updateLightboxImage();
-        }
-    }
-    
-    // Navigate to next image
-    function nextImage() {
-        if (currentZoomIndex < zoomImages.length - 1) {
-            currentZoomIndex++;
-            updateLightboxImage();
-        }
-    }
-    
-    // Event Listeners
-    mainImage.addEventListener('click', function() {
-        const currentIndex = parseInt(document.querySelector('.thumb-item.active')?.getAttribute('data-index') || 0);
-        openLightbox(currentIndex);
-    });
-    
-    mainImage.style.cursor = 'zoom-in';
-    
-    lightboxClose.addEventListener('click', closeLightbox);
-    lightboxPrev.addEventListener('click', prevImage);
-    lightboxNext.addEventListener('click', nextImage);
-    
-    // Click on background to close
-    lightbox.addEventListener('click', function(e) {
-        if (e.target === lightbox) {
-            closeLightbox();
+
+    lbClose.addEventListener('click', closeLightbox);
+    lbPrev.addEventListener('click', (e) => { e.stopPropagation(); if (currentLbIndex > 0) { currentLbIndex--; updateLightbox(); } });
+    lbNext.addEventListener('click', (e) => { e.stopPropagation(); if (currentLbIndex < lbItems.length - 1) { currentLbIndex++; updateLightbox(); } });
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox || e.target.classList.contains('product-lightbox__content')) closeLightbox(); });
+
+    document.addEventListener('keydown', (e) => {
+        if (lightbox.getAttribute('aria-hidden') === 'false') {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft' && currentLbIndex > 0) { currentLbIndex--; updateLightbox(); }
+            if (e.key === 'ArrowRight' && currentLbIndex < lbItems.length - 1) { currentLbIndex++; updateLightbox(); }
         }
     });
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', function(e) {
-        if (!lightbox.classList.contains('active')) return;
-        
-        if (e.key === 'Escape') {
-            closeLightbox();
-        } else if (e.key === 'ArrowLeft') {
-            prevImage();
-        } else if (e.key === 'ArrowRight') {
-            nextImage();
-        }
-    });
-    
-    // Touch/Swipe support for mobile
-    let touchStartX = 0;
-    let touchEndX = 0;
-    
-    lightbox.addEventListener('touchstart', function(e) {
-        touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-    
-    lightbox.addEventListener('touchend', function(e) {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    }, { passive: true });
-    
-    function handleSwipe() {
-        const swipeThreshold = 50;
-        const diff = touchStartX - touchEndX;
-        
-        if (Math.abs(diff) > swipeThreshold) {
-            if (diff > 0) {
-                // Swipe left - next image
-                nextImage();
-            } else {
-                // Swipe right - previous image
-                prevImage();
-            }
-        }
-    }
-    
-    // Pinch-to-zoom on mobile
-    let initialDistance = 0;
-    let currentScale = 1;
-    
-    lightboxImage.addEventListener('touchstart', function(e) {
-        if (e.touches.length === 2) {
-            e.preventDefault();
-            initialDistance = getDistance(e.touches[0], e.touches[1]);
-        }
-    });
-    
-    lightboxImage.addEventListener('touchmove', function(e) {
-        if (e.touches.length === 2) {
-            e.preventDefault();
-            const currentDistance = getDistance(e.touches[0], e.touches[1]);
-            const scale = currentDistance / initialDistance;
-            currentScale = Math.min(Math.max(1, scale), 3);
-            lightboxImage.style.transform = `scale(${currentScale})`;
-        }
-    });
-    
-    lightboxImage.addEventListener('touchend', function(e) {
-        if (e.touches.length < 2) {
-            setTimeout(() => {
-                currentScale = 1;
-                lightboxImage.style.transform = 'scale(1)';
-            }, 300);
-        }
-    });
-    
-    function getDistance(touch1, touch2) {
-        const dx = touch1.clientX - touch2.clientX;
-        const dy = touch1.clientY - touch2.clientY;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
 })();
 </script>
 
@@ -4304,291 +4144,6 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 </script>
 <!-- ZOOM FUNCTIONALITY END -->
-
-<!-- FULLSCREEN LIGHTBOX START -->
-<div id="fullscreen-lightbox" style="display:none;">
-  <button id="lightbox-close" aria-label="Close"></button>
-  <div class="lightbox-content">
-    <img id="lightbox-image" src="" alt="Zoom Preview">
-  </div>
-</div>
-<style>
-  #fullscreen-lightbox {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: #ffffff;
-    z-index: 99999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-  #fullscreen-lightbox.active {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  #fullscreen-lightbox .lightbox-content {
-    width: 90vw;
-    height: 90vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden; /* For zoom clipping */
-    position: relative;
-    cursor: zoom-in;
-  }
-  #lightbox-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    transition: transform 0.1s ease-out; /* Smooth follow */
-    transform-origin: center center;
-  }
-  #lightbox-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    z-index: 100000;
-  }
-  #lightbox-close::before, #lightbox-close::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 24px;
-    height: 2px;
-    background: #000;
-  }
-  #lightbox-close::before { transform: translate(-50%, -50%) rotate(45deg); }
-  #lightbox-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
-</style>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const lightbox = document.getElementById('fullscreen-lightbox');
-    const lightboxImg = document.getElementById('lightbox-image');
-    const closeBtn = document.getElementById('lightbox-close');
-    const lightboxContent = lightbox.querySelector('.lightbox-content');
-    
-    // Open Lightbox
-    const mainContainer = document.querySelector('.main-image-container');
-    if(mainContainer) {
-      mainContainer.addEventListener('click', function(e) {
-        // Only open if we are not already interacting with something else
-        if(e.target.tagName === 'IMG' || e.target.classList.contains('main-image-container')) {
-           const currentSrc = document.getElementById('zoom-image').src;
-           // Use a higher res image if available, otherwise current
-           lightboxImg.src = currentSrc.replace('900x', '2000x'); // Try to guess Shopify URL structure for higher res
-           lightbox.style.display = 'flex';
-           // Small timeout to allow display:flex to apply before adding opacity class
-           setTimeout(() => lightbox.classList.add('active'), 10);
-           document.body.style.overflow = 'hidden'; // Prevent scrolling
-        }
-      });
-    }
-
-    // Close Lightbox
-    function closeLightbox() {
-      lightbox.classList.remove('active');
-      setTimeout(() => {
-        lightbox.style.display = 'none';
-        lightboxImg.style.transform = 'scale(1)'; // Reset zoom
-      }, 300);
-      document.body.style.overflow = '';
-    }
-
-    closeBtn.addEventListener('click', closeLightbox);
-    
-    // Close on background click (optional, if user clicks outside image area)
-    lightbox.addEventListener('click', function(e) {
-      if(e.target === lightbox) closeLightbox();
-    });
-
-    // Zoom Logic inside Lightbox
-    // Click to toggle zoom mode
-    let isZoomed = false;
-
-    lightboxContent.addEventListener('click', function(e) {
-      // Don't close if clicking content
-      e.stopPropagation(); 
-      
-      if(!isZoomed) {
-        isZoomed = true;
-        lightboxContent.style.cursor = 'zoom-out';
-        // Initial zoom to mouse position
-        moveZoom(e);
-      } else {
-        isZoomed = false;
-        lightboxContent.style.cursor = 'zoom-in';
-        lightboxImg.style.transform = 'scale(1)';
-        lightboxImg.style.transformOrigin = 'center center';
-      }
-    });
-
-    function moveZoom(e) {
-      if(!isZoomed) return;
-      const rect = lightboxContent.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      const xPercent = (x / rect.width) * 100;
-      const yPercent = (y / rect.height) * 100;
-
-      lightboxImg.style.transformOrigin = `${xPercent}% ${yPercent}%`;
-      lightboxImg.style.transform = 'scale(2.5)';
-    }
-
-    lightboxContent.addEventListener('mousemove', moveZoom);
-  });
-</script>
-<!-- FULLSCREEN LIGHTBOX END -->
-
-<!-- GALLERY DOTS AND NAVIGATION START -->
-<style>
-  .lightbox-nav-dots {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 8px;
-    z-index: 100000;
-  }
-  .lightbox-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #ccc;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  .lightbox-dot.active {
-    background: #e6b800; /* Gold/Yellow color like reference */
-  }
-  .lightbox-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.8);
-    border: none;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    z-index: 100000;
-    transition: background 0.2s, transform 0.2s;
-  }
-  .lightbox-arrow:hover {
-    background: #fff;
-    transform: translateY(-50%) scale(1.1);
-  }
-  .lightbox-arrow.prev { left: 20px; }
-  .lightbox-arrow.next { right: 20px; }
-  .lightbox-arrow svg {
-    width: 24px;
-    height: 24px;
-    fill: #333;
-  }
-</style>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const lightbox = document.getElementById('fullscreen-lightbox');
-    const lightboxImg = document.getElementById('lightbox-image');
-    let currentIndex = 0;
-    
-    // Get all product images
-    // Assuming thumbnails have data-src or src attribute we can use
-    const thumbs = document.querySelectorAll('.thumb-item img');
-    // Remove all query params and size suffixes to get original master image
-    const images = Array.from(thumbs).map(img => {
-      let src = img.src.split('?')[0]; // Remove query params
-      src = src.replace(/_\d+x(\d+)?/, ''); // Remove _200x, _crop_center etc
-      src = src.replace('_crop_center', '');
-      return src; 
-    });
-    
-    if(images.length <= 1) return; // No need for dots if only 1 image
-
-    // Create Dots container
-    const dotsContainer = document.createElement('div');
-    dotsContainer.className = 'lightbox-nav-dots';
-    lightbox.appendChild(dotsContainer);
-
-    // Create Arrows
-    const prevBtn = document.createElement('button');
-    prevBtn.className = 'lightbox-arrow prev';
-    prevBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>';
-    lightbox.appendChild(prevBtn);
-
-    const nextBtn = document.createElement('button');
-    nextBtn.className = 'lightbox-arrow next';
-    nextBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>';
-    lightbox.appendChild(nextBtn);
-
-    // Initialize Dots
-    images.forEach((_, index) => {
-      const dot = document.createElement('div');
-      dot.className = 'lightbox-dot';
-      if(index === 0) dot.classList.add('active');
-      dot.addEventListener('click', (e) => {
-        e.stopPropagation();
-        updateImage(index);
-      });
-      dotsContainer.appendChild(dot);
-    });
-
-    function updateImage(index) {
-      currentIndex = index;
-      lightboxImg.src = images[currentIndex];
-      
-      // Update Dots
-      document.querySelectorAll('.lightbox-dot').forEach((dot, idx) => {
-        dot.classList.toggle('active', idx === currentIndex);
-      });
-      
-      // Reset zoom
-      lightboxImg.style.transform = 'scale(1)';
-      lightboxImg.style.transformOrigin = 'center center';
-    }
-
-    // Arrow Events
-    prevBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      let newIndex = currentIndex - 1;
-      if(newIndex < 0) newIndex = images.length - 1;
-      updateImage(newIndex);
-    });
-
-    nextBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      let newIndex = currentIndex + 1;
-      if(newIndex >= images.length) newIndex = 0;
-      updateImage(newIndex);
-    });
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-      if(lightbox.style.display !== 'none' && lightbox.classList.contains('active')) {
-        if(e.key === 'ArrowLeft') prevBtn.click();
-        if(e.key === 'ArrowRight') nextBtn.click();
-      }
-    });
-  });
-</script>
-<!-- GALLERY DOTS AND NAVIGATION END -->
 
 <style>
 /* Updated Price Display */
