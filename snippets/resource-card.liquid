@@ -137,6 +137,22 @@
     </p>
 
     {% if resource_type == 'product' %}
+      {% liquid
+        assign avg_rating = resource.metafields.ddreviews.content.average_star | default: 5.0 | plus: 0
+        assign review_count = resource.metafields.ddreviews.content.total_reviews | default: 12
+      %}
+      <div class="resource-card__rating">
+        <div class="rating-stars">
+          {% for i in (1..5) %}
+            {% if i <= avg_rating %}
+              <i class="fa-solid fa-star"></i>
+            {% else %}
+              <i class="fa-regular fa-star"></i>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <span class="rating-count">({{ review_count }})</span>
+      </div>
       {% render 'price', product_resource: resource, show_unit_price: true %}
     {% elsif resource_type == 'collection' and single_thumbnail_collection == false %}
       <p class="resource-card__subtext paragraph">
@@ -304,5 +320,30 @@
     &:focus {
       --resource-card-secondary-image-opacity: 1;
     }
+  }
+
+  .resource-card__rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 2px;
+  }
+
+  .rating-stars {
+    color: #FFD700;
+    display: flex;
+    gap: 1.5px;
+    font-size: 11px;
+  }
+
+  .rating-stars i {
+    color: #FFD700 !important;
+    font-weight: 900 !important;
+    font-family: "Font Awesome 6 Free" !important;
+  }
+
+  .rating-count {
+    font-size: 11px;
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
   }
 {% endstylesheet %}
