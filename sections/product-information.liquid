@@ -4528,24 +4528,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <style>
 /* Updated Price Display */
+/* Updated Price Display */
+.price-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
 .price-container {
     display: flex;
     flex-direction: column;
-    gap: 0; /* Remove gap */
-    margin-bottom: 4px; /* Move slightly up */
+    gap: 0;
+    margin-bottom: 0px;
 }
 .price-main-row {
     display: flex;
-    align-items: center; /* Center align items vertically */
+    align-items: center; 
     gap: 12px;
-    height: 40px; /* Fixed height for consistency */
+    height: 40px; 
 }
 .current-price {
     font-size: 32px;
     font-weight: 800;
     color: #d32f2f;
-    line-height: normal; /* Fix line-height */
-    transform: translateY(-2px); /* Slight lift */
+    line-height: normal;
+    transform: translateY(-2px); 
 }
 .discount-pill-simple {
     background: #d32f2f;
@@ -4555,7 +4562,7 @@ document.addEventListener('DOMContentLoaded', function () {
     padding: 3px 7px;
     border-radius: 4px;
     letter-spacing: 0.5px;
-    transform: translateY(-1px); /* Alien with price optical center */
+    transform: translateY(-2px); 
 }
 .price-sub-row {
     display: flex;
@@ -4563,7 +4570,7 @@ document.addEventListener('DOMContentLoaded', function () {
     gap: 8px;
     font-size: 14px;
     color: #555;
-    margin-top: 2px;
+    margin-top: -2px; /* Pull closer to price */
 }
 .price-sep {
     color: #ccc;
