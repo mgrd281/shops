@@ -1865,7 +1865,7 @@ document.addEventListener("DOMContentLoaded", function () {
   .product-brand-link:hover{text-decoration:underline}
   .in-stock{color:#1d7a34;font-weight:600}
   .out-of-stock{color:#c00;font-weight:600}
-  .highlights-list{list-style:none;padding-left:0;margin:0;display:grid;grid-template-columns:1fr;gap:0;margin-bottom:18px;}
+  .highlights-list{list-style:none;padding-left:0;margin:0;display:grid;grid-template-columns:1fr;gap:0;margin-bottom:8px;}
   .highlights-list li{display:flex;align-items:center;gap:6px;font-size:13px;color:#222;margin:0;padding: calc(var(--row-gap)/2) 0;line-height:1.35;}
   .highlights-list i{color:var(--brand);min-width:16px;font-size:15px;line-height:1;margin:0}
   .highlights-list li>*{margin:0}
@@ -2335,12 +2335,20 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
       {% endif %}
     </div>
+  </div>
   {% if is_digital %}
-    <div class="price-meta">inkl. MwSt.</div>
+    <div class="price-meta" style="margin-top:2px;">inkl. MwSt.</div>
   {% else %}
-    <div class="price-meta">inkl. MwSt. zzgl. Versandkosten</div>
+    <div class="price-meta" style="margin-top:2px;">inkl. MwSt. zzgl. Versandkosten</div>
   {% endif %}
 </div>
+<style>
+  .price-box {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+  }
+</style>
 <!-- In den Warenkorb Button -->
 <form method="post" action="/cart/add" id="add-to-cart-form">
   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
