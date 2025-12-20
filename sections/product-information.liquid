@@ -1521,7 +1521,8 @@ nav[aria-label="Breadcrumb"],
                                 {% assign vendor_handle = product.vendor | handleize %}
                                 {% capture brand_logo_filename %}brand-{{ vendor_handle }}.svg{% endcapture %}
                                 <!-- Check if we can display it (assumes file exists if you uploaded it) -->
-                                {% if vendor_handle == 'microsoft' %}
+                                {% assign product_title_downcase = product.title | downcase %}
+                                {% if vendor_handle == 'microsoft' and product_title_downcase contains 'office' %}
                                   <div class="brand-header-logo" style="margin-bottom: 6px;">
                                     <img src="{{ brand_logo_filename | asset_url }}" 
                                          alt="{{ product.vendor }}" 
