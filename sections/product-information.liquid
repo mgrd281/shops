@@ -2313,27 +2313,21 @@ document.addEventListener("DOMContentLoaded", function () {
     {% endif %}
     {% assign pct_string = pct | prepend: '-' | append: '%' %}
 
-    <div class="price-left">
-      <span class="current-price">{{ cur | money }}</span>
+    <div class="price-container">
+      <div class="price-main-row">
+        <span class="current-price">{{ cur | money }}</span>
+        {% if cap and cap > cur %}
+          <span class="discount-pill-simple">-{{ pct }}%</span>
+        {% endif %}
+      </div>
+      
       {% if cap and cap > cur %}
-        <span class="discount-bubble" data-len="{{ pct_string | size }}" aria-hidden="true">{{ pct_string }}</span>
+        <div class="price-sub-row">
+          <span class="old-price">{{ cap | money }}</span>
+          <span class="savings-text">Sie sparen: {{ cap | minus: cur | money }}</span>
+        </div>
       {% endif %}
     </div>
-
-    {% if cap and cap > cur %}
-      <span class="savings-badge">
-        <span class="label">Sie sparen:</span>
-        <strong class="savings-amount">{{ cap | minus: cur | money }}</strong>
-        <span class="bang"></span>
-      </span>
-    {% endif %}
-
-    <div class="price-right">
-      {% if cap and cap > cur %}
-        <span class="old-price">{{ cap | money }}</span>
-      {% endif %}
-    </div>
-  </div>
   {% if is_digital %}
     <div class="price-meta">inkl. MwSt.</div>
   {% else %}
@@ -4524,3 +4518,52 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 </script>
 <!-- GALLERY DOTS AND NAVIGATION END -->
+
+<style>
+/* Updated Price Display */
+.price-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.price-main-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.current-price {
+    font-size: 32px;
+    font-weight: 800;
+    color: #d32f2f; /* Premium red for price */
+    line-height: 1;
+}
+.discount-pill-simple {
+    background: #d32f2f;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+.price-sub-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #666;
+}
+.old-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 16px;
+    font-weight: 500;
+}
+.savings-text {
+    color: #1D4739; /* Brand green */
+    font-weight: 600;
+    background: rgba(29, 71, 57, 0.08); /* Careful subtle background */
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+</style>
