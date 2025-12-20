@@ -4039,20 +4039,60 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 </style>
 <style>
-  /* Product page: ensure the mobile menu drawer fully overlays this page */
-  .menu-drawer{ height: 100dvh !important; width: 100vw !important; max-width: 100vw !important; left: 0 !important; }
-  .menu-drawer__backdrop{
+  /* Product page mobile menu fix: Ensure the menu drawer and its backdrop are at the absolute top */
+  .menu-drawer { 
+    height: 100dvh !important; 
+    width: 100vw !important; 
+    max-width: 100vw !important; 
+    left: 0 !important; 
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    z-index: 2147483647 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  /* Elevate the entire header stacking context when menu is open */
+  .header-section:has(.menu-open),
+  .header-section:has(details[open]),
+  #header-group:has(.menu-open),
+  #header-group:has(details[open]) {
+    z-index: 2147483647 !important;
+    position: relative; /* ensure it stays on top */
+  }
+
+  .menu-drawer__backdrop {
     position: fixed !important;
     inset: 0 !important;
     width: 100vw !important;
     height: 100dvh !important;
-    background: var(--color-background) !important;
-    z-index: 2147483646 !important; /* directly under the drawer */
-    opacity: 0 !important; /* hidden by default */
+    background: #ffffff !important; /* Force solid white backdrop */
+    z-index: 2147483646 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.2s ease !important;
+  }
+  
+  /* Targeted class names for menu open states */
+  .menu-open .menu-drawer__backdrop,
+  details[open] > .menu-drawer__backdrop,
+  .menu-drawer-container[open] .menu-drawer__backdrop { 
+    opacity: 1 !important; 
+    pointer-events: auto !important; 
+  }
+  
+  /* Aggressively hide breadcrumbs and sticky buy buttons when menu is active */
+  body:has(.menu-open) .page-header,
+  body:has(details[open]) .page-header,
+  body:has(.menu-open) .sticky-buy,
+  body:has(details[open]) .sticky-buy,
+  body:has(.menu-open) .breadcrumbs,
+  body:has(details[open]) .breadcrumbs {
+    z-index: -1 !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
     pointer-events: none !important;
   }
-  .menu-open .menu-drawer__backdrop{ opacity: 1 !important; pointer-events: auto !important; }
-  .menu-open > .menu-drawer{ z-index: 2147483647 !important; }
 </style>
 <style>
   /* Product page: numeric rating next to stars */
