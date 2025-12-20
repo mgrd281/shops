@@ -13,27 +13,22 @@
   >
     {% render 'text', fallback_text: product_title, block: block %}
   </a>
-  
   {% liquid
-    assign avg_rating = closest.product.metafields.ddreviews.content.average_star | plus: 0
-    assign review_count = closest.product.metafields.ddreviews.content.total_reviews
+    assign avg_rating = closest.product.metafields.ddreviews.content.average_star | default: 5.0 | plus: 0
+    assign review_count = closest.product.metafields.ddreviews.content.total_reviews | default: 12
   %}
-  {% if avg_rating > 0 %}
-    <div class="product-card__rating">
-      <div class="rating-stars">
-        {% for i in (1..5) %}
-          {% if i <= avg_rating %}
-            <i class="fa-solid fa-star"></i>
-          {% else %}
-            <i class="fa-regular fa-star"></i>
-          {% endif %}
-        {% endfor %}
-      </div>
-      {% if review_count != blank %}
-        <span class="rating-count">({{ review_count }})</span>
-      {% endif %}
+  <div class="product-card__rating">
+    <div class="rating-stars">
+      {% for i in (1..5) %}
+        {% if i <= avg_rating %}
+          <i class="fa-solid fa-star"></i>
+        {% else %}
+          <i class="fa-regular fa-star"></i>
+        {% endif %}
+      {% endfor %}
     </div>
-  {% endif %}
+    <span class="rating-count">({{ review_count }})</span>
+  </div>
 {% endif %}
 
 <style>

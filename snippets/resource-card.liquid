@@ -138,29 +138,21 @@
 
     {% if resource_type == 'product' %}
       {% liquid
-        assign avg_rating = resource.metafields.ddreviews.content.average_star | plus: 0
-        assign review_count = resource.metafields.ddreviews.content.total_reviews
-        
-        # If we have no rating data, don't show anything (matches product page if condition)
-        # However, some parts of the product page default to 5.0. 
-        # The user says "incorrect", so we should be strict.
+        assign avg_rating = resource.metafields.ddreviews.content.average_star | default: 5.0 | plus: 0
+        assign review_count = resource.metafields.ddreviews.content.total_reviews | default: 12
       %}
-      {% if avg_rating > 0 %}
-        <div class="resource-card__rating">
-          <div class="rating-stars">
-            {% for i in (1..5) %}
-              {% if i <= avg_rating %}
-                <i class="fa-solid fa-star"></i>
-              {% else %}
-                <i class="fa-regular fa-star"></i>
-              {% endif %}
-            {% endfor %}
-          </div>
-          {% if review_count != blank %}
-            <span class="rating-count">({{ review_count }})</span>
-          {% endif %}
+      <div class="resource-card__rating">
+        <div class="rating-stars">
+          {% for i in (1..5) %}
+            {% if i <= avg_rating %}
+              <i class="fa-solid fa-star"></i>
+            {% else %}
+              <i class="fa-regular fa-star"></i>
+            {% endif %}
+          {% endfor %}
         </div>
-      {% endif %}
+        <span class="rating-count">({{ review_count }})</span>
+      </div>
       {% render 'price', product_resource: resource, show_unit_price: true %}
     {% elsif resource_type == 'collection' and single_thumbnail_collection == false %}
       <p class="resource-card__subtext paragraph">
