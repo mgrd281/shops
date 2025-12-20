@@ -684,6 +684,22 @@
             transform: translateY(0);
             box-shadow: var(--shadow-sm);
         }
+        /* Secondary Action: Buy Now (Outline Style) */
+        .buy-btn.buy-now {
+            background-color: #fff; /* White background */
+            color: var(--primary); /* Brand color text */
+            border: 2px solid var(--primary); /* Brand color border */
+            margin-bottom: 0px; /* Remove extra bottom margin if any */
+        }
+        .buy-btn.buy-now:hover {
+            background-color: var(--bg-light); /* Slight grey on hover */
+            color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+        /* Ensure primary button has margin since buy-now follows it */
+        .buy-btn.pulse {
+           margin-bottom: 12px;
+        }
         /* Zahlungsmethoden */
         .payment-methods {
             text-align: center;
