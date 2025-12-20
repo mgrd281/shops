@@ -1,9 +1,12 @@
 <!doctype html>
 <html
-  class="no-js{% if request.design_mode %} shopify-design-mode{% endif %}"
+  {% if request.design_mode %}
+    class="shopify-design-mode"
+  {% endif %}
   lang="{{ request.locale.iso_code }}"
 >
   <head>
+    <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="e83f2376-0309-485b-96d5-6f1db86db8ee" data-blockingmode="auto" type="text/javascript"></script>
     {%- if settings.favicon != blank -%}
       <link
         rel="icon"
@@ -13,27 +16,19 @@
     {%- endif -%}
 
     {% comment %} This a way to wait for main content to load when navigating to a new page so that the view transitions can work consistently {% endcomment %}
-    <link
-      rel="expect"
-      href="#MainContent"
-      blocking="render"
-      id="view-transition-render-blocker"
-    >
+    {% if settings.transition_to_main_product or settings.page_transition_enabled %}
+      <link
+        rel="expect"
+        href="#MainContent"
+        blocking="render"
+        id="view-transition-render-blocker"
+      >
+    {% endif %}
 
-    {%- if template.name == 'index' -%}
-      <link rel="preload" as="image" href="https://cdn.shopify.com/s/files/1/0917/5328/3851/files/mgrdegh.png?v=1761674227&width=1600&format=webp" fetchpriority="high">
-    {%- endif -%}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     {%- render 'meta-tags' -%}
-    
     {%- render 'stylesheets' -%}
     {%- render 'fonts' -%}
     {%- render 'scripts' -%}
-
-    
-
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-schemes' -%}
 
@@ -42,20 +37,68 @@
     {% endif %}
 
     {{ content_for_header }}
+  </head>
 
-    <script src="https://invoice-production-8cd6.up.railway.app/review-widget.js" async></script>
 
+      <script src="https://invoice-production-8cd6.up.railway.app/review-widget.js" async></script>
+
+      
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
     <div id="header-group">
       {% sections 'header-group' %}
     </div>
 
-    <script
-      src="{{ 'critical.js' | asset_url }}"
-      type="module"
-      async
-    ></script>
+    <script>
+      // Inline header height calculation to prevent layout shift
+      // Note: Updates in calculateHeaderGroupHeight() and updateTransparentHeaderOffset()utilities.js should be kept in sync with this function
+      (function setHeaderHeighCustomProperties() {
+        /*
+         * Header calculation functions for maintaining CSS variables
+         * Mimic calculateHeaderGroupHeight() in utilities.js
+         */
+        const header = document.querySelector('header-component');
+        const headerGroup = document.querySelector('#header-group');
+        const hasHeaderSection = headerGroup?.querySelector('.header-section');
+
+        if (!header || !headerGroup) return;
+
+        const headerHeight = header.offsetHeight;
+
+        // Calculate the total height of the header group
+        let headerGroupHeight = 0;
+        const children = headerGroup.children;
+        for (let i = 0; i < children.length; i++) {
+          const element = children[i];
+          if (element === header || !(element instanceof HTMLElement)) continue;
+          headerGroupHeight += element.offsetHeight;
+        }
+
+        // Check for transparent header special case
+        if (header.hasAttribute('transparent') && header.parentElement?.nextElementSibling) {
+          headerGroupHeight += headerHeight;
+        }
+
+        // Set CSS variables
+        document.body.style.setProperty('--header-height', `${headerHeight}px`);
+        document.body.style.setProperty('--header-group-height', `${headerGroupHeight}px`);
+
+        /**
+         * Updates CSS custom properties for transparent header offset calculation
+         * Mimic updateTransparentHeaderOffset() in utilities.js
+         */
+
+        if (!hasHeaderSection || !header?.hasAttribute('transparent')) {
+          document.body.style.setProperty('--transparent-header-offset-boolean', '0');
+          return;
+        }
+
+        const hasImmediateSection = hasHeaderSection.nextElementSibling?.classList.contains('shopify-section');
+
+        const shouldApplyOffset = !hasImmediateSection ? '1' : '0';
+        document.body.style.setProperty('--transparent-header-offset-boolean', shouldApplyOffset);
+      })();
+    </script>
 
     <main
       id="MainContent"
@@ -75,8 +118,6 @@
     {% if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add-modal' %}
     {% endif %}
-
-    <!-- Exit Intent Popup Script -->
-    <script src="https://invoice-production-8cd6.up.railway.app/exit-intent.js" defer></script>
+  </body>
+      <script src="https://invoice-production-8cd6.up.railway.app/exit-intent.js" defer></script>
 </html>
-
