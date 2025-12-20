@@ -236,21 +236,27 @@
         .thumb-item {
             width: var(--thumb-size);
             height: var(--thumb-size);
-            border: 2px solid var(--medium-gray);
+            border: 1px solid transparent; /* Hidden by default */
             border-radius: var(--radius-sm);
             overflow: hidden;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.2s ease;
             position: relative;
+            opacity: 0.8; /* Slightly dimmed when inactive */
         }
-        .thumb-item:hover, 
+        .thumb-item:hover {
+            opacity: 1;
+        }
         .thumb-item.active {
-            border-color: var(--primary);
+            border-color: #333; /* Dark clean border for active */
+            opacity: 1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Subtle premium shadow */
         }
         .thumb-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            /* mix-blend-mode: multiply; Optional: if backgrounds are not perfectly white */
         }
         /* Badges auf Thumbnails */
         .thumb-badge {
