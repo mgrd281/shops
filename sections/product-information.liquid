@@ -4358,3 +4358,150 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 </script>
 <!-- ZOOM FUNCTIONALITY END -->
+
+<!-- FULLSCREEN LIGHTBOX START -->
+<div id="fullscreen-lightbox" style="display:none;">
+  <button id="lightbox-close" aria-label="Close"></button>
+  <div class="lightbox-content">
+    <img id="lightbox-image" src="" alt="Zoom Preview">
+  </div>
+</div>
+<style>
+  #fullscreen-lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #ffffff;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  #fullscreen-lightbox.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  #fullscreen-lightbox .lightbox-content {
+    width: 90vw;
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* For zoom clipping */
+    position: relative;
+    cursor: zoom-in;
+  }
+  #lightbox-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.1s ease-out; /* Smooth follow */
+    transform-origin: center center;
+  }
+  #lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 100000;
+  }
+  #lightbox-close::before, #lightbox-close::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 2px;
+    background: #000;
+  }
+  #lightbox-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+  #lightbox-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const lightbox = document.getElementById('fullscreen-lightbox');
+    const lightboxImg = document.getElementById('lightbox-image');
+    const closeBtn = document.getElementById('lightbox-close');
+    const lightboxContent = lightbox.querySelector('.lightbox-content');
+    
+    // Open Lightbox
+    const mainContainer = document.querySelector('.main-image-container');
+    if(mainContainer) {
+      mainContainer.addEventListener('click', function(e) {
+        // Only open if we are not already interacting with something else
+        if(e.target.tagName === 'IMG' || e.target.classList.contains('main-image-container')) {
+           const currentSrc = document.getElementById('zoom-image').src;
+           // Use a higher res image if available, otherwise current
+           lightboxImg.src = currentSrc.replace('900x', '2000x'); // Try to guess Shopify URL structure for higher res
+           lightbox.style.display = 'flex';
+           // Small timeout to allow display:flex to apply before adding opacity class
+           setTimeout(() => lightbox.classList.add('active'), 10);
+           document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+      });
+    }
+
+    // Close Lightbox
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+      setTimeout(() => {
+        lightbox.style.display = 'none';
+        lightboxImg.style.transform = 'scale(1)'; // Reset zoom
+      }, 300);
+      document.body.style.overflow = '';
+    }
+
+    closeBtn.addEventListener('click', closeLightbox);
+    
+    // Close on background click (optional, if user clicks outside image area)
+    lightbox.addEventListener('click', function(e) {
+      if(e.target === lightbox) closeLightbox();
+    });
+
+    // Zoom Logic inside Lightbox
+    // Click to toggle zoom mode
+    let isZoomed = false;
+
+    lightboxContent.addEventListener('click', function(e) {
+      // Don't close if clicking content
+      e.stopPropagation(); 
+      
+      if(!isZoomed) {
+        isZoomed = true;
+        lightboxContent.style.cursor = 'zoom-out';
+        // Initial zoom to mouse position
+        moveZoom(e);
+      } else {
+        isZoomed = false;
+        lightboxContent.style.cursor = 'zoom-in';
+        lightboxImg.style.transform = 'scale(1)';
+        lightboxImg.style.transformOrigin = 'center center';
+      }
+    });
+
+    function moveZoom(e) {
+      if(!isZoomed) return;
+      const rect = lightboxContent.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const xPercent = (x / rect.width) * 100;
+      const yPercent = (y / rect.height) * 100;
+
+      lightboxImg.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+      lightboxImg.style.transform = 'scale(2.5)';
+    }
+
+    lightboxContent.addEventListener('mousemove', moveZoom);
+  });
+</script>
+<!-- FULLSCREEN LIGHTBOX END -->
