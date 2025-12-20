@@ -1,6 +1,6 @@
 
 <!-- SEO Meta Tags -->
-    <meta name="description" content="{{ product.description | strip_html | truncate: 160 }}">
+
     <meta name="keywords" content="{{ product.title }}, kaufen, Shop, Premium">
     <!-- Schema.org Structured Data for SEO -->
     <script type="application/ld+json">
@@ -86,10 +86,8 @@
     </script>
     
     <!-- Preload wichtiger Ressourcen -->
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
     <link rel="preload" href="{{ 'theme.css' | asset_url }}" as="style">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome unified in theme.liquid -->
     <style>
         /* Design-Tokens */
         :root {
@@ -143,6 +141,19 @@
             background-color: var(--white);
             -webkit-font-smoothing: antialiased;
         }
+        }
+        /* Force solid gold stars for rating widget */
+        .rechnung-profi-stars i,
+        .rating-stars i,
+        .fa-star {
+            color: #FFD700 !important;
+            font-weight: 900 !important; /* Force Solid (FA) */
+            font-family: "Font Awesome 6 Free" !important;
+            -webkit-text-stroke: 0 !important; /* Remove outline if any */
+        }
+        .rechnung-profi-stars { display: inline-flex; gap: 2px; }
+        .product-rating .rating-value { font-weight: 700; color: #333; margin-right: 6px; }
+        
         img {
             max-width: 100%;
             height: auto;
@@ -236,21 +247,27 @@
         .thumb-item {
             width: var(--thumb-size);
             height: var(--thumb-size);
-            border: 2px solid var(--medium-gray);
+            border: 1px solid transparent; /* Hidden by default */
             border-radius: var(--radius-sm);
             overflow: hidden;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.2s ease;
             position: relative;
+            opacity: 0.8; /* Slightly dimmed when inactive */
         }
-        .thumb-item:hover, 
+        .thumb-item:hover {
+            opacity: 1;
+        }
         .thumb-item.active {
-            border-color: var(--primary);
+            border-color: #333; /* Dark clean border for active */
+            opacity: 1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Subtle premium shadow */
         }
         .thumb-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            /* mix-blend-mode: multiply; Optional: if backgrounds are not perfectly white */
         }
         /* Badges auf Thumbnails */
         .thumb-badge {
@@ -321,126 +338,7 @@
         }
         
         
-        /* Enhanced Image Zoom Lightbox */
-        .zoom-lightbox {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 10000;
-            cursor: zoom-out;
-            animation: fadeIn 0.3s ease;
-        }
-        .zoom-lightbox.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .zoom-lightbox-image {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: grab;
-        }
-        .zoom-lightbox-image:active {
-            cursor: grabbing;
-        }
-        .zoom-lightbox-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        .zoom-lightbox-close:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: rotate(90deg);
-        }
-        .zoom-lightbox-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        .zoom-lightbox-nav:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        .zoom-lightbox-nav.prev {
-            left: 20px;
-        }
-        .zoom-lightbox-nav.next {
-            right: 20px;
-        }
-        .zoom-lightbox-counter {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px 20px;
-            border-radius: 25px;
-            color: white;
-            font-size: 14px;
-            backdrop-filter: blur(10px);
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        /* Mobile Touch Zoom */
-        @media (max-width: 768px) {
-            .zoom-lightbox-image {
-                max-width: 100%;
-                max-height: 100%;
-                touch-action: pinch-zoom pan-x pan-y;
-            }
-            .zoom-lightbox-close {
-                top: 10px;
-                right: 10px;
-                width: 40px;
-                height: 40px;
-                font-size: 20px;
-            }
-            .zoom-lightbox-nav {
-                width: 40px;
-                height: 40px;
-                font-size: 18px;
-            }
-            .zoom-lightbox-nav.prev {
-                left: 10px;
-            }
-            .zoom-lightbox-nav.next {
-                right: 10px;
-            }
-        }
+
         /* Bildzähler */
         .image-counter {
             position: absolute;
@@ -543,9 +441,8 @@
             box-shadow: var(--shadow-sm);
         }
         .blob--black-friday {
-            background: #222;
-            color: #FFD400;
-            border-left: 6px solid #FFD400;
+            background: #1D4739;
+            color: #fff;
         }
         /* Product-page discount pill (percent) */
         .discount-pill {
@@ -585,45 +482,7 @@
           .discount-pill[data-len="4"],
           .discount-pill[data-len="5"]{ font-size: clamp(12px, 3.5vw, 16px); }
         }
-        /* Vollbild-Modus */
-        .fullscreen-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .fullscreen-modal.active {
-            display: flex;
-        }
-        .fullscreen-content {
-            max-width: 90%;
-            max-height: 90%;
-            position: relative;
-        }
-        .fullscreen-content img,
-        .fullscreen-content video {
-            max-width: 100%;
-            max-height: 90vh;
-            object-fit: contain;
-        }
-        .close-fullscreen {
-            position: absolute;
-            top: var(--space-lg);
-            right: var(--space-lg);
-            color: var(--white);
-            font-size: 2rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .close-fullscreen:hover {
-            color: var(--primary);
-        }
+
         /* Produktinfo */
         .product-info {
             flex: 1;
@@ -797,6 +656,33 @@
         .buy-btn:active {
             transform: translateY(0);
             box-shadow: var(--shadow-sm);
+        }
+        .buy-btn i {
+            width: 20px;
+            text-align: center;
+            display: inline-block;
+        }
+        .buy-btn .btn-text {
+            min-width: 145px; /* Fixed width to align icons */
+            text-align: left;
+            display: inline-block;
+        }
+        /* Secondary Action: Buy Now (Outline Style) */
+        .buy-btn.buy-now {
+            background-color: #fff; 
+            color: #000; /* Pure black text */
+            border: 1.5px solid #000; /* Solid black border */
+            margin-bottom: 0px; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .buy-btn.buy-now:hover {
+            background-color: #f9f9f9; 
+            color: #000;
+            border-color: #999;
+        }
+        /* Ensure primary button has margin since buy-now follows it */
+        .buy-btn.pulse {
+           margin-bottom: 12px;
         }
         /* Zahlungsmethoden */
         .payment-methods {
@@ -1258,7 +1144,7 @@
   <!-- DIGITALER VERSAND -->
   <div class="shipping-info border-digital">
     <span class="icon-container" role="img" aria-label="Download">
-      <i class="fas fa-download" aria-hidden="true"></i>
+      <i class="fa-solid fa-download" aria-hidden="true"></i>
     </span>
     <span class="text">
       <strong class="ship-claim">Blitzversand per E-Mail</strong>
@@ -1322,7 +1208,7 @@
   {% assign delivery_iso = found_ts | date: '%Y-%m-%d' %}
   <div class="shipping-info border-physisch">
     <span class="icon-container" role="img" aria-label="Lieferung">
-      <i class="fas fa-truck" aria-hidden="true"></i>
+      <i class="fa-solid fa-truck" aria-hidden="true"></i>
     </span>
     <span class="text">
       <strong class="return-claim">Kostenlose Rückgabe innerhalb von 100 Tagen</strong>
@@ -1449,7 +1335,7 @@ nav[aria-label="Breadcrumb"],
                 <!-- Thumbnail-Spalte (vertikal) -->
                 <div class="thumbs-rail {% if images_count > 5 %}is-scroll{% else %}is-static{% endif %}">
                 {% if images_count > 5 %}
-                <button type="button" class="thumbs-scroll-btn thumbs-scroll-btn--up" aria-label="Scroll up"><i class="fas fa-chevron-up"></i></button>
+                <button type="button" class="thumbs-scroll-btn thumbs-scroll-btn--up" aria-label="Scroll up"><i class="fa-solid fa-chevron-up"></i></button>
                 {% endif %}
                 <div class="gallery-thumbs{% if images_count > 5 %} gallery-thumbs--scroll{% endif %}">
      {% assign media_index = 0 %}
@@ -1479,7 +1365,7 @@ nav[aria-label="Breadcrumb"],
              <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center' }}"
                   alt="{{ media.alt | default: product.title }} - Video"
                   loading="lazy">
-             <span class="thumb-badge" aria-label="Video"><i class="fas fa-play"></i></span>
+             <span class="thumb-badge" aria-label="Video"><i class="fa-solid fa-play"></i></span>
            </div>
            {% assign media_index = media_index | plus: 1 %}
          {% when 'external_video' %}
@@ -1501,7 +1387,7 @@ nav[aria-label="Breadcrumb"],
              <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center' }}"
                   alt="{{ media.alt | default: product.title }} - Video"
                   loading="lazy">
-             <span class="thumb-badge" aria-label="Video"><i class="fas fa-play"></i></span>
+             <span class="thumb-badge" aria-label="Video"><i class="fa-solid fa-play"></i></span>
            </div>
            {% assign media_index = media_index | plus: 1 %}
          {% when 'model' %}
@@ -1520,27 +1406,28 @@ nav[aria-label="Breadcrumb"],
      {% endfor %}
                 </div>
                 {% if images_count > 5 %}
-                <button type="button" class="thumbs-scroll-btn thumbs-scroll-btn--down" aria-label="Scroll down"><i class="fas fa-chevron-down"></i></button>
+                <button type="button" class="thumbs-scroll-btn thumbs-scroll-btn--down" aria-label="Scroll down"><i class="fa-solid fa-chevron-down"></i></button>
                 {% endif %}
                 </div>
    <!-- Hauptbild-Bereich -->
                 <div class="gallery-main">
                     <div class="main-image-container">
                         <img class="main-image" 
-                             src="{{ product.featured_image | img_url: '900x' }}" 
+                             src="{{ product.featured_image | image_url: width: 900 }}" 
                              alt="{{ product.title | escape }} - {{ product.vendor | escape }} | Jetzt kaufen bei {{ shop.name | escape }}"
                              title="{{ product.title | escape }} - Produktbild"
                              loading="eager"
                              decoding="async"
                              fetchpriority="high"
                              width="900"
-                             height="900">
+                             height="900"
+                             id="zoom-image">
                         <video class="main-video" playsinline muted autoplay preload="auto"></video>
                         <iframe class="main-iframe" title="Produktvideo" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="border:0;"></iframe>
 
                         <!-- Video-Indikator (nur bei Videos sichtbar) -->
                         <div class="video-indicator" style="display: none;">
-                            <i class="fas fa-play"></i> Video
+                            <i class="fa-solid fa-play"></i> Video
                         </div>
                         {% assign selv = product.selected_or_first_available_variant %}
                         {% assign cap = selv.compare_at_price | default: 0 %}
@@ -1555,9 +1442,7 @@ nav[aria-label="Breadcrumb"],
                         {% assign badge_text = '' %}
                         {% if cap > cur and cap > 0 %}
                           {% assign disc_pct = cap | minus: cur | times: 100 | divided_by: cap %}
-                          {% if disc_pct > 30 %}
-                            {% assign badge_text = 'Sehr beliebt' %}
-                          {% elsif disc_pct >= 10 %}
+                          {% if disc_pct >= 10 %}
                             {% assign badge_text = 'MEGA DEAL' %}
                           {% endif %}
                         {% endif %}
@@ -1577,14 +1462,14 @@ nav[aria-label="Breadcrumb"],
                     </div>
                     <!-- Mobile-only dots indicator -->
                     <div class="carousel-dots" id="carousel-dots" aria-hidden="true"></div>
->
+
                         <!-- Navigationsbuttons -->
                     <div class="gallery-nav">
                         <button class="nav-btn prev-btn" disabled>
-                            <i class="fas fa-chevron-left"></i>
+                            <i class="fa-solid fa-chevron-left"></i>
                         </button>
                         <button class="nav-btn next-btn">
-                            <i class="fas fa-chevron-right"></i>
+                            <i class="fa-solid fa-chevron-right"></i>
                         </button>
                     </div>
                 </div>
@@ -1592,7 +1477,21 @@ nav[aria-label="Breadcrumb"],
      <!-- Produktinfo -->
             <div class="product-info">
 
-                                <h1 class="product-title">{{ product.title }}</h1> 
+                                <!-- Brand Logo above Title (Generic) -->
+                                {% assign vendor_handle = product.vendor | handleize %}
+                                {% capture brand_logo_filename %}brand-{{ vendor_handle }}.svg{% endcapture %}
+                                <!-- Check if we can display it (assumes file exists if you uploaded it) -->
+                                {% assign product_title_downcase = product.title | downcase %}
+                                {% if vendor_handle == 'microsoft' and product_title_downcase contains 'office' %}
+                                  <div class="brand-header-logo" style="margin-bottom: 6px;">
+                                    <img src="{{ brand_logo_filename | asset_url }}" 
+                                         alt="{{ product.vendor }}" 
+                                         style="width: 130px; height: auto; max-height: 50px; object-fit: contain; display: block;"
+                                         onerror="this.style.display='none'">
+                                  </div>
+                                {% endif %}
+
+                                <h1 class="product-title" style="margin-bottom: 8px;">{{ product.title }}</h1> 
 {% assign __avg = product.metafields.ddreviews.content.average_star | default: 5.0 %}
 {% assign __avg_fmt = __avg | times: 10 | round | divided_by: 10.0 %}
 <div class="product-rating">
@@ -1613,7 +1512,7 @@ nav[aria-label="Breadcrumb"],
 {% if title_l contains 'windows' or tags_l contains 'windows' or type_l contains 'windows' %}{% assign is_win = true %}{% endif %}
 {% if title_l contains 'mac' or title_l contains 'macos' or tags_l contains 'mac' or tags_l contains 'macos' or type_l contains 'mac' %}{% assign is_mac = true %}{% endif %}
 {% if digital %}
-  <p class="product-subtitle">
+  <p class="product-subtitle" style="margin-bottom: 0;">
     {% if is_win and is_mac == false %}Dauerlizenz für Windows – Kein Abo – Sofort per E-Mail
     {% elsif is_mac and is_win == false %}Dauerlizenz für macOS – Kein Abo – Sofort per E-Mail
     {% elsif is_win and is_mac %}Dauerlizenz für Windows & macOS – Kein Abo – Sofort per E-Mail
@@ -1808,7 +1707,8 @@ und zeigt die Shipping-Card nur, wenn die Bedingungen erfüllt sind.
 .verkaufs-box {
   display: flex;
   align-items: center;
-  margin: 12px 0;
+  margin-top: 20px;
+  margin-bottom: 10px;
   font-family: 'Inter', sans-serif;
   flex-wrap: wrap;
   gap: 10px;
@@ -1913,84 +1813,7 @@ document.addEventListener("DOMContentLoaded", function () {
   setInterval(updateTimeText, 60000); // jede Minute aktualisieren
 });
 </script>
-{% assign stock = product.selected_or_first_available_variant.inventory_quantity | default: 0 %}
-{% assign max_stock = 30 %}
-{% assign percentage = stock | times: 100 | divided_by: max_stock | at_most: 100 | round %}
-{% assign fill_color = '#4CAF50' %}
-{% assign icon = '✔️' %}
-{% assign message = 'Sofort lieferbar' %}
-{% if stock <= 20 and stock > 10 %}
-  {% assign fill_color = '#555' %}
-  {% assign icon = '📦' %}
-  {% assign message = 'Begrenzte Stückzahl' %}
-{% elsif stock <= 10 and stock > 5 %}
-  {% assign fill_color = '#FFA500' %}
-  {% assign icon = '⚠️' %}
-  {% assign message = 'Fast ausverkauft!' %}
-{% elsif stock <= 5 and stock > 0 %}
-  {% assign fill_color = '#E53935' %}
-  {% assign icon = '🔥' %}
-  {% assign message = 'Letzte Stücke!' %}
-{% elsif stock <= 0 %}
-  {% assign fill_color = '#222' %}
-  {% assign icon = '❌' %}
-  {% assign message = 'Nicht verfügbar' %}
-{% endif %}
-<style>
-  .stock-status-bar {
-    width: 100%; max-width: 560px; margin: 2rem 0 1.5rem 0;
-    font-family: 'Montserrat', Arial, sans-serif; font-size: 1.09rem;
-  }
-  .stock-status-row {
-    display: flex; align-items: center; gap: 0.6rem; margin-bottom: 9px;
-    font-weight: 500; color: #232323;
-  }
-  .stock-status-icon {
-    font-size: 1.45em; line-height: 1; 
-  }
-  .stock-status-message {
-    font-size: 1em; font-weight: 600;
-  }
-  .stock-status-bar-outer {
-    width: 100%; background: #ededed; border-radius: 8px; height: 13px;
-    position: relative; overflow: hidden; margin-top: 2px;
-  }
-  .stock-status-bar-fill {
-    width: 0; height: 100%; border-radius: 8px;
-    background: {{ fill_color }};
-    transition: width 1.2s cubic-bezier(.36,1,.6,1);
-    will-change: width;
-    position: absolute; left: 0; top: 0;
-  }
-  .stock-status-bar-percent {
-    position: absolute; right: 11px; top: 0; height: 100%;
-    display: flex; align-items: center; font-size: 0.96em; font-weight: 700;
-    color: #fff; text-shadow: 0 1px 6px #2225;
-    pointer-events: none;
-  }
-  @media (max-width: 650px){
-    .stock-status-bar { max-width: 97vw; font-size: 0.97rem;}
-    .stock-status-bar-outer{height:9px;}
-    .stock-status-bar-percent{font-size:0.89em;}
-  }
-</style>
-<div class="stock-status-bar">
-  <div class="stock-status-row">
-    <span class="stock-status-icon">{{ icon }}</span>
-    <span class="stock-status-message">{{ message }}</span>
-    <span style="margin-left:auto;">{{ stock }} Stück</span>
-  </div>
-  <div class="stock-status-bar-outer">
-    <div class="stock-status-bar-fill" id="stock-bar-fill"></div>
-    <span class="stock-status-bar-percent">{{ percentage }}%</span>
-  </div>
-</div>
-<script>
-  document.addEventListener("DOMContentLoaded", function(){
-    var el = document.getElementById('stock-bar-fill');
-    if (el) { el.style.width = "{{ percentage }}%"; }
-  });
-</script>
+
 {%- if product.title contains " " or product.title contains "LEGO" -%}
   <!-- Countdown Timer -->
   <div class="countdown-timer">
@@ -2033,10 +1856,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   </style>
 {%- endif -%}
-                                <div class="product-rating">
-                    <div class="rating-stars">
-                    </div>
-                </div>
+
 <!-- === Icons & Webfont === -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2058,13 +1878,15 @@ document.addEventListener("DOMContentLoaded", function () {
   .info-pair{display:inline-flex;align-items:baseline;gap:6px}
   .info-pair strong{font-weight:600;margin:0}
   .info-value{margin:0;padding:0}
-  .product-brand-link{color:#1a73e8;text-decoration:none;font-weight:500}
-  .product-brand-link:hover{text-decoration:underline}
+  /* Standard icons (EAN, Brand, Truck) -> Brand Green */
+  .product-info-line i { color: #1d4739; min-width: 20px; text-align: center; }
+  .product-brand-link{color:#1d4739;text-decoration:none;font-weight:600;}
+  .product-brand-link:hover{text-decoration:underline;color:#000;}
   .in-stock{color:#1d7a34;font-weight:600}
   .out-of-stock{color:#c00;font-weight:600}
-  .highlights-list{list-style:none;padding-left:0;margin:0;display:grid;grid-template-columns:1fr;gap:0;margin-bottom:18px;}
-  .highlights-list li{display:flex;align-items:center;gap:6px;font-size:13px;color:#222;margin:0;padding: calc(var(--row-gap)/2) 0;line-height:1.35;}
-  .highlights-list i{color:var(--brand);min-width:16px;font-size:15px;line-height:1;margin:0}
+  .highlights-list{list-style:none;padding-left:0;margin:0;display:grid;grid-template-columns:1fr;gap:0;margin-bottom:8px;}
+  .highlights-list li{display:flex;align-items:center;gap:8px;font-size:13px;color:#222;margin:0;padding: calc(var(--row-gap)/2) 0;line-height:1.35;}
+  .highlights-list i{min-width:18px;font-size:16px;line-height:1;margin:0;text-align:center;}
   .highlights-list li>*{margin:0}
   .highlights-list a.open-return-drawer{text-decoration:none;text-underline-offset:2px;color:#1a1a1a}
   .highlights-list a.open-return-drawer:hover{opacity:.85}
@@ -2154,7 +1976,7 @@ document.addEventListener("DOMContentLoaded", function () {
   <div class="product-info-line usk-info" style="align-items: center;">
     <span class="usk-badge usk-{{ usk_age }}">USK {{ usk_age }}</span>
     {%- if usk_age == '18' -%}
-      <span class="usk-warning"><i class="fas fa-exclamation-triangle"></i> Altersprüfung erforderlich</span>
+      <span class="usk-warning"><i class="fa-solid fa-exclamation-triangle"></i> Altersprüfung erforderlich</span>
     {%- endif -%}
   </div>
   <style>
@@ -2183,19 +2005,19 @@ document.addEventListener("DOMContentLoaded", function () {
 <!-- ===== Produktinfos (Barcode, Marke, Versanddatum, Lieferbar) ===== -->
 {% if product.selected_or_first_available_variant.barcode != blank %}
   <div class="product-info-line">
-    <i class="fas fa-barcode"></i>
+    <i class="fa-solid fa-barcode"></i>
     <span class="info-pair"><strong>EAN:</strong><span id="eanValue" class="info-value">{{ product.selected_or_first_available_variant.barcode }}</span></span>
   </div>
 {% endif %}
 {% if product.vendor != blank %}
   <div class="product-info-line">
-    <i class="fas fa-tag"></i>
+    <i class="fa-solid fa-tag"></i>
     <span class="info-pair"><strong>Marke:</strong><span class="info-value"><a class="product-brand-link" href="/collections/vendors?q={{ product.vendor | url_encode }}">{{ product.vendor }}</a></span></span>
   </div>
 {% endif %}
 {% if ship_dt != blank %}
   <div class="product-info-line">
-    <i class="fas fa-calendar-alt"></i>
+    <i class="fa-solid fa-calendar-alt"></i>
     <span class="info-pair"><strong>Versanddatum / Angebotsende:</strong><span id="shippingDateValue" class="info-value">{{ ship_dt | date: "%-d. %B %Y" }}</span></span>
   </div>
 {% endif %}
@@ -2223,24 +2045,22 @@ document.addEventListener("DOMContentLoaded", function () {
 <!-- ===== H I G H L I G H T S ===== -->
 <ul class="highlights-list">
   {%- if is_digital -%}
-    <li><i class="fas fa-check-circle"></i> Einmalige Zahlung – keine Folgekosten</li>
-    <li><i class="fas fa-envelope"></i> Lizenzschlüssel sofort per E-Mail</li>
-    <li><i class="fas fa-file-alt"></i> Inklusive Download-Anleitung</li>
-    <li><i class="fas fa-shield-alt"></i> DSGVO-konform & rechtlich geprüft</li>
-    <li><i class="fas fa-credit-card"></i> Sicher bezahlen (Klarna, Kreditkarte, Überweisung u. m.)</li>
-    <li><i class="fas fa-headset"></i> Deutscher Support & kompetente Beratung
-</li>
+    <li><i class="fa-solid fa-check-circle" style="color:#1D4739;"></i> Einmalige Zahlung – keine Folgekosten</li>
+    <li><i class="fa-solid fa-envelope" style="color:#1D4739;"></i> Lizenzschlüssel sofort per E-Mail</li>
+    <li><i class="fa-solid fa-file-alt" style="color:#1D4739;"></i> Inklusive Download-Anleitung</li>
+    <li><i class="fa-solid fa-shield-alt" style="color:#1D4739;"></i> DSGVO-konform & rechtlich geprüft</li>
+    <li><i class="fa-solid fa-credit-card" style="color:#1D4739;"></i> Sicher bezahlen (Klarna, Kreditkarte, Überweisung u. m.)</li>
+    <li><i class="fa-solid fa-headset" style="color:#1D4739;"></i> Deutscher Support & kompetente Beratung</li>
   {%- else -%}
-    <li><i class="fas fa-box"></i> Original Neuware im Karton</li>
-    <li><i class="fas fa-shipping-fast"></i> Schneller & kostenloser Versand aus DE</li>
-    <li><i class="fas fa-undo-alt"></i>
-      <a href="#" class="open-return-drawer" aria-haspopup="dialog" aria-controls="returnPolicyDrawer" aria-expanded="false">
+    <li><i class="fa-solid fa-box" style="color:#1D4739;"></i> Original Neuware im Karton</li>
+    <li><i class="fa-solid fa-shipping-fast" style="color:#1D4739;"></i> Schneller & kostenloser Versand aus DE</li>
+    <li><i class="fa-solid fa-undo-alt" style="color:#1D4739;"></i>
+      <a href="#" class="open-return-drawer" aria-haspopup="dialog" aria-controls="returnPolicyDrawer" aria-expanded="false" style="color:#222; text-decoration: underline;">
         100 Tage Widerrufsrecht & kostenfreie Retoure
       </a>
     </li>
-    <li><i class="fas fa-credit-card"></i> Sicher bezahlen (Rechnung, Kreditkarte u. m.)</li>
-    <li><i class="fas fa-headset"></i> Deutscher Support & kompetente Beratung
-</li>
+    <li><i class="fa-solid fa-credit-card" style="color:#1D4739;"></i> Sicher bezahlen (Rechnung, Kreditkarte u. m.)</li>
+    <li><i class="fa-solid fa-headset" style="color:#1D4739;"></i> Deutscher Support & kompetente Beratung</li>
   {%- endif -%}
 </ul>
 <!-- ===== V A R I A N T E N (nur wenn >= 2 Varianten existieren) ===== -->
@@ -2442,32 +2262,38 @@ document.addEventListener("DOMContentLoaded", function () {
       document.querySelectorAll('#add-to-cart-form input[name="id"], #buy-now-form input[name="id"]').forEach(el => el.value = String(variantId));
     }
     function renderMainPrice(variant){
-      var priceBox = document.querySelector('.price-box');
+      var priceBox = document.querySelector('.price-container');
       if(!priceBox || !variant) return;
       var curEl  = priceBox.querySelector('.current-price');
       var oldEl  = priceBox.querySelector('.old-price');
-      var saveEl = priceBox.querySelector('.savings-badge');
-      var saveAmtEl = priceBox.querySelector('.savings-badge .savings-amount');
-      var bubbleEl = priceBox.querySelector('.discount-bubble');
+      // New structure elements
+      var subRow = priceBox.querySelector('.price-sub-row');
+      var saveTextEl = priceBox.querySelector('.savings-text .amount'); // We will add a span for amount if needed, or regex replace? Simpler to just rebuild string
+      var saveFullTextEl = priceBox.querySelector('.savings-text');
+      var pillEl = priceBox.querySelector('.discount-pill-simple');
+
       var price = Number(variant.price);
       var cap   = Number(variant.compare_at_price || 0);
+
       if(curEl) curEl.textContent = moneyFormat(price);
+      
       if(cap && cap > price){
-        if(oldEl){ oldEl.textContent = moneyFormat(cap); oldEl.style.display = ''; }
+        // Show discount UI
+        if(subRow) subRow.style.display = 'flex';
+        if(oldEl) oldEl.textContent = moneyFormat(cap);
+        
         var save = cap - price;
-        if(saveAmtEl){ saveAmtEl.textContent = moneyFormat(save); }
-        if(saveEl){ saveEl.style.display = ''; }
-        if(bubbleEl){
+        if(saveFullTextEl) saveFullTextEl.textContent = 'Du sparst: ' + moneyFormat(save);
+        
+        if(pillEl){
           var pct = Math.round(((cap - price) / cap) * 100);
-          var txt = '-' + pct + '%';
-          bubbleEl.textContent = txt;
-          bubbleEl.setAttribute('data-len', String(txt.length));
-          bubbleEl.style.display = '';
+          pillEl.textContent = '-' + pct + '%';
+          pillEl.style.display = 'inline-block';
         }
-      }else{
-        if(oldEl)  oldEl.style.display  = 'none';
-        if(saveEl) saveEl.style.display = 'none';
-        if(bubbleEl) bubbleEl.style.display = 'none';
+      } else {
+        // Hide discount UI
+        if(subRow) subRow.style.display = 'none';
+        if(pillEl) pillEl.style.display = 'none';
       }
     }
     document.addEventListener('variant:change', function(e){
@@ -2510,45 +2336,48 @@ document.addEventListener("DOMContentLoaded", function () {
     {% endif %}
     {% assign pct_string = pct | prepend: '-' | append: '%' %}
 
-    <div class="price-left">
-      <span class="current-price">{{ cur | money }}</span>
+    <div class="price-container">
+      <div class="price-main-row">
+        <span class="current-price">{{ cur | money }}</span>
+        {% if cap and cap > cur %}
+          <span class="discount-pill-simple">-{{ pct }}%</span>
+        {% endif %}
+      </div>
+      
       {% if cap and cap > cur %}
-        <span class="discount-bubble" data-len="{{ pct_string | size }}" aria-hidden="true">{{ pct_string }}</span>
-      {% endif %}
-    </div>
-
-    {% if cap and cap > cur %}
-      <span class="savings-badge">
-        <span class="label">Sie sparen:</span>
-        <strong class="savings-amount">{{ cap | minus: cur | money }}</strong>
-        <span class="bang"></span>
-      </span>
-    {% endif %}
-
-    <div class="price-right">
-      {% if cap and cap > cur %}
-        <span class="old-price">{{ cap | money }}</span>
+        <div class="price-sub-row">
+          <span class="old-price">{{ cap | money }}</span>
+          <span class="price-sep">•</span>
+          <span class="savings-text">Du sparst: <strong>{{ cap | minus: cur | money }}</strong></span>
+        </div>
       {% endif %}
     </div>
   </div>
   {% if is_digital %}
-    <div class="price-meta">inkl. MwSt.</div>
+    <div class="price-meta" style="margin-top:2px;">inkl. MwSt.</div>
   {% else %}
-    <div class="price-meta">inkl. MwSt. zzgl. Versandkosten</div>
+    <div class="price-meta" style="margin-top:2px;">inkl. MwSt. zzgl. Versandkosten</div>
   {% endif %}
 </div>
+<style>
+  .price-box {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+  }
+</style>
 <!-- In den Warenkorb Button -->
 <form method="post" action="/cart/add" id="add-to-cart-form">
   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-  <button type="submit" class="buy-btn pulse">
-    <i class="fas fa-shopping-cart"></i> In den Warenkorb
+   <button type="submit" class="buy-btn pulse">
+    <i class="fa-solid fa-shopping-cart"></i> <span class="btn-text">In den Warenkorb</span>
   </button>
 </form>
 <!-- Jetzt kaufen Button -->
 <form method="post" action="/cart/add" id="buy-now-form">
   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
   <button type="submit" class="buy-btn buy-now">
-    <i class="fas fa-rocket"></i> Jetzt kaufen
+    <i class="fa-solid fa-rocket"></i> <span class="btn-text">Jetzt kaufen</span>
   </button>
 </form>
 <script>
@@ -2631,7 +2460,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <strong id="fbt-total-price">{{ product.selected_or_first_available_variant.price | money }}</strong>
         </div>
         <button type="button" class="buy-btn fbt-add-btn" id="fbt-add-all">
-          <i class="fas fa-shopping-cart"></i> Alle in den Warenkorb
+          <i class="fa-solid fa-shopping-cart"></i> Alle in den Warenkorb
         </button>
       </div>
     </div>
@@ -2799,7 +2628,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (items.length === 0) return;
           
           addAllBtn.disabled = true;
-          addAllBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Wird hinzugefügt...';
+          addAllBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Wird hinzugefügt...';
           
           fetch('/cart/add.js', {
             method: 'POST',
@@ -2808,14 +2637,14 @@ document.addEventListener("DOMContentLoaded", function () {
           })
           .then(response => response.json())
           .then(data => {
-            addAllBtn.innerHTML = '<i class="fas fa-check"></i> Hinzugefügt!';
+            addAllBtn.innerHTML = '<i class="fa-solid fa-check"></i> Hinzugefügt!';
             setTimeout(() => {
               window.location.href = '/cart';
             }, 500);
           })
           .catch(error => {
             addAllBtn.disabled = false;
-            addAllBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Alle in den Warenkorb';
+            addAllBtn.innerHTML = '<i class="fa-solid fa-shopping-cart"></i> Alle in den Warenkorb';
             alert('Fehler beim Hinzufügen. Bitte versuchen Sie es erneut.');
           });
         });
@@ -2865,10 +2694,10 @@ document.addEventListener("DOMContentLoaded", function () {
           <textarea id="frage-text" name="contact[body]" placeholder="Ihre Frage" rows="5" required></textarea>
         </div>
         <p class="ds-hinweis">
-          <a href="/pages/datenschutz">Bitte beachten Sie unsere Datenschutzerklärung</a>
+          <a href="/policies/privacy-policy">Bitte beachten Sie unsere Datenschutzerklärung</a>
         </p>
         <button type="submit" class="frage-submit">
-          <i class="fas fa-paper-plane"></i> Frage abschicken
+          <i class="fa-solid fa-paper-plane"></i> Frage abschicken
         </button>
       </form>
     </div>
@@ -2891,6 +2720,7 @@ document.addEventListener("DOMContentLoaded", function () {
   background:none;border:none;cursor:pointer;
   display:inline-flex;align-items:center;gap:.55rem;
   color:#444;font:600 16px/1.2 Inter,system-ui,Arial,sans-serif;
+  margin-top: 12px;
 }
 .frage-btn .icon-q{display:block}
 .frage-btn:hover{color:#0a7cc7}
@@ -3031,15 +2861,15 @@ document.addEventListener("DOMContentLoaded", function () {
 </style>
                 <div class="trust-badges">
                     <a class="trust-badge" href="/pages/zahlungsarten" aria-label="Sicherer Einkauf">
-                        <i class="fas fa-lock" aria-hidden="true"></i>
+                        <i class="fa-solid fa-lock" aria-hidden="true"></i>
                         <span>Sicherer Einkauf</span>
                     </a>
                     <a class="trust-badge" href="/policies/refund-policy" aria-label="100 Tage Rückgabe">
-                        <i class="fas fa-undo-alt" aria-hidden="true"></i>
+                        <i class="fa-solid fa-undo-alt" aria-hidden="true"></i>
                         <span>100 Tage Rückgabe</span>
                     </a>
                     <a class="trust-badge" href="/pages/kontakt" aria-label="Deutscher Support">
-                        <i class="fas fa-headset" aria-hidden="true"></i>
+                        <i class="fa-solid fa-headset" aria-hidden="true"></i>
                         <span>Deutscher Support</span>
                     </a>
                 </div>
@@ -3051,19 +2881,19 @@ document.addEventListener("DOMContentLoaded", function () {
     <h3 style="margin-bottom: var(--space-md); color: var(--primary);">Hauptfunktionen</h3>
     <ul class="feature-list" style="list-style: none; padding-left: 0;">
         <li style="margin-bottom: 1rem; display: flex; align-items: center;">
-            <i class="fas fa-file-alt" style="margin-right: 0.75rem; color: var(--primary);"></i>
+            <i class="fa-solid fa-file-alt" style="margin-right: 0.75rem; color: var(--primary);"></i>
             Professionelle Textverarbeitung
         </li>
         <li style="margin-bottom: 1rem; display: flex; align-items: center;">
-            <i class="fas fa-table" style="margin-right: 0.75rem; color: var(--primary);"></i>
+            <i class="fa-solid fa-table" style="margin-right: 0.75rem; color: var(--primary);"></i>
             Leistungsstarke Tabellenkalkulation
         </li>
         <li style="margin-bottom: 1rem; display: flex; align-items: center;">
-            <i class="fas fa-chart-line" style="margin-right: 0.75rem; color: var(--primary);"></i>
+            <i class="fa-solid fa-chart-line" style="margin-right: 0.75rem; color: var(--primary);"></i>
             Beeindruckende Präsentationen
         </li>
         <li style="margin-bottom: 1rem; display: flex; align-items: center;">
-            <i class="fas fa-envelope-open-text" style="margin-right: 0.75rem; color: var(--primary);"></i>
+            <i class="fa-solid fa-envelope-open-text" style="margin-right: 0.75rem; color: var(--primary);"></i>
             Effizientes E-Mail-Management
         </li>
     </ul>
@@ -3185,23 +3015,23 @@ document.addEventListener("DOMContentLoaded", function () {
   <div class="benefits-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:var(--space-lg);margin-top:var(--space-xl);">
     {%- if is_digital -%}
       <div class="benefit-item" style="background:var(--light);padding:var(--space-lg);border-radius:var(--radius-md);text-align:center;">
-        <i class="fas fa-money-bill-wave" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
+        <i class="fa-solid fa-money-bill-wave" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
         <h3 style="margin-bottom:var(--space-xs);">Kein Abo</h3>
         <p style="color:var(--text-light);">Einmalige Zahlung, keine versteckten Kosten</p>
       </div>
       <div class="benefit-item" style="background:var(--light);padding:var(--space-lg);border-radius:var(--radius-md);text-align:center;">
-        <i class="fas fa-bolt" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
+        <i class="fa-solid fa-bolt" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
         <h3 style="margin-bottom:var(--space-xs);">Sofortiger Download</h3>
         <p style="color:var(--text-light);">Direkt nach Kauf verfügbar</p>
       </div>
     {%- else -%}
       <div class="benefit-item" style="background:var(--light);padding:var(--space-lg);border-radius:var(--radius-md);text-align:center;">
-        <i class="fas fa-truck" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
+        <i class="fa-solid fa-truck" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
         <h3 style="margin-bottom:var(--space-xs);">Kostenloser Versand</h3>
         <p style="color:var(--text-light);">Schneller Versand aus Deutschland</p>
       </div>
       <div class="benefit-item" style="background:var(--light);padding:var(--space-lg);border-radius:var(--radius-md);text-align:center;">
-        <i class="fas fa-undo-alt" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
+        <i class="fa-solid fa-undo-alt" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
         <h3 style="margin-bottom:var(--space-xs);">100 Tage Rückgabe</h3>
         <p style="color:var(--text-light);">Widerrufsrecht &amp; einfacher Rückversand</p>
       </div>
@@ -3403,37 +3233,37 @@ document.addEventListener("DOMContentLoaded", function () {
   {%- if is_digital -%}
   <div class="faq-item">
     <button class="faq-question">Ist dies eine Einmalzahlung oder ein Abonnement?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Einmalzahlung – Dauerlizenz, keine Folgekosten.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Wie erhalte ich den Download?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Download-Link & Lizenzschlüssel kommen automatisch per E-Mail – meist in Sekunden.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Wie schnell erfolgt die Lieferung?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Digital sofort nach Zahlungseingang (E-Mail-Zustellung).</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Welche Zahlungsmethoden gibt es?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Kreditkarte (Visa, Mastercard, American Express, UnionPay), Apple Pay, Google Pay, Klarna, Rechnung, Vorkasse/Banküberweisung u. a.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Sind wir ein zertifiziertes/seriöses Unternehmen?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Ja, wir sind ein in Deutschland registriertes Unternehmen und erfüllen alle gesetzlichen Anforderungen der EU. Zudem sind wir ein zertifizierter Microsoft‑Partner, was unsere Glaubwürdigkeit und die Qualität unserer Dienstleistungen zusätzlich bestätigt.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Wie schnell beantworten wir Kundenanfragen?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Wir legen großen Wert auf schnelle Reaktionszeiten – in der Regel beantworten wir Kundenanfragen innerhalb von weniger als einer Stunde und gewährleisten damit einen verlässlichen und prompten Service.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Welche Vorteile habe ich hier?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer">
       <ul style="list-style:none; padding-left:0; margin:0;">
         <li><span class="faq-check">✔</span>Sofortiger Download per E-Mail</li>
@@ -3446,32 +3276,32 @@ document.addEventListener("DOMContentLoaded", function () {
   {%- else -%}
   <div class="faq-item">
     <button class="faq-question">Wie erfolgt die Lieferung?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Versand aus DE mit DHL inkl. Sendungsverfolgung.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Wie lange ist die Lieferzeit?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>In der Regel 1–3 Werktage. Bestellungen bis 12&nbsp;Uhr meist noch am selben Tag.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Fallen Versandkosten an?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Innerhalb Deutschlands <strong>kostenloser Versand</strong> (Express ggf. gegen Aufpreis).</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Rückgabe & Widerruf?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p><strong>100 Tage Widerrufsrecht.</strong> Rücksendung unkompliziert – wir helfen beim Label.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Ist der Artikel original & neu?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Ja, originale Neuware im unbeschädigten Karton – ideal als Geschenk.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Erhalte ich eine Rechnung mit MwSt.?
-      <i class="fas fa-plus icon-toggle"></i></button>
+      <i class="fa-solid fa-plus icon-toggle"></i></button>
     <div class="faq-answer"><p>Ja, automatisch per E-Mail mit ausgewiesener Mehrwertsteuer.</p></div>
   </div>
   {%- endif -%}
@@ -3540,7 +3370,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
             <button id="write-review" class="buy-btn" style="margin-top: var(--space-lg);">
-                <i class="fas fa-pen"></i> Bewertung schreiben
+                <i class="fa-solid fa-pen"></i> Bewertung schreiben
             </button>
             <div id="review-form" class="review-form">
                 <h3 style="margin-bottom: var(--space-lg);">Ihre Bewertung</h3>
@@ -3548,11 +3378,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div style="margin-bottom: var(--space-md);">
                         <label style="display: block; margin-bottom: var(--space-xs);">Ihre Bewertung</label>
                         <div class="stars" style="color: #F9C100; font-size: 1.5rem;">
-                            <i class="far fa-star" data-rating="1"></i>
-                            <i class="far fa-star" data-rating="2"></i>
-                            <i class="far fa-star" data-rating="3"></i>
-                            <i class="far fa-star" data-rating="4"></i>
-                            <i class="far fa-star" data-rating="5"></i>
+                            <i class="fa-regular fa-star" data-rating="1"></i>
+                            <i class="fa-regular fa-star" data-rating="2"></i>
+                            <i class="fa-regular fa-star" data-rating="3"></i>
+                            <i class="fa-regular fa-star" data-rating="4"></i>
+                            <i class="fa-regular fa-star" data-rating="5"></i>
                         </div>
                         <input type="hidden" name="rating" id="review-rating" value="0">
                     </div>
@@ -3565,7 +3395,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <textarea style="width: 100%; padding: var(--space-sm); border: 1px solid var(--medium-gray); border-radius: var(--radius-sm); min-height: 100px;"></textarea>
                     </div>
                     <button type="submit" class="buy-btn">
-                        <i class="fas fa-paper-plane"></i> Bewertung absenden
+                        <i class="fa-solid fa-paper-plane"></i> Bewertung absenden
                     </button>
                 </form>
             </div>
@@ -3582,28 +3412,11 @@ document.addEventListener('DOMContentLoaded', function () {
                                                 <p style="margin-bottom: var(--space-lg); max-width: 600px; margin-left: auto; margin-right: auto;">Jetzt {{ product.title }} sicher kaufen und sofort loslegen! 100 Tage Geld-zurück-Garantie.</p>
 <div data-shop-id="{{shop.id}}" product-id="{{product.id }}" data-page="{{request.page_type}}" class="ddreview-star"></div>
                         <a href="/cart/add?id={{ product.variants.first.id }}" class="buy-btn" style="background-color: var(--white); color: var(--primary); max-width: 300px; margin: 0 auto;">
-                <i class="fas fa-rocket"></i> Jetzt kaufen
+                <i class="fa-solid fa-rocket"></i> Jetzt kaufen
             </a>
         </section>
     </main>
-    <!-- Sticky Kauf-Button -->
-    <div class="sticky-buy">
-        <div>
-                        <div style="font-size: 0.875rem; color: var(--text-light);">{{ product.title }}</div>
-<div data-shop-id="{{shop.id}}" product-id="{{product.id }}" data-page="{{request.page_type}}" class="ddreview-star"></div>
-            <div class="price">{{ product.price | money }}</div>
-        </div>
-        <a href="/cart/add?id={{ product.variants.first.id }}" class="buy-btn" style="max-width: 200px;">
-            <i class="fas fa-shopping-cart"></i> Kaufen
-        </a>
-    </div>
-    <!-- Vollbild-Modus -->
-    <div class="fullscreen-modal">
-        <span class="close-fullscreen"><i class="fas fa-times"></i></span>
-        <div class="fullscreen-content">
-            <img src="" alt="Vollbildansicht">
-        </div>
-    </div>
+
     <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -3619,9 +3432,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const prevBtn = document.querySelector('.prev-btn');
             const nextBtn = document.querySelector('.next-btn');
             const videoIndicator = document.querySelector('.video-indicator');
-            const fullscreenModal = document.querySelector('.fullscreen-modal');
-            const fullscreenContent = document.querySelector('.fullscreen-content img');
-            const closeFullscreen = document.querySelector('.close-fullscreen');
             const modelContainersRoot = document.getElementById('model-containers');
 
             // Benutzerdefinierte Galerie-Daten mit Fallback auf img.src
@@ -3639,7 +3449,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             let currentIndex = 0;
-            let isZoomed = false;
+
 
             // Dots (mobile only)
             const dotsWrap = document.getElementById('carousel-dots');
@@ -3792,9 +3602,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 renderDots();
                 updateUnderlineLine();
 
-                // Zoom zurücksetzen
-                isZoomed = false;
-                mainImage.classList.remove('zoom-active');
+
             }
 
             // Thumbnail-Klick
@@ -3808,32 +3616,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 mainImage.addEventListener('load', updateUnderlineLine, { passive: true });
             }
 
-            // Zoom-Toggle
-            mainImage.addEventListener('click', function() {
-                if (galleryItems[currentIndex].type === 'image') {
-                    isZoomed = !isZoomed;
-                    this.classList.toggle('zoom-active');
-                }
-            });
-
-            // Vollbild öffnen
-            function openFullscreen() {
-                const item = galleryItems[currentIndex];
-                if (item.type !== 'image') return;
-                fullscreenContent.src = item.zoom || item.src;
-                fullscreenContent.alt = item.alt;
-                fullscreenModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-
-            // Doppelklick für Vollbild
-            mainImageContainer.addEventListener('dblclick', openFullscreen);
-
-            // Vollbild schließen
-            closeFullscreen.addEventListener('click', function() {
-                fullscreenModal.classList.remove('active');
-                document.body.style.overflow = '';
-            });
+            // Vollbild / Zoom wird durch das unified ProductLightbox am Ende der Datei gehandhabt.
 
             // Navigation
             prevBtn.addEventListener('click', () => {
@@ -3845,19 +3628,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Tastatur-Navigation
             document.addEventListener('keydown', (e) => {
-                if (fullscreenModal.classList.contains('active')) {
-                    if (e.key === 'Escape') {
-                        fullscreenModal.classList.remove('active');
-                        document.body.style.overflow = '';
-                    }
-                    return;
-                }
+                const lb = document.getElementById('ProductLightbox');
+                if (lb && lb.getAttribute('aria-hidden') === 'false') return; // Lightbox handles its own keys
+
                 if (e.key === 'ArrowLeft') {
                     if (currentIndex > 0) updateMainImage(currentIndex - 1);
                 } else if (e.key === 'ArrowRight') {
                     if (currentIndex < galleryItems.length - 1) updateMainImage(currentIndex + 1);
-                } else if (e.key === 'Enter' || e.key === ' ') {
-                    openFullscreen();
                 }
             });
 
@@ -3865,8 +3642,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const writeReviewBtn = document.getElementById('write-review');
             const reviewForm = document.getElementById('review-form');
             if (writeReviewBtn && reviewForm) {
-                const openLabel = '<i class="fas fa-pen"></i> Bewertung schreiben';
-                const closeLabel = '<i class="fas fa-times"></i> Bewertung verbergen';
+                const openLabel = '<i class="fa-solid fa-pen"></i> Bewertung schreiben';
+                const closeLabel = '<i class="fa-solid fa-times"></i> Bewertung verbergen';
                 writeReviewBtn.addEventListener('click', function(e){
                     e.preventDefault();
                     const willOpen = !reviewForm.classList.contains('active');
@@ -3933,8 +3710,8 @@ document.addEventListener('DOMContentLoaded', function () {
             function getStars(){ return Array.from(document.querySelectorAll('.review-form .stars i')); }
             function paintStars(n){
                 getStars().forEach((el, i) => {
-                    if (i < n) { el.classList.add('fas'); el.classList.remove('far'); }
-                    else { el.classList.add('far'); el.classList.remove('fas'); }
+                    if (i < n) { el.classList.add('fa-solid'); el.classList.remove('fa-regular'); }
+                    else { el.classList.add('fa-regular'); el.classList.remove('fa-solid'); }
                 });
             }
             // Initial paint
@@ -4083,194 +3860,146 @@ document.addEventListener('DOMContentLoaded', function () {
   })();
 </script>
 
-<!-- Image Zoom Lightbox -->
-<div class="zoom-lightbox" id="zoomLightbox">
-    <button class="zoom-lightbox-close" id="zoomClose" aria-label="Schließen">
-        <i class="fas fa-times"></i>
-    </button>
-    <button class="zoom-lightbox-nav prev" id="zoomPrev" aria-label="Vorheriges Bild">
-        <i class="fas fa-chevron-left"></i>
-    </button>
-    <button class="zoom-lightbox-nav next" id="zoomNext" aria-label="Nächstes Bild">
-        <i class="fas fa-chevron-right"></i>
-    </button>
-    <img class="zoom-lightbox-image" id="zoomImage" alt="Vergrößertes Produktbild">
-    <div class="zoom-lightbox-counter" id="zoomCounter"></div>
+<div id="ProductLightbox" class="product-lightbox" aria-hidden="true" role="dialog">
+    <div class="product-lightbox__backdrop"></div>
+    <div class="product-lightbox__content">
+        <button class="product-lightbox__close" aria-label="Schließen">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <button class="product-lightbox__nav product-lightbox__nav--prev" aria-label="Vorheriges Bild">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <div class="product-lightbox__image-wrapper">
+            <img class="product-lightbox__image" src="" alt="Produktbild vergrößert">
+        </div>
+        <button class="product-lightbox__nav product-lightbox__nav--next" aria-label="Nächstes Bild">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <div class="product-lightbox__dots"></div>
+    </div>
 </div>
 
+<style>
+.product-lightbox { position: fixed; inset: 0; z-index: 10000; display: none; align-items: center; justify-content: center; }
+.product-lightbox[aria-hidden="false"] { display: flex; }
+.product-lightbox__backdrop { position: absolute; inset: 0; background: #ffffff; transition: opacity 0.3s ease; }
+.product-lightbox__content { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.product-lightbox__image-wrapper { max-width: 90vw; max-height: 90vh; display: flex; align-items: center; justify-content: center; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.product-lightbox__image { max-width: 100%; max-height: 100%; object-fit: contain; user-select: none; }
+.product-lightbox__close { position: absolute; top: 20px; right: 20px; background: #ffffff; border: none; color: #000; font-size: 18px; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.product-lightbox__close:hover { background: #f0f0f0; transform: scale(1.1); }
+.product-lightbox__nav { position: absolute; top: 50%; transform: translateY(-50%); background: #ffffff; border: none; color: #333; font-size: 16px; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 10; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+.product-lightbox__nav:hover { background: #fafafa; transform: translateY(-50%) scale(1.1); box-shadow: 0 4px 15px rgba(0,0,0,0.12); }
+.product-lightbox__nav[disabled] { opacity: 0; pointer-events: none; }
+.product-lightbox__nav--prev { left: 15px; }
+.product-lightbox__nav--next { right: 15px; }
+.product-lightbox__dots { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; align-items: center; z-index: 10; }
+.product-lightbox__dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; border: none; cursor: pointer; transition: all 0.2s; padding: 0; }
+.product-lightbox__dot--active { background: #000; transform: scale(1.2); }
+.product-lightbox__dot:hover:not(.product-lightbox__dot--active) { background: #bbb; }
+@media (max-width: 768px) {
+    .product-lightbox__nav { width: 36px; height: 36px; font-size: 14px; }
+    .product-lightbox__nav--prev { left: 10px; }
+    .product-lightbox__nav--next { right: 10px; }
+    .product-lightbox__close { top: 10px; right: 10px; width: 30px; height: 30px; font-size: 14px; }
+    .product-lightbox__dots { bottom: 20px; gap: 6px; }
+    .product-lightbox__dot { width: 6px; height: 6px; }
+}
+</style>
+
 <script>
-// Enhanced Image Zoom Functionality
 (function() {
-    const lightbox = document.getElementById('zoomLightbox');
-    const lightboxImage = document.getElementById('zoomImage');
-    const lightboxClose = document.getElementById('zoomClose');
-    const lightboxPrev = document.getElementById('zoomPrev');
-    const lightboxNext = document.getElementById('zoomNext');
-    const lightboxCounter = document.getElementById('zoomCounter');
-    const mainImage = document.querySelector('.main-image');
+    const lightbox = document.getElementById('ProductLightbox');
+    const lbImage = lightbox.querySelector('.product-lightbox__image');
+    const lbDots = lightbox.querySelector('.product-lightbox__dots');
+    const lbClose = lightbox.querySelector('.product-lightbox__close');
+    const lbPrev = lightbox.querySelector('.product-lightbox__nav--prev');
+    const lbNext = lightbox.querySelector('.product-lightbox__nav--next');
+    const mainImg = document.querySelector('.main-image');
     
-    if (!lightbox || !mainImage) return;
-    
-    let currentZoomIndex = 0;
-    let zoomImages = [];
-    
-    // Collect all product images
-    function collectImages() {
-        zoomImages = [];
+    let currentLbIndex = 0;
+    let lbItems = [];
+
+    function collectLbItems() {
+        lbItems = [];
         const thumbItems = document.querySelectorAll('.thumb-item[data-type="image"]');
-        thumbItems.forEach((thumb, index) => {
-            const zoomSrc = thumb.getAttribute('data-zoom') || thumb.getAttribute('data-src');
-            const alt = thumb.querySelector('img')?.alt || 'Produktbild';
-            if (zoomSrc) {
-                zoomImages.push({ src: zoomSrc, alt: alt, index: index });
-            }
+        thumbItems.forEach((thumb, idx) => {
+            lbItems.push({
+                src: thumb.getAttribute('data-zoom') || thumb.getAttribute('data-src'),
+                alt: thumb.querySelector('img')?.alt || 'Produktbild'
+            });
         });
     }
-    
-    // Open lightbox
-    function openLightbox(index = 0) {
-        collectImages();
-        if (zoomImages.length === 0) return;
+
+    function updateLightbox() {
+        if (!lbItems[currentLbIndex]) return;
+        const item = lbItems[currentLbIndex];
         
-        currentZoomIndex = index;
-        updateLightboxImage();
-        lightbox.classList.add('active');
+        lbImage.style.opacity = '0';
+        const img = new Image();
+        img.onload = () => {
+            lbImage.src = item.src;
+            lbImage.alt = item.alt;
+            lbImage.style.opacity = '1';
+        };
+        img.src = item.src;
+        
+        // Update Dots
+        if (lbDots) {
+            if (lbDots.children.length !== lbItems.length) {
+                lbDots.innerHTML = '';
+                lbItems.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.className = 'product-lightbox__dot';
+                    dot.setAttribute('aria-label', `Gehe zu Bild ${i+1}`);
+                    dot.addEventListener('click', () => { currentLbIndex = i; updateLightbox(); });
+                    lbDots.appendChild(dot);
+                });
+            }
+            Array.from(lbDots.children).forEach((dot, i) => {
+                dot.classList.toggle('product-lightbox__dot--active', i === currentLbIndex);
+            });
+        }
+        
+        lbPrev.disabled = currentLbIndex === 0;
+        lbNext.disabled = currentLbIndex === lbItems.length - 1;
+    }
+
+    function openLightbox(startIdx = 0) {
+        collectLbItems();
+        if (lbItems.length === 0) return;
+        currentLbIndex = startIdx;
+        updateLightbox();
+        lightbox.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
     }
-    
-    // Close lightbox
+
     function closeLightbox() {
-        lightbox.classList.remove('active');
+        lightbox.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
     }
-    
-    // Update lightbox image
-    function updateLightboxImage() {
-        if (zoomImages.length === 0) return;
-        
-        const current = zoomImages[currentZoomIndex];
-        lightboxImage.src = current.src;
-        lightboxImage.alt = current.alt;
-        lightboxCounter.textContent = `${currentZoomIndex + 1} / ${zoomImages.length}`;
-        
-        // Update navigation buttons
-        lightboxPrev.style.opacity = currentZoomIndex === 0 ? '0.3' : '1';
-        lightboxPrev.style.pointerEvents = currentZoomIndex === 0 ? 'none' : 'auto';
-        lightboxNext.style.opacity = currentZoomIndex === zoomImages.length - 1 ? '0.3' : '1';
-        lightboxNext.style.pointerEvents = currentZoomIndex === zoomImages.length - 1 ? 'none' : 'auto';
+
+    if (mainImg) {
+        mainImg.style.cursor = 'zoom-in';
+        mainImg.addEventListener('click', () => {
+            const activeThumb = document.querySelector('.thumb-item.active');
+            let idx = activeThumb ? parseInt(activeThumb.getAttribute('data-index')) : 0;
+            openLightbox(idx);
+        });
     }
-    
-    // Navigate to previous image
-    function prevImage() {
-        if (currentZoomIndex > 0) {
-            currentZoomIndex--;
-            updateLightboxImage();
-        }
-    }
-    
-    // Navigate to next image
-    function nextImage() {
-        if (currentZoomIndex < zoomImages.length - 1) {
-            currentZoomIndex++;
-            updateLightboxImage();
-        }
-    }
-    
-    // Event Listeners
-    mainImage.addEventListener('click', function() {
-        const currentIndex = parseInt(document.querySelector('.thumb-item.active')?.getAttribute('data-index') || 0);
-        openLightbox(currentIndex);
-    });
-    
-    mainImage.style.cursor = 'zoom-in';
-    
-    lightboxClose.addEventListener('click', closeLightbox);
-    lightboxPrev.addEventListener('click', prevImage);
-    lightboxNext.addEventListener('click', nextImage);
-    
-    // Click on background to close
-    lightbox.addEventListener('click', function(e) {
-        if (e.target === lightbox) {
-            closeLightbox();
+
+    lbClose.addEventListener('click', closeLightbox);
+    lbPrev.addEventListener('click', (e) => { e.stopPropagation(); if (currentLbIndex > 0) { currentLbIndex--; updateLightbox(); } });
+    lbNext.addEventListener('click', (e) => { e.stopPropagation(); if (currentLbIndex < lbItems.length - 1) { currentLbIndex++; updateLightbox(); } });
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox || e.target.classList.contains('product-lightbox__content')) closeLightbox(); });
+
+    document.addEventListener('keydown', (e) => {
+        if (lightbox.getAttribute('aria-hidden') === 'false') {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft' && currentLbIndex > 0) { currentLbIndex--; updateLightbox(); }
+            if (e.key === 'ArrowRight' && currentLbIndex < lbItems.length - 1) { currentLbIndex++; updateLightbox(); }
         }
     });
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', function(e) {
-        if (!lightbox.classList.contains('active')) return;
-        
-        if (e.key === 'Escape') {
-            closeLightbox();
-        } else if (e.key === 'ArrowLeft') {
-            prevImage();
-        } else if (e.key === 'ArrowRight') {
-            nextImage();
-        }
-    });
-    
-    // Touch/Swipe support for mobile
-    let touchStartX = 0;
-    let touchEndX = 0;
-    
-    lightbox.addEventListener('touchstart', function(e) {
-        touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-    
-    lightbox.addEventListener('touchend', function(e) {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    }, { passive: true });
-    
-    function handleSwipe() {
-        const swipeThreshold = 50;
-        const diff = touchStartX - touchEndX;
-        
-        if (Math.abs(diff) > swipeThreshold) {
-            if (diff > 0) {
-                // Swipe left - next image
-                nextImage();
-            } else {
-                // Swipe right - previous image
-                prevImage();
-            }
-        }
-    }
-    
-    // Pinch-to-zoom on mobile
-    let initialDistance = 0;
-    let currentScale = 1;
-    
-    lightboxImage.addEventListener('touchstart', function(e) {
-        if (e.touches.length === 2) {
-            e.preventDefault();
-            initialDistance = getDistance(e.touches[0], e.touches[1]);
-        }
-    });
-    
-    lightboxImage.addEventListener('touchmove', function(e) {
-        if (e.touches.length === 2) {
-            e.preventDefault();
-            const currentDistance = getDistance(e.touches[0], e.touches[1]);
-            const scale = currentDistance / initialDistance;
-            currentScale = Math.min(Math.max(1, scale), 3);
-            lightboxImage.style.transform = `scale(${currentScale})`;
-        }
-    });
-    
-    lightboxImage.addEventListener('touchend', function(e) {
-        if (e.touches.length < 2) {
-            setTimeout(() => {
-                currentScale = 1;
-                lightboxImage.style.transform = 'scale(1)';
-            }, 300);
-        }
-    });
-    
-    function getDistance(touch1, touch2) {
-        const dx = touch1.clientX - touch2.clientX;
-        const dy = touch1.clientY - touch2.clientY;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
 })();
 </script>
 
@@ -4391,3 +4120,116 @@ document.addEventListener('DOMContentLoaded', function () {
   })();
 </script>
 <div id="rechnung-profi-reviews-widget" data-product-id="{{ product.id }}"></div>
+
+<!-- ZOOM FUNCTIONALITY START -->
+<style>
+  .main-image-container {
+    overflow: hidden;
+    cursor: zoom-in;
+    position: relative;
+  }
+  .main-image {
+    transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform-origin: center center;
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  /* Disable zoom on touch devices */
+  @media (hover: none) {
+    .main-image-container { cursor: default; }
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.main-image-container');
+    const image = document.getElementById('zoom-image');
+
+    if (container && image) {
+      if (window.matchMedia('(hover: hover)').matches) {
+        container.addEventListener('mousemove', function(e) {
+          const rect = container.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const xPercent = (x / rect.width) * 100;
+          const yPercent = (y / rect.height) * 100;
+          image.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+          image.style.transform = 'scale(2)';
+        });
+        container.addEventListener('mouseleave', function() {
+          image.style.transformOrigin = 'center center';
+          image.style.transform = 'scale(1)';
+        });
+      }
+    }
+  });
+</script>
+<!-- ZOOM FUNCTIONALITY END -->
+
+<style>
+/* Updated Price Display */
+.price-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0; /* Remove gap */
+    margin-bottom: 4px; /* Move slightly up */
+}
+.price-main-row {
+    display: flex;
+    align-items: center; /* Center align items vertically */
+    gap: 12px;
+    height: 40px; /* Fixed height for consistency */
+}
+.current-price {
+    font-size: 32px;
+    font-weight: 800;
+    color: #d32f2f;
+    line-height: normal; /* Fix line-height */
+    transform: translateY(-2px); /* Slight lift */
+}
+.discount-pill-simple {
+    background: #d32f2f;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 3px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    transform: translateY(-1px); /* Alien with price optical center */
+}
+.price-sub-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #555;
+    margin-top: 2px;
+}
+.price-sep {
+    color: #ccc;
+    font-size: 10px;
+}
+.old-price {
+    text-decoration: line-through;
+    color: #757575;
+    font-size: 15px;
+    color: #757575;
+    font-size: 15px;
+}
+.savings-text {
+    font-weight: 700;
+    color: #388e3c;
+}
+.price-meta {
+    font-size: 12px;
+    color: #888;
+    margin-top: 2px;
+}
+.savings-text {
+    color: #1D4739;
+    font-weight: 600;
+    /* Clean text only design */
+    background: none; 
+    padding: 0;
+}
+</style>
