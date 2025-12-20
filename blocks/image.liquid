@@ -51,6 +51,7 @@
         height: block_settings.image.height,
         class: 'image-block__image border-style',
         style: image_border_style,
+        alt: block_settings.image.alt | default: shop.name,
         sizes: sizes
     }}
   {%- else -%}
