@@ -15,7 +15,13 @@
   </a>
   {% liquid
     assign avg_rating = closest.product.metafields.ddreviews.content.average_star | default: 5.0 | plus: 0
-    assign review_count = closest.product.metafields.ddreviews.content.total_reviews | default: 12
+    
+    # Calculate a deterministic but varied review count based on product ID
+    assign id_seed = closest.product.id | modulo: 15
+    assign review_count = closest.product.metafields.ddreviews.content.total_reviews | default: 0
+    if review_count == 0
+       assign review_count = id_seed | plus: 16
+    endif
   %}
   <div class="product-card__rating">
     <div class="rating-stars">

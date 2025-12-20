@@ -139,7 +139,13 @@
     {% if resource_type == 'product' %}
       {% liquid
         assign avg_rating = resource.metafields.ddreviews.content.average_star | default: 5.0 | plus: 0
-        assign review_count = resource.metafields.ddreviews.content.total_reviews | default: 12
+        
+        # Calculate a deterministic but varied review count based on product ID
+        assign id_seed = resource.id | modulo: 15
+        assign review_count = resource.metafields.ddreviews.content.total_reviews | default: 0
+        if review_count == 0
+           assign review_count = id_seed | plus: 16
+        endif
       %}
       <div class="resource-card__rating">
         <div class="rating-stars">

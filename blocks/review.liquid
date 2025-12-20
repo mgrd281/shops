@@ -18,8 +18,11 @@
   if rating == 0
     assign rating = 5.0
   endif
+  
+  # Calculate a deterministic but varied review count based on product ID
+  assign id_seed = product.id | modulo: 15
   if rating_count == 0 or rating_count == blank or rating_count == null
-    assign rating_count = 12
+    assign rating_count = id_seed | plus: 16
   endif
 -%}
 
