@@ -86,10 +86,8 @@
     </script>
     
     <!-- Preload wichtiger Ressourcen -->
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
     <link rel="preload" href="{{ 'theme.css' | asset_url }}" as="style">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome unified in theme.liquid -->
     <style>
         /* Design-Tokens */
         :root {
@@ -150,7 +148,7 @@
         .fa-star {
             color: #FFD700 !important;
             font-weight: 900 !important; /* Force Solid (FA) */
-            font-family: "Font Awesome 5 Free" !important;
+            font-family: "Font Awesome 6 Free" !important;
             -webkit-text-stroke: 0 !important; /* Remove outline if any */
         }
         .rechnung-profi-stars { display: inline-flex; gap: 2px; }
@@ -1453,7 +1451,7 @@ nav[aria-label="Breadcrumb"],
                 <div class="gallery-main">
                     <div class="main-image-container">
                         <img class="main-image" 
-                             src="{{ product.featured_image | img_url: '900x' }}" 
+                             src="{{ product.featured_image | image_url: width: 900 }}" 
                              alt="{{ product.title | escape }} - {{ product.vendor | escape }} | Jetzt kaufen bei {{ shop.name | escape }}"
                              title="{{ product.title | escape }} - Produktbild"
                              loading="eager"
