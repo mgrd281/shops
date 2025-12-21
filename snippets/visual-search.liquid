@@ -4,7 +4,7 @@
   1. "ZULETZT ANGESEHEN": Real history + Smart Backfill (Always shows 4 cards).
   2. "PRODUKTE": Contextual Suggestions (Always shows 4 cards).
   3. Hybrid Liquid/JS Data: Passthrough safe fallback products to JS.
-  4. VISUAL SEARCH SIMULATION: Simulates image analysis and returns related results.
+  4. VISUAL SEARCH SIMULATION: Smart filename-based recognition heuristic.
 {% endcomment %}
 
 {% assign source_products = empty %}
@@ -563,32 +563,46 @@
        renderRecent(); 
     }
     
-    // --- Visual Search Simulation ---
+    // --- SMART VISUAL SEARCH SIMULATION (Filename Trick) ---
     function handleImageUpload() {
-       // 1. Show Analyzing View
+       const file = fileInput.files[0];
+       if (!file) return;
+
+       // 1. Show Analyzing UI
        defaultView.style.display = 'none';
        resultsView.style.display = 'none';
        analyzingView.style.display = 'block';
        
-       // 2. Simulate Delay (1.5s)
-       setTimeout(() => {
-           // 3. Show Results (Visual Search - Simulated by showing fallback/random products)
+       // 2. Extract potential keywords from filename (e.g., "iphone-15-pro.jpg" -> "iphone 15 pro")
+       let keywords = file.name.split('.')[0].replace(/[-_]/g, ' ');
+
+       // 3. Simulate delay then REAL Search
+       setTimeout(async () => {
            analyzingView.style.display = 'none';
            resultsView.style.display = 'block';
+           document.querySelector('#vs-results-view h3').textContent = "ERGEBNISSE FÜR: " + keywords.toUpperCase();
            
-           document.querySelector('#vs-results-view h3').textContent = "ÄHNLICHE PRODUKTE GEFUNDEN";
+           try {
+             // Try a real search first
+             const res = await fetch(`/search/suggest.json?q=${encodeURIComponent(keywords)}&resources[type]=product&resources[limit]=8`);
+             const data = await res.json();
+             const products = data.resources.results.products;
 
-           // Shuffle fallback products for variety
-           let simulatedResults = [];
-           if (window.vsFallbackProducts) {
-               simulatedResults = [...window.vsFallbackProducts].sort(() => 0.5 - Math.random()).slice(0, 4);
-           }
-           
-           if (simulatedResults.length > 0) {
-              renderGrid(simulatedResults, resultsGrid);
-              document.getElementById('vs-no-results').style.display = 'none';
-           } else {
-              document.getElementById('vs-no-results').style.display = 'block';
+             if (products && products.length > 0) {
+                // Success: Found products matching the filename!
+                renderGrid(products, resultsGrid);
+                document.getElementById('vs-no-results').style.display = 'none';
+             } else {
+                // Fallback: Random products if filename had no matches
+                document.querySelector('#vs-results-view h3').textContent = "ÄHNLICHE PRODUKTE"; 
+                let simulatedResults = [];
+                if (window.vsFallbackProducts) {
+                   simulatedResults = [...window.vsFallbackProducts].sort(() => 0.5 - Math.random()).slice(0, 4);
+                }
+                if(simulatedResults.length) renderGrid(simulatedResults, resultsGrid);
+             }
+           } catch(e) {
+               console.error(e);
            }
            
        }, 1500);
