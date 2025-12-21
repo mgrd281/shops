@@ -13,43 +13,8 @@
   >
     {% render 'text', fallback_text: product_title, block: block %}
   </a>
-   <div class="rechnung-profi-stars" data-product-id="{{ closest.product.id }}"></div>
+
 {% endif %}
-
-<style>
-  .product-rating {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 4px;
-    margin-bottom: 2px;
-  }
-
-  .rating-value {
-    font-weight: 700;
-    font-size: 11px;
-    color: #333;
-    margin-right: 2px;
-  }
-
-  .rechnung-profi-stars {
-    color: #FFB800;
-    display: flex;
-    gap: 1.5px;
-    font-size: 11px;
-  }
-
-  .rechnung-profi-stars i {
-    color: #FFB800 !important;
-    font-weight: 900 !important;
-    font-family: "Font Awesome 6 Free" !important;
-  }
-
-  .rating-count {
-    font-size: 11px;
-    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
-  }
-</style>
 
 {% schema %}
 {
