@@ -1,9 +1,9 @@
 {% comment %}
-  Urgency Elements: Sales Counter + Countdown Timer
-  Optimized for conversion - shown before price
+  Urgency Elements: Sales Counter
+  Simple version - shows sales count based on product ID
 {% endcomment %}
 
-<!-- Compact Sales Counter -->
+<!-- Sales Counter -->
 <div id="sales-box-{{ product.id }}" class="sales-compact">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
@@ -34,8 +34,6 @@
 <script>
 (function() {
   const pid = {{ product.id }};
-  
-  // Sales Counter Logic
   const key = 'sales_' + pid;
   const timeKey = 'sale_time_' + pid;
   const start = 40 + (pid % 56);
