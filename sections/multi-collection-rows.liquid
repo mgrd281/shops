@@ -105,9 +105,9 @@
                     <div class="mcr-card__body">
                       <h4 class="mcr-card__title">{{ product.title }}</h4>
 
-                      {% if section.settings.show_rating and rating_val > 0 %}
+                      {% if section.settings.show_rating %}
                         <div class="mcr-rating">
-                          <span class="mcr-star">★</span> {{ rating_val | round: 1 }}
+                           <div class="rechnung-profi-stars" data-product-id="{{ product.id }}"></div>
                         </div>
                       {% endif %}
 

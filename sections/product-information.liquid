@@ -86,7 +86,7 @@
     </script>
     
     <!-- Preload wichtiger Ressourcen -->
-    <link rel="preload" href="{{ 'theme.css' | asset_url }}" as="style">
+
     <!-- Font Awesome unified in theme.liquid -->
     <style>
         /* Design-Tokens */
@@ -634,12 +634,12 @@
         }
         /* Kauf-Button */
         .buy-btn {
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: var(--space-sm);
             width: 100%;
             padding: var(--space-md) var(--space-lg);
+            position: relative;
             background-color: var(--primary);
             color: var(--white);
             border-radius: var(--radius-md);
@@ -660,11 +660,14 @@
         .buy-btn i {
             width: 20px;
             text-align: center;
-            display: inline-block;
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
         }
         .buy-btn .btn-text {
-            min-width: 145px; /* Fixed width to align icons */
-            text-align: left;
+            min-width: auto !important;
+            text-align: center !important;
             display: inline-block;
         }
         /* Secondary Action: Buy Now (Outline Style) */
@@ -1005,6 +1008,7 @@
                 padding: var(--space-sm) var(--space-md);
                 font-size: 0.875rem;
             }
+
             /* Hide question button on mobile */
             .frage-btn { display: none !important; }
             /* Hide gallery navigation buttons on mobile */
@@ -1492,14 +1496,8 @@ nav[aria-label="Breadcrumb"],
                                 {% endif %}
 
                                 <h1 class="product-title" style="margin-bottom: 8px;">{{ product.title }}</h1> 
-{% assign __avg = product.metafields.ddreviews.content.average_star | default: 5.0 %}
-{% assign __avg_fmt = __avg | times: 10 | round | divided_by: 10.0 %}
-<div class="product-rating">
-  <span class="rating-value">{{ __avg_fmt }}</span>
-
+<div class="product-rating" style="margin-bottom: 24px;">
   <div class="rechnung-profi-stars" data-product-id="{{ product.id }}"></div>
-
-  
 </div>
 {% assign product_collections = product.collections | map: 'handle' %}
 {% assign digital = false %}
@@ -2723,7 +2721,7 @@ document.addEventListener("DOMContentLoaded", function () {
   margin-top: 12px;
 }
 .frage-btn .icon-q{display:block}
-.frage-btn:hover{color:#0a7cc7}
+.frage-btn:hover{color:#1D4739}
 /* Modal */
 .frage-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;padding:16px}
 .frage-modal[aria-hidden="false"]{display:block}

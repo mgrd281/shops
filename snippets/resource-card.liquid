@@ -137,28 +137,17 @@
     </p>
 
     {% if resource_type == 'product' %}
-      {% liquid
-        assign avg_rating = resource.metafields.ddreviews.content.average_star | default: 5.0
-        assign avg_rating_fmt = avg_rating | times: 10 | round | divided_by: 10.0 | replace: '.', ','
-        assign review_count = resource.metafields.ddreviews.content.total_reviews | default: 1
-      %}
+      {% comment %}
       <div class="product-rating">
-        <span class="rating-value">{{ avg_rating_fmt }}</span>
-        <div class="rechnung-profi-stars" data-product-id="{{ resource.id }}">
-          {% liquid
-            assign avg_val = avg_rating | plus: 0
-          %}
-          {% for i in (1..5) %}
-            {% if i <= avg_val %}
-              <i class="fa-solid fa-star"></i>
-            {% else %}
-              <i class="fa-regular fa-star"></i>
-            {% endif %}
-          {% endfor %}
-        </div>
-        <span class="rating-count">({{ review_count }})</span>
+        <div class="rechnung-profi-stars" data-product-id="{{ resource.id }}"></div>
       </div>
-      {% render 'price', product_resource: resource, show_unit_price: true %}
+      {% endcomment %}
+
+      {% render 'price', product_resource: resource, show_unit_price: false %}
+      <style>
+        /* Force hide unit price in this card to prevent (1) issue */
+        .resource-card .unit-price { display: none !important; }
+      </style>
     {% elsif resource_type == 'collection' and single_thumbnail_collection == false %}
       <p class="resource-card__subtext paragraph">
         {{- 'content.search_results_resource_products_count' | t: count: resource.all_products_count -}}

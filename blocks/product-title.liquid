@@ -13,27 +13,7 @@
   >
     {% render 'text', fallback_text: product_title, block: block %}
   </a>
-  {% liquid
-    assign avg_rating = closest.product.metafields.ddreviews.content.average_star | default: 5.0
-    assign avg_rating_fmt = avg_rating | times: 10 | round | divided_by: 10.0 | replace: '.', ','
-    assign review_count = closest.product.metafields.ddreviews.content.total_reviews | default: 1
-  %}
-  <div class="product-rating">
-    <span class="rating-value">{{ avg_rating_fmt }}</span>
-    <div class="rechnung-profi-stars" data-product-id="{{ closest.product.id }}">
-      {% liquid
-        assign avg_val = avg_rating | plus: 0
-      %}
-      {% for i in (1..5) %}
-        {% if i <= avg_val %}
-          <i class="fa-solid fa-star"></i>
-        {% else %}
-          <i class="fa-regular fa-star"></i>
-        {% endif %}
-      {% endfor %}
-    </div>
-    <span class="rating-count">({{ review_count }})</span>
-  </div>
+   <div class="rechnung-profi-stars" data-product-id="{{ closest.product.id }}"></div>
 {% endif %}
 
 <style>

@@ -100,19 +100,10 @@
               <div class="fc-card__body">
                 <h3 class="fc-card__title">{{ product.title }}</h3>
 
-                {% if section.settings.show_rating and rating_val > 0 %}
-                  <div class="fc-rating">
-                    <div class="fc-stars" aria-hidden="true">
-                      {% assign full_stars = rating_val | round %}
-                      {% for i in (1..5) %}
-                        {% if i <= full_stars %}
-                          <span class="fc-star fc-star--full">★</span>
-                        {% else %}
-                          <span class="fc-star fc-star--empty">★</span>
-                        {% endif %}
-                      {% endfor %}
+                {% if section.settings.show_rating %}
+                    <div style="margin-bottom: 0.5rem;">
+                       <div class="rechnung-profi-stars" data-product-id="{{ product.id }}"></div>
                     </div>
-                  </div>
                 {% endif %}
 
                 <div class="fc-price-row">

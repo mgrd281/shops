@@ -6,7 +6,7 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */ {
   "sections": {
     "search": {
       "type": "search-header",
@@ -207,10 +207,19 @@
                     "product_swatches_padding_right": 0
                   },
                   "blocks": {}
+                },
+                "review": {
+                  "type": "review",
+                  "settings": {
+                    "stars_style": "shaded",
+                    "rating_color": "foreground",
+                    "alignment": "left"
+                  }
                 }
               },
               "block_order": [
                 "product_title_7er8rU",
+                "review",
                 "price",
                 "swatches"
               ]
