@@ -231,25 +231,50 @@
              endif
           -%}
           
-          <div class="blog-articles__article article {% if is_hero %}article--hero{% endif %}">
-            <article class="article-card">
+              {%- liquid
+                assign card_image = article.image
+                assign image_class = 'article-card__image'
+                if is_hero
+                   assign image_class = image_class | append: ' article-card__image--hero'
+                endif
+
+                # Fallback: If no featured image, try to extract first image from content
+                if card_image == blank
+                  if article.content contains '<img'
+                    assign img_src = article.content | split: 'src="' | last | split: '"' | first
+                    if img_src == blank
+                       assign img_src = article.content | split: "src='" | last | split: "'" | first
+                    endif
+                  endif
+                endif
+              -%}
+
               <div class="article-card__image-wrapper">
                 <a href="{{ article.url }}">
-                  {%- if article.image -%}
+                  {%- if card_image != blank -%}
                     <img
-                      srcset="{{ article.image | image_url: width: 165 }} 165w,
-                        {{ article.image | image_url: width: 360 }} 360w,
-                        {{ article.image | image_url: width: 533 }} 533w,
-                        {{ article.image | image_url: width: 720 }} 720w,
-                        {{ article.image | image_url: width: 1000 }} 1000w,
-                        {{ article.image | image_url: width: 1500 }} 1500w"
-                      src="{{ article.image | image_url: width: 533 }}"
+                      srcset="{{ card_image | image_url: width: 165 }} 165w,
+                        {{ card_image | image_url: width: 360 }} 360w,
+                        {{ card_image | image_url: width: 533 }} 533w,
+                        {{ card_image | image_url: width: 720 }} 720w,
+                        {{ card_image | image_url: width: 1000 }} 1000w,
+                        {{ card_image | image_url: width: 1500 }} 1500w"
+                      src="{{ card_image | image_url: width: 533 }}"
                       sizes="(min-width: 1200px) {% if is_hero %}50vw{% else %}33vw{% endif %}, (min-width: 750px) 50vw, 100vw"
-                      alt="{{ article.image.alt | escape }}"
-                      class="article-card__image"
+                      alt="{{ card_image.alt | escape }}"
+                      class="{{ image_class }}"
                       {% unless is_hero %}loading="lazy"{% endunless %}
-                      width="{{ article.image.width }}"
-                      height="{{ article.image.height }}"
+                      width="{{ card_image.width }}"
+                      height="{{ card_image.height }}"
+                    >
+                  {%- elsif img_src != blank -%}
+                    <!-- Extracted from content -->
+                    <img
+                      src="{{ img_src }}"
+                      class="{{ image_class }}"
+                      loading="lazy"
+                      alt="{{ article.title | escape }}"
+                      style="object-fit: cover; width: 100%; height: 100%;"
                     >
                   {%- else -%}
                     <div class="article-card__image article-card__image--placeholder">
