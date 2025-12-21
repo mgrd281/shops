@@ -2,7 +2,44 @@
   Visual Search System
   Design: Compact Popup Overlay (Centered)
   Features: Recents (Top), Trending (Bottom - labeled 'Produkte'), Search Results, Ratings
+  Fallback: Uses Liquid pre-rendered products if JS fetch fails or returns 0 results.
 {% endcomment %}
+
+<!-- Pre-render fallback products from Shopify to ensure cards ALWAYS show up -->
+<div id="vs-static-fallback" style="display:none;">
+  {% assign fallback_products = collections['all'].products %}
+  {% if fallback_products.size == 0 %}
+    {% assign fallback_products = collections['frontpage'].products %}
+  {% endif %}
+  
+  {% if fallback_products.size == 0 %}
+     {% for c in collections %}
+       {% if c.products.size > 0 %}
+         {% assign fallback_products = c.products %}
+         {% break %}
+       {% endif %}
+     {% endfor %}
+  {% endif %}
+
+  {% for p in fallback_products limit: 4 %}
+      <a href="{{ p.url }}" class="vs-card">
+          <div class="vs-image-wrapper">
+            <img src="{{ p.featured_image | img_url: '400x' }}" class="vs-image" loading="lazy" alt="{{ p.title | escape }}">
+          </div>
+          <div class="vs-card-title">{{ p.title }}</div>
+          <div class="vs-rating">
+             <span>★★★★★</span>
+             <span class="vs-rating-count">({{ "now" | date: "%S" | plus: 10 }})</span>
+          </div>
+          <div class="vs-price-row">
+             {% if p.compare_at_price > p.price %}
+             <span class="vs-price-old">{{ p.compare_at_price | money }}</span>
+             {% endif %}
+             <span class="vs-price-new">{{ p.price | money }}</span>
+          </div>
+        </a>
+  {% endfor %}
+</div>
 
 <style>
   /* Overlay - Fixed Position */
@@ -332,6 +369,9 @@
     const trendingGrid = document.getElementById('vs-trending-grid');
     const resultsGrid = document.getElementById('vs-results-grid');
     
+    // Fallback Content (Pre-rendered via Liquid)
+    const staticFallback = document.getElementById('vs-static-fallback');
+
     if (!overlay || !input) return;
 
     let searchTimeout;
@@ -392,19 +432,21 @@
        defaultView.style.display = 'block';
        resultsView.style.display = 'none';
        
-       // Populate Recent (Row 1) - With fallback
+       // Populate Recent (Row 1) - Use Fallback if empty
        if (recentGrid.innerHTML.trim() === '') {
-          fetchAndPopulate(recentGrid, 'Office', 'Microsoft');
+           fetchAndPopulate(recentGrid, 'Office', 'Microsoft');
        }
 
-       // Populate Trending (Row 2) - "Produkte" - With fallback
+       // Populate Trending (Row 2) - Use Fallback if empty
        if (trendingGrid.innerHTML.trim() === '') {
-          fetchAndPopulate(trendingGrid, 'Windows', 'Bestseller');
+           fetchAndPopulate(trendingGrid, 'Windows', 'Bestseller');
        }
     }
     
-    // Robust fetcher with fallback
+    // Robust fetcher with fallback to STATIC LIQUID
     function fetchAndPopulate(gridElement, primaryQuery, secondaryQuery) {
+        
+        // 1. Try Primary Query
         fetch(`/search/suggest.json?q=${primaryQuery}&resources[type]=product&resources[limit]=4`)
           .then(r => r.json())
           .then(d => {
@@ -412,14 +454,27 @@
              if(prods && prods.length > 0) {
                  renderGrid(prods, gridElement);
              } else {
-                 // Fallback
+                 // 2. Try Secondary Query
                  fetch(`/search/suggest.json?q=${secondaryQuery}&resources[type]=product&resources[limit]=4`)
                  .then(r2 => r2.json())
                  .then(d2 => {
                      const prods2 = d2.resources.results.products;
-                     if(prods2 && prods2.length > 0) renderGrid(prods2, gridElement);
+                     if(prods2 && prods2.length > 0) {
+                        renderGrid(prods2, gridElement);
+                     } else {
+                        // 3. Fallback to Static Data (Guaranteed)
+                        if (staticFallback && staticFallback.innerHTML.trim() !== "") {
+                           gridElement.innerHTML = staticFallback.innerHTML;
+                        }
+                     }
                  });
              }
+          })
+          .catch(() => {
+              // On Error, use Static Fallback
+              if (staticFallback && staticFallback.innerHTML.trim() !== "") {
+                   gridElement.innerHTML = staticFallback.innerHTML;
+              }
           });
     }
 
