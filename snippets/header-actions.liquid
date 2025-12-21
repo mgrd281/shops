@@ -43,7 +43,7 @@
         popover="auto"
         ref="popover"
       >
-        {% render 'account-actions' %}
+        {% render 'account-actions', heading_id: 'account-popover-heading' %}
       </div>
     </anchored-popover-component>
 
@@ -72,7 +72,7 @@
             {{- 'icon-close.svg' | inline_asset_content -}}
           </span>
         </button>
-        {% render 'account-actions' %}
+        {% render 'account-actions', heading_id: 'account-drawer-heading' %}
       </dialog>
     </dialog-component>
   {% endif %}
