@@ -1,6 +1,6 @@
 {% comment %}
   Visual Search System
-  Design: Compact Popup Overlay (Centered)
+  Design: Compact Popup Overlay (Centered) - Reduced Size
   Features: Search UI, Products Grid (4 cols), Ratings, Camera Button
 {% endcomment %}
 
@@ -29,10 +29,10 @@
   /* Compact Popup Container */
   .visual-search-container {
     background: #ffffff;
-    width: 90%;
-    max-width: 800px; /* Much smaller max-width for "Popup" feel */
+    width: 85%; /* Reduced from 90% */
+    max-width: 720px; /* Reduced by 10% from 800px */
     height: auto;
-    max-height: 80vh; /* Don't fill screen */
+    max-height: 80vh; 
     border-radius: 8px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.25);
     display: flex;
@@ -48,7 +48,7 @@
 
   /* Header */
   .vs-header {
-    padding: 16px 20px;
+    padding: 14px 18px; /* Slightly reduced padding */
     border-bottom: 1px solid #eee;
     display: flex;
     align-items: center;
@@ -57,8 +57,8 @@
 
   .vs-search-icon {
     color: #555;
-    width: 20px;
-    height: 20px;
+    width: 18px; /* Slightly smaller */
+    height: 18px;
     margin-right: 12px;
     flex-shrink: 0;
   }
@@ -67,7 +67,7 @@
     flex: 1;
     border: none;
     outline: none;
-    font-size: 16px; /* Smaller functional font */
+    font-size: 15px; /* Slightly smaller font */
     color: #333;
     font-family: inherit;
     font-weight: 400;
@@ -134,7 +134,7 @@
   .vs-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr); 
-    gap: 20px;
+    gap: 16px; /* Slightly smaller gap */
   }
 
   /* Card */
@@ -154,7 +154,7 @@
     position: relative;
     width: 100%;
     aspect-ratio: 1;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -168,7 +168,7 @@
   }
 
   .vs-card-title {
-    font-size: 13px;
+    font-size: 12px; /* Smaller font for smaller cards */
     color: #333;
     line-height: 1.35;
     font-family: var(--font-heading-family), serif; 
@@ -177,14 +177,14 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    height: 36px;
+    height: 34px;
   }
   
   /* Optional Ratings */
   .vs-rating {
     display: flex;
     align-items: center;
-    font-size: 11px;
+    font-size: 10px;
     color: #f5c518; /* Standard Gold */
     gap: 2px;
     margin-bottom: 4px;
@@ -204,11 +204,11 @@
   .vs-price-old {
     text-decoration: line-through;
     color: #aaa;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .vs-price-new {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 500;
     color: #222;
   }
@@ -227,7 +227,7 @@
     }
     .vs-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
+      gap: 12px;
     }
   }
 </style>
