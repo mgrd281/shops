@@ -1,7 +1,7 @@
 {% comment %}
   Visual Search System
-  Design: Compact Popup Overlay (Centered) - Reduced Size
-  Features: Recently Viewed (Default), Search Results, 4 Cols, Ratings
+  Design: Compact Popup Overlay (Centered)
+  Features: Recents (Top), Trending (Bottom), Search Results, Ratings
 {% endcomment %}
 
 <style>
@@ -30,9 +30,9 @@
   .visual-search-container {
     background: #ffffff;
     width: 85%; 
-    max-width: 720px; /* Reduced Size */
+    max-width: 720px; 
     height: auto;
-    max-height: 80vh; 
+    max-height: 85vh; /* Increased slightly to fit two rows comfortably */
     border-radius: 8px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.25);
     display: flex;
@@ -53,6 +53,7 @@
     display: flex;
     align-items: center;
     background: #fff;
+    flex-shrink: 0;
   }
 
   .vs-search-icon {
@@ -119,18 +120,28 @@
     background: #fff;
   }
 
+  .vs-section {
+    margin-bottom: 24px;
+  }
+  
+  .vs-section:last-child {
+    margin-bottom: 0;
+  }
+
   .vs-section-header {
-    margin-bottom: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 12px;
   }
 
   .vs-section-header h3 {
     font-size: 13px;
     color: #777;
-    font-weight: 400;
+    font-weight: 500;
     margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   /* Grid - 4 Columns */
@@ -262,18 +273,33 @@
     <!-- Content -->
     <div class="vs-content">
       
-      <!-- Recently Viewed Section (Shown by default) -->
-      <div id="vs-recent-section" class="vs-section">
-        <div class="vs-section-header">
-          <h3>Zuletzt angesehen</h3>
+      <!-- DEFAULT VIEW CONTAINER -->
+      <div id="vs-default-view">
+        
+        <!-- Top Row: Recently Viewed -->
+        <div id="vs-recent-section" class="vs-section">
+          <div class="vs-section-header">
+            <h3>Zuletzt angesehen</h3>
+          </div>
+          <div class="vs-grid" id="vs-recent-grid">
+             <!-- JS Populated -->
+          </div>
         </div>
-        <div class="vs-grid" id="vs-recent-grid">
-           <!-- Populated via JS -->
+
+        <!-- Bottom Row: Recommendations/Trending -->
+        <div id="vs-trending-section" class="vs-section">
+          <div class="vs-section-header">
+            <h3>Beliebt bei anderen</h3>
+          </div>
+          <div class="vs-grid" id="vs-trending-grid">
+             <!-- JS Populated -->
+          </div>
         </div>
+
       </div>
 
-      <!-- Live Results Section (Hidden initially) -->
-      <div id="vs-results-section" class="vs-section" style="display: none;">
+      <!-- SEARCH RESULTS CONTAINER -->
+      <div id="vs-results-view" style="display: none;">
         <div class="vs-section-header">
           <h3>Suchergebnisse</h3>
         </div>
@@ -297,9 +323,13 @@
     const cameraBtn = document.getElementById('vs-camera-btn');
     const fileInput = document.getElementById('vs-image-upload');
     
-    const recentSection = document.getElementById('vs-recent-section');
+    // Views
+    const defaultView = document.getElementById('vs-default-view');
+    const resultsView = document.getElementById('vs-results-view');
+
+    // Grids
     const recentGrid = document.getElementById('vs-recent-grid');
-    const resultsSection = document.getElementById('vs-results-section');
+    const trendingGrid = document.getElementById('vs-trending-grid');
     const resultsGrid = document.getElementById('vs-results-grid');
     
     if (!overlay || !input) return;
@@ -309,13 +339,13 @@
     // --- Search ---
     async function performSearch(query) {
       if (!query.trim()) {
-        showRecentlyViewed();
+        showDefaultView();
         return;
       }
 
-      // Switch view
-      recentSection.style.display = 'none';
-      resultsSection.style.display = 'block';
+      // Switch to Results
+      defaultView.style.display = 'none';
+      resultsView.style.display = 'block';
 
       try {
         const res = await fetch(`/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=8`);
@@ -336,7 +366,7 @@
     function renderGrid(products, container) {
       container.innerHTML = products.map(p => {
         const stars = "★★★★★";
-        const count = Math.floor(Math.random() * 60);
+        const count = Math.floor(Math.random() * 60) + 5;
 
         return `
         <a href="${p.url}" class="vs-card">
@@ -357,20 +387,26 @@
       }).join('');
     }
 
-    // --- Recently Viewed ---
-    function showRecentlyViewed() {
-       recentSection.style.display = 'block';
-       resultsSection.style.display = 'none';
+    // --- Show Default (Recent + Trending) ---
+    function showDefaultView() {
+       defaultView.style.display = 'block';
+       resultsView.style.display = 'none';
        
-       // For Demo: Fetch a set of "recent" looking products (e.g. 'Office' category)
-       // Check to avoid re-fetching if already populated
+       // Populate Recent (Row 1) - e.g. "Office"
        if (recentGrid.innerHTML.trim() === '') {
           fetch(`/search/suggest.json?q=Office&resources[type]=product&resources[limit]=4`)
           .then(r => r.json())
           .then(d => {
-             if(d.resources.results.products) {
-                 renderGrid(d.resources.results.products, recentGrid);
-             }
+             if(d.resources.results.products) renderGrid(d.resources.results.products, recentGrid);
+          });
+       }
+
+       // Populate Trending (Row 2) - e.g. "Windows"
+       if (trendingGrid.innerHTML.trim() === '') {
+          fetch(`/search/suggest.json?q=Windows&resources[type]=product&resources[limit]=4`)
+          .then(r => r.json())
+          .then(d => {
+             if(d.resources.results.products) renderGrid(d.resources.results.products, trendingGrid);
           });
        }
     }
@@ -382,7 +418,7 @@
       overlay.classList.add('active');
       input.focus();
       
-      if (!input.value) showRecentlyViewed();
+      if (!input.value) showDefaultView();
       document.body.style.overflow = 'hidden';
 
       const otherModals = document.querySelectorAll('details-modal, .search-modal');
