@@ -7,7 +7,26 @@
   lang="{{ request.locale.iso_code }}"
 >
   <head>
-    <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="e83f2376-0309-485b-96d5-6f1db86db8ee" data-blockingmode="auto" type="text/javascript" async defer></script>
+    <script>
+      // Delay Cookiebot loading until user interaction
+      function loadCookiebot() {
+        if (window.cookiebotLoaded) return;
+        window.cookiebotLoaded = true;
+        var script = document.createElement('script');
+        script.id = 'Cookiebot';
+        script.src = 'https://consent.cookiebot.com/uc.js';
+        script.setAttribute('data-cbid', 'e83f2376-0309-485b-96d5-6f1db86db8ee');
+        script.setAttribute('data-blockingmode', 'auto');
+        script.type = 'text/javascript';
+        document.head.appendChild(script);
+      }
+      // Load on first interaction
+      ['mousemove', 'scroll', 'touchstart', 'click'].forEach(function(event) {
+        window.addEventListener(event, loadCookiebot, {once: true, passive: true});
+      });
+      // Fallback: load after 2 seconds
+      setTimeout(loadCookiebot, 2000);
+    </script>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
