@@ -238,12 +238,17 @@
                    assign image_class = image_class | append: ' article-card__image--hero'
                 endif
 
-                # Fallback: If no featured image, try to extract first image from content
+                # Fallback: Robustly extract first image from content
                 if card_image == blank
                   if article.content contains '<img'
-                    assign img_src = article.content | split: 'src="' | last | split: '"' | first
-                    if img_src == blank
-                       assign img_src = article.content | split: "src='" | last | split: "'" | first
+                    assign content_parts = article.content | split: '<img'
+                    if content_parts.size > 1
+                      assign img_tag_fragment = content_parts[1] | split: '>' | first
+                      if img_tag_fragment contains 'src="'
+                        assign img_src = img_tag_fragment | split: 'src="' | last | split: '"' | first
+                      elsif img_tag_fragment contains "src='"
+                        assign img_src = img_tag_fragment | split: "src='" | last | split: "'" | first
+                      endif
                     endif
                   endif
                 endif
