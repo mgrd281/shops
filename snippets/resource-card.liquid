@@ -137,11 +137,11 @@
     </p>
 
     {% if resource_type == 'product' %}
-      {% unless request.page_type == 'index' %}
+      {% if show_rating or request.page_type != 'index' %}
       <div class="product-rating">
         <div class="rechnung-profi-stars" data-product-id="{{ resource.id }}"></div>
       </div>
-      {% endunless %}
+      {% endif %}
 
       {% render 'price', product_resource: resource, show_unit_price: false %}
       <style>

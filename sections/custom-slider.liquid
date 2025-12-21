@@ -1169,7 +1169,7 @@
         clearTimeout(progressTimeout);
         progressTimeout = setTimeout(() => {
             go(i + 1);
-        }, parseInt(getComputedStyle(document.documentElement).getPropertyValue('--progress-duration').replace('s', '')) * 1000);
+        }, 7000);
     }
     
     function go(n) {
@@ -1192,7 +1192,7 @@
     slider.addEventListener('mouseleave', () => {
         progressTimeout = setTimeout(() => {
             go(i + 1);
-        }, parseInt(getComputedStyle(document.documentElement).getPropertyValue('--progress-duration').replace('s', '')) * 1000);
+        }, 7000);
     });
     
     // Swipe-Funktionalität für Mobilgeräte hinzufügen
@@ -1210,7 +1210,7 @@
         
         progressTimeout = setTimeout(() => {
             go(i + 1);
-        }, parseInt(getComputedStyle(document.documentElement).getPropertyValue('--progress-duration').replace('s', '')) * 1000);
+        }, 7000);
     });
     
     function handleSwipe() {

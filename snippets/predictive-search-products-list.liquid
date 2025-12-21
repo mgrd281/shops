@@ -60,7 +60,8 @@
                 resource: product,
                 image_width: 500,
                 image_hover: true,
-                image_aspect_ratio: '4 / 5'
+                image_aspect_ratio: '4 / 5',
+                show_rating: true
               %}
             </li>
           {% endfor %}
@@ -75,7 +76,8 @@
                 resource: product,
                 image_width: 500,
                 image_hover: true,
-                image_aspect_ratio: '4 / 5'
+                image_aspect_ratio: '4 / 5',
+                show_rating: true
               %}
             </li>
           {% endfor %}
@@ -99,13 +101,14 @@
           class="predictive-search-results__card predictive-search-results__card--product"
           ref="resultsItems[]"
         >
-          {% render 'resource-card',
-            resource_type: 'product',
-            resource: product,
-            image_width: 500,
-            image_hover: true,
-            image_aspect_ratio: '4 / 5'
-          %}
+              {% render 'resource-card',
+                resource_type: 'product',
+                resource: product,
+                image_width: 500,
+                image_hover: true,
+                image_aspect_ratio: '4 / 5',
+                show_rating: true
+              %}
         </li>
       {% endfor %}
     </ul>
