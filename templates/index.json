@@ -1114,6 +1114,44 @@
         "show_bestseller": true,
         "show_rating": true
       }
+    },
+    "featured_blog_posts": {
+      "type": "featured-blog-posts",
+      "blocks": {
+        "title": {
+          "type": "_featured-blog-posts-title",
+          "settings": {
+            "text": "<h2>Neuigkeiten</h2>"
+          }
+        },
+        "card": {
+          "type": "_featured-blog-posts-card",
+          "blocks": {
+            "title": {
+              "type": "_heading",
+              "settings": {
+                "text": "<h4>{{ closest.article.title }}</h4>"
+              }
+            },
+            "excerpt": {
+              "type": "_blog-post-description"
+            }
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "card"
+      ],
+      "settings": {
+        "blog": "news",
+        "layout_type": "grid",
+        "post_limit": 3,
+        "columns": 3,
+        "section_width": "page-width",
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
     }
   },
   "order": [
@@ -1125,6 +1163,7 @@
     "collection_list_3ejxRy",
     "collection_list_XaY9C3",
     "media_with_content_HP7Qpp",
-    "black_friday_grid_giVmFz"
+    "black_friday_grid_giVmFz",
+    "featured_blog_posts"
   ]
 }
