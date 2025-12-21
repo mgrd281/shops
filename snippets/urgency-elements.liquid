@@ -1,0 +1,108 @@
+{% comment %}
+  Urgency Elements: Sales Counter + Countdown Timer
+  Optimized for conversion - shown before price
+{% endcomment %}
+
+<!-- Compact Sales Counter -->
+<div id="sales-box-{{ product.id }}" class="sales-compact">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="#2e7d32">
+    <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10-2c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zM5.21 4.22l3.6 7.59-1.35 2.44C4.52 17.37 5.48 19 7 19h12v-2H7l1.1-2h9.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0020 6H5.21l-.94-2H1v2h2z"/></svg>
+  <span class="sales-text">
+    <strong id="sales-count-{{ product.id }}">--</strong> Verkäufe in den letzten 24 Stunden
+    <span class="sales-time">• Letzter Verkauf: <strong id="last-sale-{{ product.id }}">vor ...</strong></span>
+  </span>
+</div>
+
+{%- if product.title contains " " or product.title contains "LEGO" -%}
+<!-- Compact Countdown -->
+<div class="countdown-compact">
+  🔥 <strong>Angebot endet in:</strong>
+  <span id="countdown-{{ product.id }}">02:44:30</span>
+</div>
+{%- endif -%}
+
+<style>
+.sales-compact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #2e7d32;
+  margin: 8px 0;
+}
+.sales-compact svg { flex-shrink: 0; }
+.sales-text { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
+.sales-text strong { font-weight: 700; }
+.sales-time { font-size: 13px; color: #666; }
+
+.countdown-compact {
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+  border-left: 3px solid #ff5252;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #d32f2f;
+  margin: 10px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.countdown-compact span {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+</style>
+
+<script>
+(function() {
+  const pid = {{ product.id }};
+  
+  // Sales Counter Logic
+  const key = 'sales_' + pid;
+  const timeKey = 'sale_time_' + pid;
+  const start = 40 + (pid % 56);
+  let count = parseInt(localStorage.getItem(key)) || start;
+  localStorage.setItem(key, count);
+  
+  const countEl = document.getElementById('sales-count-' + pid);
+  const timeEl = document.getElementById('last-sale-' + pid);
+  
+  if (countEl) countEl.textContent = count;
+  
+  // Last sale time
+  let saleTime = localStorage.getItem(timeKey);
+  const now = Date.now();
+  if (!saleTime) {
+    saleTime = now - (Math.floor(Math.random() * 3) + 3) * 60000;
+    localStorage.setItem(timeKey, saleTime);
+  }
+  
+  function updateSaleTime() {
+    const diff = Math.floor((Date.now() - parseInt(saleTime)) / 60000);
+    if (timeEl) timeEl.textContent = 'vor ' + (diff > 60 ? 60 : diff) + ' Min.';
+  }
+  updateSaleTime();
+  setInterval(updateSaleTime, 60000);
+  
+  // Countdown Logic
+  {%- if product.title contains " " or product.title contains "LEGO" -%}
+  const cdEl = document.getElementById('countdown-{{ product.id }}');
+  if (cdEl) {
+    function updateCountdown() {
+      const periodMs = 3 * 60 * 60 * 1000;
+      const timeLeft = periodMs - (Date.now() % periodMs);
+      const h = Math.floor(timeLeft / 3600000);
+      const m = Math.floor((timeLeft % 3600000) / 60000);
+      const s = Math.floor((timeLeft % 60000) / 1000);
+      cdEl.textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  }
+  {%- endif -%}
+})();
+</script>

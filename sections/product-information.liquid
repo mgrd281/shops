@@ -1518,8 +1518,10 @@ nav[aria-label="Breadcrumb"],
   </p>
 {% endif %}
 {% comment %}
-  Secondary info (EAN, Brand, Shipping, Sales, Countdown) moved to bottom
+  Sales counter and countdown timer moved here (before price) for better conversion
 {% endcomment %}
+
+{% render 'urgency-elements' %}
 
 
 <!-- === Icons & Webfont === -->
@@ -1740,175 +1742,7 @@ nav[aria-label="Breadcrumb"],
   </style>
 {%- endif -%}
 
-<!-- Verkaufsanzeige (Sales Counter & Last Sale) -->
-<div id="sales-box-{{ product.id }}" class="verkaufs-box fade-in">
-  <div class="verkaufs-icon-wrapper">
-    <svg class="verkaufs-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="#4CAF50">
-      <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm0 2zm10-2c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zm-9.83-4h9.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.1-.31.06-.47-.05-.16-.15-.3-.29-.39a.993.993 0 0 0-.52-.15H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.45C4.52 17.37 5.48 19 7 19h12v-2H7l1.1-2z"/>
-    </svg>
-  </div>
-  <div class="verkaufs-text" id="verkaufs-text-{{ product.id }}">
-    <strong id="verkaufszahl-{{ product.id }}">--</strong> Verkäufe in den letzten 24 Stunden
-  </div>
-  <div class="last-sale-time" id="last-sale-time-{{ product.id }}">
-    Letzter Verkauf: <span class="highlight-time">vor ...</span>
-  </div>
-</div>
-<!-- Style -->
-<style>
-.verkaufs-box {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  font-family: 'Inter', sans-serif;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.verkaufs-icon-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 8px;
-}
-.verkaufs-icon-wrapper.glow {
-  animation: pulse 1s infinite alternate;
-}
-.verkaufs-text {
-  font-size: 15px;
-  font-weight: 500;
-  color: #2e7d32;
-}
-.verkaufs-text.red {
-  color: #d32f2f;
-}
-.last-sale-time {
-  font-size: 14px;
-  color: #666;
-}
-.highlight-time {
-  color: #2e7d32;
-  font-weight: 600;
-}
-@keyframes pulse {
-  from { transform: scale(1); }
-  to { transform: scale(1.1); filter: drop-shadow(0 0 8px #ff5252); }
-}
-</style>
-<!-- Script -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const pid = {{ product.id }};
-  const key = 'verkaufs_counter_' + pid;
-  const timeKey = 'last_sale_start_time_' + pid;
-  const start = 40 + (pid % 56);
-  const max = 699;
-  let current = parseInt(localStorage.getItem(key)) || start;
-  localStorage.setItem(key, current);
-  const zahlEl = document.getElementById('verkaufszahl-' + pid);
-  const textEl = document.getElementById('verkaufs-text-' + pid);
-  const iconBox = document.querySelector(`#sales-box-${pid} .verkaufs-icon-wrapper`);
-  const timeSpan = document.querySelector("#last-sale-time-" + pid + " .highlight-time");
-  // Counter Animation
-  function animateCount(to) {
-    let i = 1;
-    const duration = 600;
-    const step = Math.max(20, duration / to);
-    const interval = setInterval(() => {
-      zahlEl.innerText = i;
-      i++;
-      if (i > to) clearInterval(interval);
-    }, step);
-  }
-  animateCount(current);
-  if (current > 120) {
-    textEl.classList.add("red");
-    iconBox.classList.add("glow");
-  }
-  (function(){ var b = document.querySelector('.main-badge'); if (b) { b.style.display = current > 100 ? 'block' : 'none'; } })();
-  setInterval(() => {
-    current = current >= max ? start : current + 1;
-    localStorage.setItem(key, current);
-    zahlEl.innerText = current;
-    if (current > 120) {
-      textEl.classList.add("red");
-      iconBox.classList.add("glow");
-    } else {
-      textEl.classList.remove("red");
-      iconBox.classList.remove("glow");
-    }
-    document.querySelector('.main-badge').style.display = current > 100 ? 'block' : 'none';
-  }, 60000);
-  // ✅ Verkauf-Zeit (beginnend bei 3 Minuten, steigert sich bis 60 Minuten, dann zurück)
-  let startTime = localStorage.getItem(timeKey);
-  const now = Date.now();
-  if (!startTime) {
-    // Starte z. B. vor 3 Minuten zufällig
-    const randomOffsetMinutes = Math.floor(Math.random() * 3) + 3; // 3–5 Min.
-    startTime = now - randomOffsetMinutes * 60 * 1000;
-    localStorage.setItem(timeKey, startTime);
-  } else {
-    startTime = parseInt(startTime);
-  }
-  function updateTimeText() {
-    const now = Date.now();
-    let diff = Math.floor((now - startTime) / 60000); // Minuten
-    if (diff > 60) {
-      // Wieder auf Anfang
-      const newStart = Date.now() - (3 * 60 * 1000);
-      localStorage.setItem(timeKey, newStart);
-      diff = 3;
-    }
-    timeSpan.innerText = `vor ${diff} Min.`;
-  }
-  updateTimeText();
-  setInterval(updateTimeText, 60000); // jede Minute aktualisieren
-});
-</script>
 
-{%- if product.title contains " " or product.title contains "LEGO" -%}
-  <!-- Countdown Timer -->
-  <div class="countdown-timer">
-    <span>Angebot endet in:</span>
-    <span id="countdown-hours">02</span>:
-    <span id="countdown-minutes">15</span>:
-    <span id="countdown-seconds">30</span>
-  </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const hoursEl   = document.getElementById('countdown-hours');
-      const minutesEl = document.getElementById('countdown-minutes');
-      const secondsEl = document.getElementById('countdown-seconds');
-      function pad(num) {
-        return String(num).padStart(2, '0');
-      }
-      function updateCountdown() {
-        const now = new Date();
-        const currentMs = now.getTime();
-        // Dauer einer Periode (3 Stunden) in ms
-        const periodMs = 3 * 60 * 60 * 1000;
-        // Zeit seit letzter vollen 3h-Einheit
-        const timePassed = currentMs % periodMs;
-        // Verbleibende Zeit bis zur nächsten 3h-Grenze
-        const timeLeft = periodMs - timePassed;
-        const hours   = Math.floor(timeLeft / (1000 * 60 * 60));
-        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-        hoursEl.textContent   = pad(hours);
-        minutesEl.textContent = pad(minutes);
-        secondsEl.textContent = pad(seconds);
-      }
-      updateCountdown();
-      setInterval(updateCountdown, 1000);
-    });
-  </script>
-  <style>
-    .countdown-timer {
-      margin-top: 10px;
-      margin-bottom: 20px !important;
-    }
-  </style>
-{%- endif -%}
 
 <!-- ===== Produktinfos (Barcode, Marke, Versanddatum, Lieferbar) MOVED TO BOTTOM ===== -->
 {% if product.selected_or_first_available_variant.barcode != blank %}
