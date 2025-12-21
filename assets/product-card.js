@@ -210,6 +210,9 @@ export class ProductCard extends Component {
       productCardLink.href = productUrl;
       if (cardGalleryLink instanceof HTMLAnchorElement) {
         cardGalleryLink.href = productUrl;
+      } else if (cardGalleryLink instanceof HTMLElement) {
+        // Accessibility fix: If it's a div, update data-href instead
+        cardGalleryLink.setAttribute('data-href', productUrl);
       }
       if (productTitleLink instanceof HTMLAnchorElement) {
         productTitleLink.href = productUrl;
