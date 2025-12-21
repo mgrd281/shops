@@ -1758,7 +1758,7 @@ nav[aria-label="Breadcrumb"],
 
 
 <!-- Compact Product Meta (EAN, Marke, Lieferbar) -->
-{% render 'product-meta-compact' %}
+{% render 'product-meta-compact', is_digital: is_digital, long_shipping: long_shipping, ship_dt: ship_dt %}
 <!-- ===== H I G H L I G H T S (Top 3) ===== -->
 <ul class="highlights-list">
   {%- if is_digital -%}
