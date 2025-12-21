@@ -83,30 +83,38 @@
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
-    z-index: 99999;
-    transition: opacity 0.3s ease;
+    z-index: 2147483647; /* Max Z-Index */
+    transition: opacity 0.2s ease;
     display: flex;
     align-items: flex-start;
     justify-content: center;
+    visibility: hidden; /* Use visibility for cleaner transitions */
   }
 
   .visual-search-overlay.active {
     opacity: 1;
+    visibility: visible;
   }
 
   /* Main Container */
   .visual-search-container {
     background: #fff;
     width: 100%;
-    max-width: 1000px; /* Wide layout like the image */
+    max-width: 1000px;
     min-height: 50vh;
     max-height: 90vh;
-    margin-top: 60px; /* Offset from top */
+    margin-top: 60px;
     border-radius: 8px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    transform: translateY(-20px);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .visual-search-overlay.active .visual-search-container {
+    transform: translateY(0);
   }
 
   /* Header & Input */
@@ -119,6 +127,7 @@
     display: flex;
     align-items: center;
     gap: 15px;
+    position: relative;
   }
 
   .vs-search-icon {
@@ -136,7 +145,8 @@
     color: #333;
     outline: none;
     background: transparent;
-    min-width: 0; /* Fix flex child overflow */
+    min-width: 0; 
+    height: 44px;
   }
 
   .vs-input::placeholder {
@@ -154,8 +164,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0; /* Prevent crushing */
-    width: 44px; /* Explicit touch target */
+    flex-shrink: 0;
+    width: 44px;
     height: 44px;
   }
 
@@ -178,6 +188,11 @@
     padding: 4px;
     transition: color 0.2s;
     flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .vs-close-btn:hover {
@@ -225,7 +240,7 @@
   /* Product Grid */
   .vs-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 columns like image */
+    grid-template-columns: repeat(4, 1fr);
     gap: 24px;
   }
 
@@ -245,7 +260,7 @@
   .vs-image-wrapper {
     position: relative;
     width: 100%;
-    padding-top: 100%; /* square */
+    padding-top: 100%;
     background: #f8f8f8;
     border-radius: 8px;
     overflow: hidden;
@@ -397,7 +412,9 @@
     function openOverlay() {
       overlay.style.display = 'flex';
       // Small timeout for fading effect
-      setTimeout(() => overlay.classList.add('active'), 10);
+      requestAnimationFrame(() => {
+        overlay.classList.add('active');
+      });
       input.focus();
       showRecentlyViewed();
       
@@ -416,18 +433,21 @@
     }
 
     // Event Delegation for Search Buttons
-    document.addEventListener('click', function(e) {
-      // Catch common theme search button selectors
-      const btn = e.target.closest('.header__icon--search, .search-modal__button, .header__search, [aria-label="Search"], [role="search"]');
+    // Use capture phase (true) to catch the event before the theme's hydration scripts do
+    window.addEventListener('click', function(e) {
+      // Selector that targets standard Shopify search buttons/icons
+      const btn = e.target.closest('.header__icon--search, .search-modal__button, .header__search, search-button button, [role="search"], [aria-label="Search"]');
+      
       if (btn) {
+        // Prevent default theme search behavior
         e.preventDefault(); 
-        // Force closing any existing search modal if it opened quickly
-        const existingModal = document.querySelector('details-modal[open], .search-modal--active');
-        if(existingModal) existingModal.removeAttribute('open');
+        e.stopPropagation();
+        e.stopImmediatePropagation();
         
         openOverlay();
+        return false;
       }
-    });
+    }, true);
 
     closeBtn.addEventListener('click', closeOverlay);
     
