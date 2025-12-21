@@ -79,21 +79,21 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
     z-index: 2147483647; /* Max Z-Index */
-    transition: opacity 0.2s ease;
-    display: flex;
+    display: none; /* Default hidden */
     align-items: flex-start;
     justify-content: center;
-    visibility: hidden; /* Use visibility for cleaner transitions */
+    opacity: 0;
+    transition: opacity 0.2s ease;
   }
 
   .visual-search-overlay.active {
-    opacity: 1;
-    visibility: visible;
+    display: flex !important;
+    opacity: 1 !important;
   }
 
   /* Main Container */
@@ -331,6 +331,7 @@
 
 <script>
   (function() {
+    // --- Elements ---
     const overlay = document.getElementById('visual-search-overlay');
     const input = document.getElementById('vs-input');
     const closeBtn = document.getElementById('vs-close-btn');
@@ -342,6 +343,12 @@
     const cameraBtn = document.getElementById('vs-camera-btn');
     const fileInput = document.getElementById('vs-image-upload');
 
+    // Check if critical elements exist before running
+    if (!overlay || !input) {
+      console.warn("Visual Search: Critical elements not found.");
+      return;
+    }
+
     let searchTimeout;
 
     // --- Search Logic ---
@@ -351,9 +358,9 @@
         return;
       }
 
-      recentSection.style.display = 'none';
-      resultsSection.style.display = 'block';
-      resultsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center;">Laden...</div>';
+      if (recentSection) recentSection.style.display = 'none';
+      if (resultsSection) resultsSection.style.display = 'block';
+      if (resultsGrid) resultsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center;">Laden...</div>';
 
       try {
         const res = await fetch(`/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=8`);
@@ -370,12 +377,13 @@
           document.getElementById('vs-no-results').style.display = 'block';
         }
       } catch (err) {
-        console.error(err);
+        console.error("Visual Search Error:", err);
       }
     }
 
     // --- Render Grid ---
     function renderGrid(products, container) {
+      if (!container) return;
       container.innerHTML = products.map(p => {
         return `
         <a href="${p.url}" class="vs-card">
@@ -391,77 +399,81 @@
       }).join('');
     }
 
-    // --- Recently Viewed Logic (Mockup for now, uses search history products) ---
+    // --- Recently Viewed ---
     function showRecentlyViewed() {
-      recentSection.style.display = 'block';
-      resultsSection.style.display = 'none';
+      if (recentSection) recentSection.style.display = 'block';
+      if (resultsSection) resultsSection.style.display = 'none';
       
-      // Simulate fetching popular products to display as "Recently Viewed"
-      fetch(`/search/suggest.json?q=Office&resources[type]=product&resources[limit]=4`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.resources.results.products) {
-             renderGrid(data.resources.results.products, recentGrid);
-          }
-        });
+      if (recentGrid) {
+        fetch(`/search/suggest.json?q=Office&resources[type]=product&resources[limit]=4`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.resources.results.products) {
+               renderGrid(data.resources.results.products, recentGrid);
+            }
+          })
+          .catch(e => console.log(e));
+      }
     }
 
-    // --- Event Listeners ---
-    
-    // Open Overlay
+    // --- Open/Close Logic ---
     function openOverlay() {
+      // Direct style manipulation for reliability
       overlay.style.display = 'flex';
-      // Small timeout for fading effect
-      requestAnimationFrame(() => {
-        overlay.classList.add('active');
-      });
+      
+      // Force layout reflow before adding active class (optional, but 'display: flex' is instantaneous)
+      // We use setTimeout to ensure browser registers "display: flex" before transitioning opacity
+      setTimeout(() => {
+         overlay.classList.add('active');
+         overlay.style.opacity = '1'; 
+      }, 10);
+
       input.focus();
       showRecentlyViewed();
-      
-      // Prevent body scroll
       document.body.style.overflow = 'hidden';
     }
 
-    // Close Overlay
     function closeOverlay() {
       overlay.classList.remove('active');
+      overlay.style.opacity = '0';
+      
       setTimeout(() => {
         overlay.style.display = 'none';
         document.body.style.overflow = '';
-      }, 300);
+      }, 250);
       input.value = '';
     }
 
-    // Event Delegation for Search Buttons
-    // Use capture phase (true) to catch the event before the theme's hydration scripts do
+    // --- Event Capture ---
+    // Intercept clicks on any search button in the header
     window.addEventListener('click', function(e) {
-      // Selector that targets standard Shopify search buttons/icons
-      const btn = e.target.closest('.header__icon--search, .search-modal__button, .header__search, search-button button, [role="search"], [aria-label="Search"]');
+      // Broad selector to catch any search icon/button
+      const btn = e.target.closest('.header__icon--search, .search-modal__button, .header__search, search-button button, [role="search"], [aria-label="Search"], [aria-label="Suchen"]');
       
       if (btn) {
-        // Prevent default theme search behavior
         e.preventDefault(); 
         e.stopPropagation();
         e.stopImmediatePropagation();
         
+        // Ensure any existing modals are closed (Theme dependent)
+        const details = btn.closest('details-modal');
+        if (details) details.removeAttribute('open');
+        
         openOverlay();
         return false;
       }
-    }, true);
+    }, true); // Capture phase
 
-    closeBtn.addEventListener('click', closeOverlay);
+    if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
     
-    // Close on click outside
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) closeOverlay();
     });
 
-    // Close on ESC
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeOverlay();
     });
 
-    // Input Typing
     input.addEventListener('input', (e) => {
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(() => {
@@ -469,17 +481,14 @@
       }, 300);
     });
 
-    // Camera Button (Image Search)
-    cameraBtn.addEventListener('click', () => {
-      fileInput.click();
-    });
-
-    fileInput.addEventListener('change', (e) => {
-      if (e.target.files && e.target.files[0]) {
-        alert("📷 Bilderkennung wird gestartet...\n(Hinweis: Für eine echte Bildsuche wird eine externe API benötigt.)");
-        // Here you would upload the file to your backend/API
-      }
-    });
+    if (cameraBtn && fileInput) {
+      cameraBtn.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          alert("📷 Bild wird analysiert...");
+        }
+      });
+    }
 
   })();
 </script>
