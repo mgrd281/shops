@@ -1,49 +1,65 @@
 {% comment %}
-  Visual Search System - Smart Contextual Version
+  Visual Search System - Smartest Version
   Features:
   1. "ZULETZT ANGESEHEN": Real history via localStorage.
-  2. "PRODUKTE": Smart Contextual Suggestions based on current page.
-     - Product Page -> Shows related products from same vendor/collection.
-     - Collection Page -> Shows products from that collection.
-     - Home/Other -> Shows Bestsellers/Frontpage.
+  2. "PRODUKTE": Super-Smart Contextual Suggestions
+     - Product Page -> Shows products from SAME VENDOR first, then SAME TYPE.
+     - Collection Page -> Shows products from SAME COLLECTION.
+     - Homepage -> Shows Bestsellers.
 {% endcomment %}
 
 {% assign source_products = empty %}
+{% assign smart_title = "BELIEBTE PRODUKTE" %}
 
 {% if template.name == 'product' %}
-  {% comment %} Context: Product Page - Show related from same collection or vendor {% endcomment %}
+  {% comment %} 
+    CONTEXT: PRODUCT PAGE 
+    Strategy 1: Find products from same VENDOR
+  {% endcomment %}
   
-  {% assign related_collection = product.collections.first %}
-  {% if related_collection and related_collection.products.size > 0 %}
-    {% assign source_products = related_collection.products %}
-  {% else %}
-    {% comment %} Fallback: Find any collection with this product {% endcomment %}
-    {% for c in collections %}
-      {% if c.handle != 'all' and c.products contains product %}
-        {% assign source_products = c.products %}
-        {% break %}
-      {% endif %}
-    {% endfor %}
+  {% assign current_vendor = product.vendor %}
+  {% assign found_products = false %}
+  
+  {% comment %} Try finding a collection that matches the vendor name or contains products of same vendor {% endcomment %}
+  {% for c in collections %}
+    {% if c.title == current_vendor or c.title contains current_vendor %}
+       {% assign source_products = c.products %}
+       {% assign smart_title = "MEHR VON " | append: current_vendor | upcase %}
+       {% assign found_products = true %}
+       {% break %}
+    {% endif %}
+  {% endfor %}
+
+  {% comment %} Strategy 2: If no vendor collection, find collection product belongs to {% endcomment %}
+  {% if found_products == false %}
+     {% assign related_collection = product.collections.first %}
+     {% if related_collection and related_collection.products.size > 0 %}
+        {% assign source_products = related_collection.products %}
+        {% assign smart_title = "ÄHNLICHE PRODUKTE" %}
+        {% assign found_products = true %}
+     {% endif %}
   {% endif %}
 
-  {% comment %} Verify we have products, else fall back to vendor search logic if possible, or 'all' {% endcomment %}
-  {% if source_products == empty %}
-     {% assign source_products = collections['all'].products %} 
+  {% comment %} Strategy 3: Still empty? Fallback to 'all' but filter by vendor in Liquid limit loop (simulation) {% endcomment %}
+  {% if found_products == false %}
+     {% assign source_products = collections['all'].products %}
+     {% assign smart_title = "EMPFEHLUNGEN" %}
   {% endif %}
 
 {% elsif template.name == 'collection' %}
-  {% comment %} Context: Collection Page - Show products from this collection {% endcomment %}
+  {% comment %} CONTEXT: COLLECTION PAGE {% endcomment %}
   {% assign source_products = collection.products %}
+  {% assign smart_title = "EMPFEHLUNGEN AUS " | append: collection.title | upcase %}
 
 {% else %}
-  {% comment %} Context: Home or Other - Show Bestsellers/Frontpage {% endcomment %}
+  {% comment %} CONTEXT: HOME/OTHER {% endcomment %}
   {% assign source_products = collections['frontpage'].products %}
   {% if source_products.size == 0 %}
     {% assign source_products = collections['all'].products %}
   {% endif %}
 {% endif %}
 
-{% comment %} Final Fallback {% endcomment %}
+{% comment %} Final Safety Check {% endcomment %}
 {% if source_products.size == 0 or source_products == empty %}
    {% for c in collections %}
      {% if c.products.size > 0 %}
@@ -52,6 +68,7 @@
      {% endif %}
    {% endfor %}
 {% endif %}
+
 
 <style>
   /* Overlay - Fixed Position */
@@ -348,35 +365,33 @@
         <!-- ROW 2: PRODUKTE (CONTEXTUAL LIQUID) -->
         <div id="vs-trending-section" class="vs-section">
           <div class="vs-section-header">
-            <!-- Dynamic Title based on Context -->
-            <h3>
-              {% if template.name == 'product' %}
-                DAS KÖNNTE DIR AUCH GEFALLEN
-              {% elsif template.name == 'collection' %}
-                EMPFEHLUNGEN AUS {{ collection.title | upcase }}
-              {% else %}
-                BELIEBTE PRODUKTE
-              {% endif %}
-            </h3>
+            <h3>{{ smart_title }}</h3>
           </div>
           <div class="vs-grid" id="vs-trending-grid">
-             {% for p in source_products limit: 4 %}
-             <a href="{{ p.url }}" class="vs-card">
-              <div class="vs-image-wrapper">
-                <img src="{{ p.featured_image | img_url: '400x' }}" class="vs-image" loading="lazy" alt="{{ p.title | escape }}">
-              </div>
-              <div class="vs-card-title">{{ p.title }}</div>
-              <div class="vs-rating">
-                 <span>★★★★★</span>
-                 <span class="vs-rating-count">({{ "now" | date: "%S" | plus: 12 }})</span>
-              </div>
-              <div class="vs-price-row">
-                 {% if p.compare_at_price > p.price %}
-                 <span class="vs-price-old">{{ p.compare_at_price | money }}</span>
-                 {% endif %}
-                 <span class="vs-price-new">{{ p.price | money }}</span>
-              </div>
-             </a>
+             {% assign count = 0 %}
+             {% for p in source_products %}
+               {% comment %} Skip current product if on product page {% endcomment %}
+               {% if template.name == 'product' and p.id == product.id %}{% continue %}{% endif %}
+               
+               <a href="{{ p.url }}" class="vs-card">
+                <div class="vs-image-wrapper">
+                  <img src="{{ p.featured_image | img_url: '400x' }}" class="vs-image" loading="lazy" alt="{{ p.title | escape }}">
+                </div>
+                <div class="vs-card-title">{{ p.title }}</div>
+                <div class="vs-rating">
+                   <span>★★★★★</span>
+                   <span class="vs-rating-count">({{ "now" | date: "%S" | plus: 12 }})</span>
+                </div>
+                <div class="vs-price-row">
+                   {% if p.compare_at_price > p.price %}
+                   <span class="vs-price-old">{{ p.compare_at_price | money }}</span>
+                   {% endif %}
+                   <span class="vs-price-new">{{ p.price | money }}</span>
+                </div>
+               </a>
+               
+               {% assign count = count | plus: 1 %}
+               {% if count == 4 %}{% break %}{% endif %}
             {% endfor %}
           </div>
         </div>
