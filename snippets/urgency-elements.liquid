@@ -1,7 +1,94 @@
 {% comment %}
-  Urgency Elements: Sales Counter
-  Simple version - shows sales count based on product ID
+  Urgency Elements: Countdown Timer + Sales Counter
 {% endcomment %}
+
+<!-- Countdown Timer for Special Price -->
+<div id="countdown-timer-{{ product.id }}" class="countdown-timer-box">
+  <div class="countdown-icon">⚡</div>
+  <div class="countdown-content">
+    <span class="countdown-label">Sonderpreis endet in:</span>
+    <div class="countdown-digits">
+      <span id="countdown-hours-{{ product.id }}">00</span>:<span id="countdown-minutes-{{ product.id }}">00</span>:<span id="countdown-seconds-{{ product.id }}">00</span>
+    </div>
+  </div>
+</div>
+
+<style>
+.countdown-timer-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+  border: 2px solid #ff9800;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin: 12px 0;
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
+  animation: pulse-border 2s ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: #ff9800; box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2); }
+  50% { border-color: #f57c00; box-shadow: 0 6px 18px rgba(255, 152, 0, 0.35); }
+}
+
+.countdown-icon {
+  font-size: 28px;
+  line-height: 1;
+  animation: flash 1.5s ease-in-out infinite;
+}
+
+@keyframes flash {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+.countdown-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.countdown-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #e65100;
+}
+
+.countdown-digits {
+  font-size: 20px;
+  font-weight: 800;
+  color: #bf360c;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+}
+
+.countdown-digits span {
+  display: inline-block;
+  min-width: 24px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .countdown-timer-box {
+    padding: 10px 14px;
+  }
+  
+  .countdown-icon {
+    font-size: 24px;
+  }
+  
+  .countdown-label {
+    font-size: 13px;
+  }
+  
+  .countdown-digits {
+    font-size: 18px;
+  }
+}
+</style>
 
 <!-- Sales Counter -->
 <div id="sales-box-{{ product.id }}" class="sales-compact">
@@ -30,6 +117,58 @@
 .sales-text strong { font-weight: 700; }
 .sales-time { font-size: 13px; color: #666; }
 </style>
+
+<script>
+// Countdown Timer Logic
+(function() {
+  const pid = {{ product.id }};
+  const timerKey = 'countdown_end_' + pid;
+  const hoursEl = document.getElementById('countdown-hours-' + pid);
+  const minutesEl = document.getElementById('countdown-minutes-' + pid);
+  const secondsEl = document.getElementById('countdown-seconds-' + pid);
+  
+  if (!hoursEl || !minutesEl || !secondsEl) return;
+  
+  function pad(num) {
+    return String(num).padStart(2, '0');
+  }
+  
+  function getEndTime() {
+    let endTime = localStorage.getItem(timerKey);
+    if (!endTime) {
+      // Set random duration between 3-6 hours
+      const hours = 3 + Math.floor(Math.random() * 4);
+      endTime = Date.now() + (hours * 60 * 60 * 1000);
+      localStorage.setItem(timerKey, endTime);
+    }
+    return parseInt(endTime);
+  }
+  
+  function updateCountdown() {
+    const now = Date.now();
+    let endTime = getEndTime();
+    let remaining = endTime - now;
+    
+    // If expired, reset with new random duration
+    if (remaining <= 0) {
+      localStorage.removeItem(timerKey);
+      endTime = getEndTime();
+      remaining = endTime - now;
+    }
+    
+    const hours = Math.floor(remaining / (1000 * 60 * 60));
+    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+    
+    hoursEl.textContent = pad(hours);
+    minutesEl.textContent = pad(minutes);
+    secondsEl.textContent = pad(seconds);
+  }
+  
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+})();
+</script>
 
 <script>
 (function() {
