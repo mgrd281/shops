@@ -1,66 +1,65 @@
 {% comment %}
-  Visual Search System - Smartest Version
+  Visual Search System - Final Polish
   Features:
-  1. "ZULETZT ANGESEHEN": Real history via localStorage.
-  2. "PRODUKTE": Super-Smart Contextual Suggestions
-     - Product Page -> Shows products from SAME VENDOR first, then SAME TYPE.
-     - Collection Page -> Shows products from SAME COLLECTION.
-     - Homepage -> Shows Bestsellers.
+  1. "ZULETZT ANGESEHEN": Real history + Smart Backfill (Always shows 4 cards).
+  2. "PRODUKTE": Contextual Suggestions (Always shows 4 cards).
+  3. Hybrid Liquid/JS Data: Passes Liquid product data to JS for instant rendering.
 {% endcomment %}
 
 {% assign source_products = empty %}
 {% assign smart_title = "BELIEBTE PRODUKTE" %}
 
 {% if template.name == 'product' %}
-  {% comment %} 
-    CONTEXT: PRODUCT PAGE 
-    Strategy 1: Find products from same VENDOR
-  {% endcomment %}
-  
   {% assign current_vendor = product.vendor %}
   {% assign found_products = false %}
   
-  {% comment %} Try finding a collection that matches the vendor name or contains products of same vendor {% endcomment %}
+  {% capture vendor_products %}
   {% for c in collections %}
     {% if c.title == current_vendor or c.title contains current_vendor %}
-       {% assign source_products = c.products %}
+       {% for p in c.products limit: 12 %}{% unless p.id == product.id %}{{ p.handle }},{% endunless %}{% endfor %}
        {% assign smart_title = "MEHR VON " | append: current_vendor | upcase %}
        {% assign found_products = true %}
        {% break %}
     {% endif %}
   {% endfor %}
-
-  {% comment %} Strategy 2: If no vendor collection, find collection product belongs to {% endcomment %}
-  {% if found_products == false %}
+  {% endcapture %}
+  
+  {% if found_products %}
+     {% assign handle_list = vendor_products | split: ',' %}
+     {% assign source_products = handle_list %} 
+     {% comment %} Note: We can't easily iterate handles to get product objects without all_products lookups which are heavy. 
+         So we'll stick to collection strategy for reliability. {% endcomment %}
+     {% for c in collections %}
+        {% if c.title == current_vendor or c.title contains current_vendor %}
+           {% assign source_products = c.products %}
+           {% break %}
+        {% endif %}
+     {% endfor %}
+  {% else %}
      {% assign related_collection = product.collections.first %}
      {% if related_collection and related_collection.products.size > 0 %}
         {% assign source_products = related_collection.products %}
         {% assign smart_title = "ÄHNLICHE PRODUKTE" %}
-        {% assign found_products = true %}
      {% endif %}
   {% endif %}
 
-  {% comment %} Strategy 3: Still empty? Fallback to 'all' but filter by vendor in Liquid limit loop (simulation) {% endcomment %}
-  {% if found_products == false %}
+  {% if source_products == empty %}
      {% assign source_products = collections['all'].products %}
      {% assign smart_title = "EMPFEHLUNGEN" %}
   {% endif %}
 
 {% elsif template.name == 'collection' %}
-  {% comment %} CONTEXT: COLLECTION PAGE {% endcomment %}
   {% assign source_products = collection.products %}
   {% assign smart_title = "EMPFEHLUNGEN AUS " | append: collection.title | upcase %}
 
 {% else %}
-  {% comment %} CONTEXT: HOME/OTHER {% endcomment %}
   {% assign source_products = collections['frontpage'].products %}
   {% if source_products.size == 0 %}
     {% assign source_products = collections['all'].products %}
   {% endif %}
 {% endif %}
 
-{% comment %} Final Safety Check {% endcomment %}
-{% if source_products.size == 0 or source_products == empty %}
+{% if source_products.size == 0 %}
    {% for c in collections %}
      {% if c.products.size > 0 %}
        {% assign source_products = c.products %}
@@ -69,6 +68,21 @@
    {% endfor %}
 {% endif %}
 
+<script>
+  // Pass safe fallback products to JS for "Recently Viewed" backfill
+  window.vsFallbackProducts = [
+    {% for p in source_products limit: 8 %}
+    {
+      id: {{ p.id }},
+      title: `{{ p.title | escape }}`,
+      url: `{{ p.url }}`,
+      image: `{{ p.featured_image | img_url: '400x' }}`,
+      price: `{{ p.price | money }}`,
+      compare_at: `{% if p.compare_at_price > p.price %}{{ p.compare_at_price | money }}{% endif %}`
+    },
+    {% endfor %}
+  ];
+</script>
 
 <style>
   /* Overlay - Fixed Position */
@@ -293,14 +307,6 @@
     color: #222;
   }
 
-  .vs-no-text {
-    grid-column: 1 / -1;
-    color: #999;
-    font-size: 13px;
-    text-align: center;
-    padding: 20px;
-  }
-
   .vs-no-results {
     text-align: center;
     color: #999;
@@ -351,18 +357,17 @@
       <!-- DEFAULT VIEW -->
       <div id="vs-default-view">
         
-        <!-- ROW 1: ZULETZT ANGESEHEN (REAL JS) -->
+        <!-- ROW 1: ZULETZT ANGESEHEN (REAL JS + BACKFILL) -->
         <div id="vs-recent-section" class="vs-section">
           <div class="vs-section-header">
             <h3>ZULETZT ANGESEHEN</h3>
           </div>
           <div class="vs-grid" id="vs-recent-grid">
-            <!-- Populated via JS from localStorage -->
-            <div class="vs-no-text" style="display:none;">Noch keine Produkte angesehen.</div>
+            <!-- Populated via JS -->
           </div>
         </div>
 
-        <!-- ROW 2: PRODUKTE (CONTEXTUAL LIQUID) -->
+        <!-- ROW 2: PRODUKTE (SERVER-SIDE LIQUID) -->
         <div id="vs-trending-section" class="vs-section">
           <div class="vs-section-header">
             <h3>{{ smart_title }}</h3>
@@ -370,9 +375,7 @@
           <div class="vs-grid" id="vs-trending-grid">
              {% assign count = 0 %}
              {% for p in source_products %}
-               {% comment %} Skip current product if on product page {% endcomment %}
                {% if template.name == 'product' and p.id == product.id %}{% continue %}{% endif %}
-               
                <a href="{{ p.url }}" class="vs-card">
                 <div class="vs-image-wrapper">
                   <img src="{{ p.featured_image | img_url: '400x' }}" class="vs-image" loading="lazy" alt="{{ p.title | escape }}">
@@ -389,7 +392,6 @@
                    <span class="vs-price-new">{{ p.price | money }}</span>
                 </div>
                </a>
-               
                {% assign count = count | plus: 1 %}
                {% if count == 4 %}{% break %}{% endif %}
             {% endfor %}
@@ -416,7 +418,7 @@
 <input type="file" id="vs-image-upload" accept="image/*" style="display: none;" />
 
 <script>
-  // --- Global Tracking Script: Run immediately to save current product ---
+  // --- Tracking ---
   (function() {
     {% if template contains 'product' %}
       try {
@@ -430,15 +432,12 @@
         };
         
         let viewed = JSON.parse(localStorage.getItem('vs_recently_viewed')) || [];
-        // Remove duplicate if exists
         viewed = viewed.filter(p => p.id !== product.id);
-        // Add to front
         viewed.unshift(product);
-        // Limit to 4
-        if (viewed.length > 4) viewed.pop();
+        if (viewed.length > 8) viewed.pop(); 
         
         localStorage.setItem('vs_recently_viewed', JSON.stringify(viewed));
-      } catch(e) { console.error("Error saving recent product", e); }
+      } catch(e) {}
     {% endif %}
   })();
 
@@ -450,13 +449,13 @@
     const cameraBtn = document.getElementById('vs-camera-btn');
     const fileInput = document.getElementById('vs-image-upload');
     
-    // Views
+    // Grids
     const defaultView = document.getElementById('vs-default-view');
     const resultsView = document.getElementById('vs-results-view');
     const resultsGrid = document.getElementById('vs-results-grid');
     const recentGrid = document.getElementById('vs-recent-grid');
 
-    if (!overlay || !input) return;
+    if (!overlay) return;
 
     let searchTimeout;
 
@@ -466,7 +465,6 @@
         showDefaultView();
         return;
       }
-
       defaultView.style.display = 'none';
       resultsView.style.display = 'block';
 
@@ -485,13 +483,15 @@
       } catch (e) { console.error(e); }
     }
 
+    // --- Render Grid Helper ---
     function renderGrid(products, container) {
       container.innerHTML = products.map(p => {
         const stars = "★★★★★";
-        const count = Math.floor(Math.random() * 60) + 5;
-        const img = p.image || p.featured_image;
+        const count = Math.floor(Math.random() * 50) + 10;
+        // Check image property structure depending on source (API vs Liquid vs LocalStorage)
+        const img = p.image || p.featured_image || p.image; 
         const price = p.price;
-        const oldPrice = p.compare_at_price || '';
+        const oldPrice = p.compare_at_price || p.compare_at || '';
 
         return `
         <a href="${p.url}" class="vs-card">
@@ -512,33 +512,33 @@
       }).join('');
     }
     
-    // --- Render From LocalStorage (Recent) ---
+    // --- Render Recent (Smart Filling) ---
     function renderRecent() {
        try {
-         const viewed = JSON.parse(localStorage.getItem('vs_recently_viewed')) || [];
-         if (viewed.length === 0) {
-             recentGrid.innerHTML = '<div class="vs-no-text">Noch keine Produkte angesehen.</div>';
-             return;
+         let viewed = JSON.parse(localStorage.getItem('vs_recently_viewed')) || [];
+         
+         // Backfill: If less than 4, fill with fallback products (but no duplicates)
+         if (viewed.length < 4 && window.vsFallbackProducts) {
+             const viewedIds = new Set(viewed.map(v => v.id));
+             
+             for (const fallback of window.vsFallbackProducts) {
+                 if (viewed.length >= 4) break;
+                 if (!viewedIds.has(fallback.id)) {
+                     viewed.push(fallback);
+                     viewedIds.add(fallback.id);
+                 }
+             }
          }
          
-         recentGrid.innerHTML = viewed.map(p => {
-            return `
-            <a href="${p.url}" class="vs-card">
-              <div class="vs-image-wrapper">
-                <img src="${p.image}" class="vs-image" loading="lazy" alt="${p.title}">
-              </div>
-              <div class="vs-card-title">${p.title}</div>
-              <div class="vs-rating">
-                 <span>★★★★★</span>
-                 <span class="vs-rating-count">(Zuletzt angesehen)</span>
-              </div>
-              <div class="vs-price-row">
-                 ${ p.compare_at ? `<span class="vs-price-old">${p.compare_at}</span>` : '' }
-                 <span class="vs-price-new">${p.price}</span>
-              </div>
-            </a>
-            `;
-         }).join('');
+         // Limit to 4 for the grid
+         viewed = viewed.slice(0, 4);
+         
+         if (viewed.length === 0) {
+            recentGrid.innerHTML = '<div class="vs-no-text">Keine Produkte verfügbar</div>';
+         } else {
+            renderGrid(viewed, recentGrid);
+         }
+
        } catch(e) { console.error(e); }
     }
 
@@ -553,13 +553,13 @@
       overlay.style.display = 'flex';
       void overlay.offsetWidth;
       overlay.classList.add('active');
-      input.focus();
-      
-      if (!input.value) showDefaultView();
+      if(input) {
+         input.focus();
+         if (!input.value) showDefaultView();
+      }
       document.body.style.overflow = 'hidden';
 
-      const otherModals = document.querySelectorAll('details-modal, .search-modal');
-      otherModals.forEach(m => {
+      document.querySelectorAll('details-modal, .search-modal').forEach(m => {
          if(m.hasAttribute('open')) m.removeAttribute('open');
       });
     }
@@ -570,7 +570,7 @@
         overlay.style.display = 'none';
         document.body.style.overflow = '';
       }, 200);
-      input.value = '';
+      if(input) input.value = '';
     }
 
     if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
@@ -587,10 +587,12 @@
       }
     }, true);
 
-    input.addEventListener('input', (e) => {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => performSearch(e.target.value), 300);
-    });
+    if(input) {
+        input.addEventListener('input', (e) => {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => performSearch(e.target.value), 300);
+        });
+    }
     
     if (cameraBtn) cameraBtn.addEventListener('click', () => fileInput.click());
     if (fileInput) fileInput.addEventListener('change', () => alert("📷 Bild wird analysiert..."));
