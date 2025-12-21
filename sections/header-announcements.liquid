@@ -146,6 +146,11 @@
       margin: 0 2px;
     }
 
+    /* SPECIAL FIX: Push timer down ONLY on product page */
+    body.template-product .countdown-timer {
+      transform: translateY(5px) !important; /* Specific adjustment for product page */
+    }
+
     @media (max-width: 768px) {
       .announcement-bar-wrapper {
         height: auto;
