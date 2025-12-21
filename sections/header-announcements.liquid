@@ -108,11 +108,9 @@
 
     .countdown-timer {
       display: flex;
-      align-items: flex-start;
+      align-items: center; /* Back to center for safety */
       gap: 10px;
-      margin-top: 6px; /* Push the whole timer down */
-      position: relative;
-      top: 2px; /* Extra nudge */
+      transform: translateY(2px); /* Safe visual nudge without affecting layout flow */
     }
 
     .timer-block {
