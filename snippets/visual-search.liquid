@@ -4,91 +4,23 @@
   Features: Image Search UI, Recently Viewed, Instant Results
 {% endcomment %}
 
-<div id="visual-search-overlay" class="visual-search-overlay" style="display: none; opacity: 0;">
-  <div class="visual-search-container">
-    
-    <!-- Header: Search Input -->
-    <div class="vs-header">
-      <div class="vs-input-wrapper">
-        <svg class="vs-search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        
-        <input 
-          type="text" 
-          id="vs-input" 
-          class="vs-input" 
-          placeholder="Suchen nach Produkten, Marken..."
-          autocomplete="off"
-        >
-
-        <!-- Image Search Button -->
-        <button class="vs-camera-btn" id="vs-camera-btn" title="Suche mit Bild" type="button">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-
-        <button class="vs-close-btn" id="vs-close-btn" type="button">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Content Area -->
-    <div class="vs-content">
-      
-      <!-- Section: Recently Viewed (Zuletzt angesehen) -->
-      <div id="vs-recent-section" class="vs-section">
-        <div class="vs-section-header">
-          <h3>Zuletzt angesehen</h3>
-          <button class="vs-clear-btn" id="vs-clear-history">Löschen</button>
-        </div>
-        <div class="vs-grid" id="vs-recent-grid">
-          <!-- Populated by JS -->
-        </div>
-      </div>
-
-      <!-- Section: Search Results -->
-      <div id="vs-results-section" class="vs-section" style="display: none;">
-        <div class="vs-section-header">
-          <h3>Produkte (<span id="vs-count">0</span>)</h3>
-        </div>
-        <div class="vs-grid" id="vs-results-grid">
-          <!-- Populated by JS -->
-        </div>
-        <!-- No Results -->
-        <div id="vs-no-results" class="vs-no-results" style="display: none;">
-          <p>Keine Ergebnisse gefunden.</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- Image Upload Input (Hidden) -->
-<input type="file" id="vs-image-upload" accept="image/*" style="display: none;">
-
 <style>
-  /* Overlay */
+  /* Overlay - Fixed Position, Full Screen */
   .visual-search-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-    z-index: 2147483647; /* Max Z-Index */
-    display: none; /* Default hidden */
+    background: rgba(0, 0, 0, 0.4); /* Slight dim */
+    backdrop-filter: blur(2px);
+    z-index: 2147483647;
+    display: none; /* Toggled via JS */
     align-items: flex-start;
     justify-content: center;
+    padding-top: 60px; /* Offset from top */
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease-out;
   }
 
   .visual-search-overlay.active {
@@ -96,152 +28,139 @@
     opacity: 1 !important;
   }
 
-  /* Main Container */
+  /* Main Modal Container */
   .visual-search-container {
-    background: #fff;
-    width: 100%;
-    max-width: 1000px;
-    min-height: 50vh;
-    max-height: 90vh;
-    margin-top: 60px;
-    border-radius: 8px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
-    overflow: hidden;
+    background: #ffffff;
+    width: 95%;
+    max-width: 980px;
+    height: auto;
+    min-height: 400px;
+    max-height: 85vh;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     display: flex;
     flex-direction: column;
-    transform: translateY(-20px);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+    transform: translateY(-10px);
+    transition: transform 0.2s ease-out;
   }
-  
+
   .visual-search-overlay.active .visual-search-container {
     transform: translateY(0);
   }
 
-  /* Header & Input */
+  /* Header Section */
   .vs-header {
-    padding: 20px;
-    border-bottom: 1px solid #eee;
-  }
-
-  .vs-input-wrapper {
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f0f0;
     display: flex;
     align-items: center;
-    gap: 15px;
-    position: relative;
+    background: #fff;
   }
 
   .vs-search-icon {
-    color: #666;
+    color: #777;
+    width: 22px;
+    height: 22px;
+    margin-right: 16px;
     flex-shrink: 0;
-    width: 24px;
-    height: 24px;
   }
 
   .vs-input {
     flex: 1;
     border: none;
-    font-size: 24px;
-    font-weight: 300;
-    color: #333;
     outline: none;
+    font-size: 20px;
+    color: #333;
+    font-family: inherit;
+    font-weight: 400;
     background: transparent;
-    min-width: 0; 
-    height: 44px;
+    height: 40px;
   }
 
   .vs-input::placeholder {
     color: #999;
   }
 
-  .vs-camera-btn {
+  /* Header Icons Actions */
+  .vs-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 10px;
+  }
+
+  .vs-icon-btn {
     background: none;
     border: none;
     cursor: pointer;
-    color: #666;
+    color: #777;
     padding: 8px;
     border-radius: 50%;
     transition: background 0.2s, color 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-    width: 44px;
-    height: 44px;
   }
 
-  .vs-camera-btn:hover {
+  .vs-icon-btn:hover {
     background: #f5f5f5;
     color: #000;
   }
-  
-  .vs-camera-btn svg {
-     width: 24px;
-     height: 24px;
-     display: block;
+
+  .vs-icon-btn svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 1.5; /* Thinner stroke for premium look */
   }
 
-  .vs-close-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #999;
-    padding: 4px;
-    transition: color 0.2s;
-    flex-shrink: 0;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .vs-close-btn:hover {
-    color: #333;
-  }
-
-  /* Content */
+  /* Content Scroll Area */
   .vs-content {
     flex: 1;
-    padding: 30px;
     overflow-y: auto;
+    padding: 24px 32px;
+    background: #fff;
   }
 
   .vs-section {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
   }
 
   .vs-section-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end; /* Align bottom baseline */
     margin-bottom: 20px;
+    padding-bottom: 5px;
   }
 
   .vs-section-header h3 {
-    font-size: 16px;
+    font-size: 15px;
     color: #666;
     font-weight: 500;
     margin: 0;
+    letter-spacing: 0.02em;
   }
 
   .vs-clear-btn {
     background: none;
     border: none;
     color: #999;
-    font-size: 14px;
+    font-size: 13px;
     cursor: pointer;
     text-decoration: underline;
+    padding: 0;
   }
 
   .vs-clear-btn:hover {
     color: #666;
   }
 
-  /* Product Grid */
+  /* Grid Layout */
   .vs-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
+    gap: 20px;
   }
 
   /* Product Card */
@@ -250,124 +169,185 @@
     flex-direction: column;
     text-decoration: none;
     color: inherit;
-    transition: transform 0.2s;
+    group: card;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.15s;
   }
-
+  
   .vs-card:hover {
-    transform: translateY(-4px);
+    background: #f9f9f9;
   }
 
   .vs-image-wrapper {
     position: relative;
     width: 100%;
-    padding-top: 100%;
-    background: #f8f8f8;
-    border-radius: 8px;
-    overflow: hidden;
+    aspect-ratio: 1; /* Square */
+    background: #fff;
     margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
   }
 
   .vs-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
-    padding: 16px;
-    mix-blend-mode: multiply;
+    transition: transform 0.2s;
+  }
+
+  .vs-card:hover .vs-image {
+    transform: scale(1.02);
   }
 
   .vs-card-title {
     font-size: 14px;
     color: #333;
     line-height: 1.4;
-    margin-bottom: 8px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    height: 40px; /* Limit 2 lines approx */
     overflow: hidden;
+    margin-bottom: 8px;
+    font-weight: 400;
   }
 
-  .vs-card-price-row {
-    margin-top: auto;
-  }
-
-  .vs-price-old {
-    text-decoration: line-through;
-    color: #999;
-    font-size: 13px;
-    margin-right: 6px;
-  }
-
-  .vs-price-new {
+  .vs-price {
     font-size: 18px;
-    font-weight: 600;
-    color: #333;
+    font-weight: 700;
+    color: #222;
   }
 
   .vs-no-results {
     text-align: center;
-    color: #999;
+    color: #888;
     padding: 40px;
   }
 
-  /* Responsive */
+  /* Mobile Responsive */
   @media (max-width: 768px) {
     .visual-search-container {
-      margin-top: 0;
+      width: 100%;
       height: 100%;
-      max-height: 100%;
+      max-height: 100vh;
+      margin-top: 0;
       border-radius: 0;
     }
+    
     .vs-grid {
       grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
     }
-    .vs-input {
-      font-size: 18px;
+
+    .vs-header {
+      padding: 12px 16px;
     }
   }
 </style>
 
+<div id="visual-search-overlay" class="visual-search-overlay">
+  <div class="visual-search-container">
+    
+    <!-- Top Bar -->
+    <div class="vs-header">
+      <!-- Search Icon -->
+      <svg class="vs-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      
+      <!-- Input -->
+      <input 
+        type="text" 
+        id="vs-input" 
+        class="vs-input" 
+        placeholder="Suchen nach Produkten, Marken..."
+        autocomplete="off"
+      >
+
+      <!-- Actions Right -->
+      <div class="vs-actions">
+        <!-- Camera Button -->
+        <button class="vs-icon-btn" id="vs-camera-btn" type="button" title="Bildersuche">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+        </button>
+
+        <!-- Close Button -->
+        <button class="vs-icon-btn" id="vs-close-btn" type="button" title="Schließen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="vs-content">
+      
+      <!-- Recently Viewed Section -->
+      <div id="vs-recent-section" class="vs-section">
+        <div class="vs-section-header">
+          <h3>Zuletzt angesehen</h3>
+          <button class="vs-clear-btn" id="vs-clear-history">Löschen</button>
+        </div>
+        <div class="vs-grid" id="vs-recent-grid">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+
+      <!-- Live Search Results -->
+      <div id="vs-results-section" class="vs-section" style="display: none;">
+        <div class="vs-section-header">
+          <h3>Produkte (<span id="vs-count">0</span>)</h3>
+        </div>
+        <div class="vs-grid" id="vs-results-grid"></div>
+        <div id="vs-no-results" class="vs-no-results" style="display: none;">
+          Keine Ergebnisse gefunden.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<input type="file" id="vs-image-upload" accept="image/*" style="display: none;" />
+
 <script>
   (function() {
-    // --- Elements ---
     const overlay = document.getElementById('visual-search-overlay');
     const input = document.getElementById('vs-input');
     const closeBtn = document.getElementById('vs-close-btn');
-    const clearBtn = document.getElementById('vs-clear-history');
-    const recentSection = document.getElementById('vs-recent-section');
-    const recentGrid = document.getElementById('vs-recent-grid');
-    const resultsSection = document.getElementById('vs-results-section');
-    const resultsGrid = document.getElementById('vs-results-grid');
     const cameraBtn = document.getElementById('vs-camera-btn');
     const fileInput = document.getElementById('vs-image-upload');
-
-    // Check if critical elements exist before running
-    if (!overlay || !input) {
-      console.warn("Visual Search: Critical elements not found.");
-      return;
-    }
+    const recentGrid = document.getElementById('vs-recent-grid');
+    const resultsGrid = document.getElementById('vs-results-grid');
+    
+    // Safety check
+    if (!overlay || !input) return;
 
     let searchTimeout;
 
-    // --- Search Logic ---
+    // --- Search API ---
     async function performSearch(query) {
       if (!query.trim()) {
         showRecentlyViewed();
         return;
       }
-
-      if (recentSection) recentSection.style.display = 'none';
-      if (resultsSection) resultsSection.style.display = 'block';
-      if (resultsGrid) resultsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center;">Laden...</div>';
+      
+      document.getElementById('vs-recent-section').style.display = 'none';
+      document.getElementById('vs-results-section').style.display = 'block';
+      resultsGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#999;padding:20px;">Laden...</div>';
 
       try {
         const res = await fetch(`/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=8`);
         const data = await res.json();
         const products = data.resources.results.products;
 
-        if (products && products.length > 0) {
+        if (products && products.length) {
           renderGrid(products, resultsGrid);
           document.getElementById('vs-count').textContent = products.length;
           document.getElementById('vs-no-results').style.display = 'none';
@@ -376,119 +356,86 @@
           document.getElementById('vs-count').textContent = '0';
           document.getElementById('vs-no-results').style.display = 'block';
         }
-      } catch (err) {
-        console.error("Visual Search Error:", err);
-      }
+      } catch (e) { console.error(e); }
     }
 
-    // --- Render Grid ---
+    // --- Grid Render ---
     function renderGrid(products, container) {
-      if (!container) return;
       container.innerHTML = products.map(p => {
+        // Simple price format to match design
+        // Usually comes as "19,99 €" string from Shopify suggest API
         return `
         <a href="${p.url}" class="vs-card">
           <div class="vs-image-wrapper">
-            <img src="${p.image || p.featured_image}" class="vs-image" alt="${p.title}" loading="lazy">
+            <img src="${p.image || p.featured_image}" class="vs-image" loading="lazy" alt="${p.title}">
           </div>
           <div class="vs-card-title">${p.title}</div>
-          <div class="vs-card-price-row">
-            <span class="vs-price-new">${p.price}</span>
-          </div>
+          <div class="vs-price">${p.price}</div>
         </a>
         `;
       }).join('');
     }
 
-    // --- Recently Viewed ---
+    // --- Recent (Mock) ---
     function showRecentlyViewed() {
-      if (recentSection) recentSection.style.display = 'block';
-      if (resultsSection) resultsSection.style.display = 'none';
+      document.getElementById('vs-recent-section').style.display = 'block';
+      document.getElementById('vs-results-section').style.display = 'none';
       
-      if (recentGrid) {
+      // Fetch some products to simulate history if empty
+      // In real app, check localStorage
+      if (recentGrid.children.length === 0) {
         fetch(`/search/suggest.json?q=Office&resources[type]=product&resources[limit]=4`)
-          .then(res => res.json())
-          .then(data => {
-            if (data.resources.results.products) {
-               renderGrid(data.resources.results.products, recentGrid);
-            }
-          })
-          .catch(e => console.log(e));
+          .then(r=>r.json())
+          .then(d => {
+            if(d.resources.results.products) renderGrid(d.resources.results.products, recentGrid);
+          });
       }
     }
 
-    // --- Open/Close Logic ---
+    // --- Interaction ---
     function openOverlay() {
-      // Direct style manipulation for reliability
       overlay.style.display = 'flex';
+      // Force repaint
+      void overlay.offsetWidth;
+      overlay.classList.add('active');
       
-      // Force layout reflow before adding active class (optional, but 'display: flex' is instantaneous)
-      // We use setTimeout to ensure browser registers "display: flex" before transitioning opacity
-      setTimeout(() => {
-         overlay.classList.add('active');
-         overlay.style.opacity = '1'; 
-      }, 10);
-
       input.focus();
-      showRecentlyViewed();
+      if (!input.value) showRecentlyViewed();
       document.body.style.overflow = 'hidden';
     }
 
     function closeOverlay() {
       overlay.classList.remove('active');
-      overlay.style.opacity = '0';
-      
       setTimeout(() => {
         overlay.style.display = 'none';
         document.body.style.overflow = '';
-      }, 250);
+      }, 200);
       input.value = '';
     }
 
-    // --- Event Capture ---
-    // Intercept clicks on any search button in the header
+    // Listeners
+    if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
+    overlay.addEventListener('click', e => { if(e.target === overlay) closeOverlay(); });
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') closeOverlay(); });
+
+    // Robust Capture for Search Button
     window.addEventListener('click', function(e) {
-      // Broad selector to catch any search icon/button
-      const btn = e.target.closest('.header__icon--search, .search-modal__button, .header__search, search-button button, [role="search"], [aria-label="Search"], [aria-label="Suchen"]');
-      
+      const btn = e.target.closest('.header__icon--search, .search-modal__button, .header__search, [role="search"]');
       if (btn) {
-        e.preventDefault(); 
+        e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
-        
-        // Ensure any existing modals are closed (Theme dependent)
-        const details = btn.closest('details-modal');
-        if (details) details.removeAttribute('open');
-        
         openOverlay();
-        return false;
       }
-    }, true); // Capture phase
-
-    if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
-    
-    overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) closeOverlay();
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeOverlay();
-    });
+    }, true);
 
     input.addEventListener('input', (e) => {
       clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        performSearch(e.target.value);
-      }, 300);
+      searchTimeout = setTimeout(() => performSearch(e.target.value), 300);
     });
 
-    if (cameraBtn && fileInput) {
-      cameraBtn.addEventListener('click', () => fileInput.click());
-      fileInput.addEventListener('change', (e) => {
-        if (e.target.files && e.target.files[0]) {
-          alert("📷 Bild wird analysiert...");
-        }
-      });
-    }
+    if (cameraBtn) cameraBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => alert("Bild-Suche Funktion (Demo)"));
 
   })();
 </script>
