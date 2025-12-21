@@ -103,6 +103,62 @@
   </span>
 </div>
 
+<!-- Last Purchase Notification -->
+<div id="last-purchase-{{ product.id }}" class="last-purchase-box">
+  <div class="purchase-icon">✅</div>
+  <div class="purchase-text">
+    <span>Zuletzt gekauft vor <strong id="purchase-time-{{ product.id }}">...</strong> aus <strong id="purchase-city-{{ product.id }}">...</strong></span>
+  </div>
+</div>
+
+<style>
+.last-purchase-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%);
+  border-left: 4px solid #27ae60;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: #1b5e20;
+  box-shadow: 0 2px 8px rgba(39, 174, 96, 0.1);
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.purchase-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.purchase-text {
+  flex: 1;
+  font-weight: 500;
+}
+
+.purchase-text strong {
+  font-weight: 700;
+  color: #1b5e20;
+}
+
+@media (max-width: 768px) {
+  .last-purchase-box {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  
+  .purchase-icon {
+    font-size: 18px;
+  }
+}
+</style>
+
 <style>
 .sales-compact {
   display: flex;
@@ -299,5 +355,70 @@
   }
   updateSaleTime();
   setInterval(updateSaleTime, 60000);
+})();
+</script>
+
+<script>
+// Last Purchase Notification Logic
+(function() {
+  const pid = {{ product.id }};
+  const purchaseTimeEl = document.getElementById('purchase-time-' + pid);
+  const purchaseCityEl = document.getElementById('purchase-city-' + pid);
+  
+  if (!purchaseTimeEl || !purchaseCityEl) return;
+  
+  // German cities
+  const cities = [
+    'Berlin', 'Hamburg', 'München', 'Köln', 'Frankfurt',
+    'Stuttgart', 'Düsseldorf', 'Dortmund', 'Essen', 'Leipzig',
+    'Bremen', 'Dresden', 'Hannover', 'Nürnberg', 'Duisburg',
+    'Bochum', 'Wuppertal', 'Bielefeld', 'Bonn', 'Münster',
+    'Karlsruhe', 'Mannheim', 'Augsburg', 'Wiesbaden', 'Gelsenkirchen'
+  ];
+  
+  const purchaseKey = 'last_purchase_time_' + pid;
+  const cityKey = 'last_purchase_city_' + pid;
+  
+  function getRandomCity() {
+    return cities[Math.floor(Math.random() * cities.length)];
+  }
+  
+  function updatePurchase() {
+    let purchaseTime = localStorage.getItem(purchaseKey);
+    let city = localStorage.getItem(cityKey);
+    
+    if (!purchaseTime || !city) {
+      // Initial setup: random time between 2-15 minutes ago
+      const minutesAgo = 2 + Math.floor(Math.random() * 14);
+      purchaseTime = Date.now() - (minutesAgo * 60 * 1000);
+      city = getRandomCity();
+      localStorage.setItem(purchaseKey, purchaseTime);
+      localStorage.setItem(cityKey, city);
+    }
+    
+    const diff = Math.floor((Date.now() - parseInt(purchaseTime)) / 60000);
+    
+    // Update every 3-8 minutes with new city
+    if (diff > (3 + Math.floor(Math.random() * 6))) {
+      purchaseTime = Date.now();
+      city = getRandomCity();
+      localStorage.setItem(purchaseKey, purchaseTime);
+      localStorage.setItem(cityKey, city);
+      
+      // Animate update
+      const box = document.getElementById('last-purchase-' + pid);
+      if (box) {
+        box.style.animation = 'none';
+        setTimeout(() => box.style.animation = 'slideIn 0.5s ease-out', 10);
+      }
+    }
+    
+    const minutes = Math.floor((Date.now() - parseInt(purchaseTime)) / 60000);
+    purchaseTimeEl.textContent = minutes + ' Min.';
+    purchaseCityEl.textContent = city;
+  }
+  
+  updatePurchase();
+  setInterval(updatePurchase, 30000); // Check every 30 seconds
 })();
 </script>
