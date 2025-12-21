@@ -1,52 +1,34 @@
 {% comment %}
   Urgency Elements: Countdown Timer + Sales Counter
-  Version: 2.0 - Updated 22.12.2025
+  Version: 3.0 - Force Display Update
 {% endcomment %}
 
-<!-- Countdown Timer for Special Price -->
-<div id="countdown-timer-{{ product.id }}" class="countdown-timer-box">
-  <div class="countdown-icon">⚡</div>
-  <div class="countdown-content">
-    <span class="countdown-label">Sonderpreis endet in:</span>
-    <div class="countdown-digits">
-      <span id="countdown-hours-{{ product.id }}">00</span>:<span id="countdown-minutes-{{ product.id }}">00</span>:<span id="countdown-seconds-{{ product.id }}">00</span>
-    </div>
-  </div>
-</div>
-
 <style>
-.countdown-timer-box {
+.urgency-countdown-box {
   display: flex !important;
   align-items: center;
   gap: 12px;
   background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-  border: 2px solid #ff9800;
+  border: 2px solid #ff9800 !important;
   border-radius: 10px;
   padding: 12px 16px;
-  margin: 12px 0;
+  margin: 15px 0 !important;
   box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
-  animation: pulse-border 2s ease-in-out infinite;
+  position: relative !important;
+  z-index: 10 !important;
   visibility: visible !important;
   opacity: 1 !important;
+  min-height: 60px; /* Ensure height */
+  width: 100%;
 }
 
-@keyframes pulse-border {
-  0%, 100% { border-color: #ff9800; box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2); }
-  50% { border-color: #f57c00; box-shadow: 0 6px 18px rgba(255, 152, 0, 0.35); }
-}
-
-.countdown-icon {
+.urgency-icon {
   font-size: 28px;
   line-height: 1;
-  animation: flash 1.5s ease-in-out infinite;
+  animation: urgency-flash 1.5s ease-in-out infinite;
 }
 
-@keyframes flash {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.1); }
-}
-
-.countdown-content {
+.urgency-content {
   flex: 1;
   display: flex;
   align-items: center;
@@ -54,44 +36,43 @@
   flex-wrap: wrap;
 }
 
-.countdown-label {
+.urgency-label {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: #e65100;
+  text-transform: uppercase;
 }
 
-.countdown-digits {
-  font-size: 20px;
+.urgency-digits {
+  font-size: 22px;
   font-weight: 800;
   color: #bf360c;
-  font-family: 'Courier New', monospace;
+  font-family: monospace;
   letter-spacing: 1px;
 }
 
-.countdown-digits span {
-  display: inline-block;
-  min-width: 24px;
-  text-align: center;
+@keyframes urgency-flash {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
 }
 
 @media (max-width: 768px) {
-  .countdown-timer-box {
-    padding: 10px 14px;
-  }
-  
-  .countdown-icon {
-    font-size: 24px;
-  }
-  
-  .countdown-label {
-    font-size: 13px;
-  }
-  
-  .countdown-digits {
-    font-size: 18px;
-  }
+  .urgency-countdown-box { padding: 10px 14px; }
+  .urgency-label { font-size: 13px; }
+  .urgency-digits { font-size: 18px; }
 }
 </style>
+
+<!-- Countdown Timer for Special Price -->
+<div id="countdown-timer-{{ product.id }}" class="urgency-countdown-box">
+  <div class="urgency-icon">⚡</div>
+  <div class="urgency-content">
+    <span class="urgency-label">Sonderpreis endet in:</span>
+    <div class="urgency-digits">
+      <span id="countdown-hours-{{ product.id }}">00</span>:<span id="countdown-minutes-{{ product.id }}">00</span>:<span id="countdown-seconds-{{ product.id }}">00</span>
+    </div>
+  </div>
+</div>
 
 <!-- Sales Counter -->
 <div id="sales-box-{{ product.id }}" class="sales-compact">
