@@ -1763,65 +1763,6 @@ nav[aria-label="Breadcrumb"],
   {%- endif -%}
 </ul>
 
-{%- if product.title contains " " or product.title contains "LEGO" -%}
-<!-- Countdown Timer (Old Design) -->
-<div class="countdown-timer-green">
-  <span>Angebot endet in:</span>
-  <span id="countdown-hours-old">02</span>:
-  <span id="countdown-minutes-old">15</span>:
-  <span id="countdown-seconds-old">30</span>
-</div>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const hoursEl = document.getElementById('countdown-hours-old');
-    const minutesEl = document.getElementById('countdown-minutes-old');
-    const secondsEl = document.getElementById('countdown-seconds-old');
-    if (!hoursEl) return;
-    
-    function pad(num) {
-      return String(num).padStart(2, '0');
-    }
-    function updateCountdown() {
-      const now = new Date();
-      const currentMs = now.getTime();
-      const periodMs = 3 * 60 * 60 * 1000;
-      const timePassed = currentMs % periodMs;
-      const timeLeft = periodMs - timePassed;
-      const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-      hoursEl.textContent = pad(hours);
-      minutesEl.textContent = pad(minutes);
-      secondsEl.textContent = pad(seconds);
-    }
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-  });
-</script>
-<style>
-  .countdown-timer-green {
-    background: linear-gradient(135deg, #1d4739 0%, #2d5a48 100%);
-    color: #fff;
-    padding: 14px 20px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    margin: 16px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-shadow: 0 4px 12px rgba(29, 71, 57, 0.2);
-  }
-  .countdown-timer-green span:not(:first-child) {
-    font-family: 'Courier New', monospace;
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: 1px;
-  }
-</style>
-{%- endif -%}
 <!-- ===== V A R I A N T E N (nur wenn >= 2 Varianten existieren) ===== -->
 {% if has_variants %}
 <div class="kvp-pro__group" id="variantPicker" aria-label="Varianten-Auswahl">
