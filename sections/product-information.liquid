@@ -1495,8 +1495,8 @@ nav[aria-label="Breadcrumb"],
                                   </div>
                                 {% endif %}
 
-                                <h1 class="product-title" style="margin-bottom: 8px;">{{ product.title }}</h1> 
-<div class="product-rating" style="margin-bottom: 24px;">
+                                <h1 class="product-title" style="margin-bottom: 6px;">{{ product.title }}</h1> 
+<div class="product-rating" style="margin-bottom: 12px;">
   <div class="rechnung-profi-stars" data-product-id="{{ product.id }}"></div>
 </div>
 {% assign product_collections = product.collections | map: 'handle' %}
@@ -1510,7 +1510,7 @@ nav[aria-label="Breadcrumb"],
 {% if title_l contains 'windows' or tags_l contains 'windows' or type_l contains 'windows' %}{% assign is_win = true %}{% endif %}
 {% if title_l contains 'mac' or title_l contains 'macos' or tags_l contains 'mac' or tags_l contains 'macos' or type_l contains 'mac' %}{% assign is_mac = true %}{% endif %}
 {% if digital %}
-  <p class="product-subtitle" style="margin-bottom: 0;">
+  <p class="product-subtitle" style="margin-bottom: 8px;">
     {% if is_win and is_mac == false %}Dauerlizenz für Windows – Kein Abo – Sofort per E-Mail
     {% elsif is_mac and is_win == false %}Dauerlizenz für macOS – Kein Abo – Sofort per E-Mail
     {% elsif is_win and is_mac %}Dauerlizenz für Windows & macOS – Kein Abo – Sofort per E-Mail
@@ -1671,7 +1671,7 @@ nav[aria-label="Breadcrumb"],
   .price-box {
     display: flex;
     flex-direction: column;
-    margin-top: 4px;
+    margin-top: 0;
   }
 </style>
 <!-- In den Warenkorb Button -->
