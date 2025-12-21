@@ -105,11 +105,7 @@
                     <div class="mcr-card__body">
                       <h4 class="mcr-card__title">{{ product.title }}</h4>
 
-                      {% if section.settings.show_rating %}
-                        <div class="mcr-rating">
-                           <div class="rechnung-profi-stars" data-product-id="{{ product.id }}"></div>
-                        </div>
-                      {% endif %}
+
 
                       <div class="mcr-price-row">
                         {% if compare_at and compare_at > price %}
