@@ -1740,47 +1740,6 @@ nav[aria-label="Breadcrumb"],
   </style>
 {%- endif -%}
 
-<!-- ===== Produktinfos (Barcode, Marke, Versanddatum, Lieferbar) MOVED HERE ===== -->
-{% if product.selected_or_first_available_variant.barcode != blank %}
-  <div class="product-info-line">
-    <i class="fa-solid fa-barcode"></i>
-    <span class="info-pair"><strong>EAN:</strong><span id="eanValue" class="info-value">{{ product.selected_or_first_available_variant.barcode }}</span></span>
-  </div>
-{% endif %}
-{% if product.vendor != blank %}
-  <div class="product-info-line">
-    <i class="fa-solid fa-tag"></i>
-    <span class="info-pair"><strong>Marke:</strong><span class="info-value"><a class="product-brand-link" href="/collections/vendors?q={{ product.vendor | url_encode }}">{{ product.vendor }}</a></span></span>
-  </div>
-{% endif %}
-{% if ship_dt != blank %}
-  <div class="product-info-line">
-    <i class="fa-solid fa-calendar-alt"></i>
-    <span class="info-pair"><strong>Versanddatum / Angebotsende:</strong><span id="shippingDateValue" class="info-value">{{ ship_dt | date: "%-d. %B %Y" }}</span></span>
-  </div>
-{% endif %}
-<div class="product-info-line" style="margin-bottom: 20px;">
-  <i class="fas {% if is_digital %}fa-download{% else %}fa-truck{% endif %}"></i>
-  <span class="info-pair">
-    <strong>Lieferbar:</strong>
-    <span id="availabilityValue" class="info-value">
-      {% if product.selected_or_first_available_variant.available %}
-        {% if is_digital %}
-          <span class="in-stock">Versand per E-Mail sofort nach Zahlung</span>
-        {% else %}
-          {% if long_shipping and ship_dt != blank %}
-            <span class="out-of-stock">Lieferbar ab {{ ship_dt | date: "%-d. %B %Y" }}</span>
-          {% else %}
-            <span class="in-stock">in 1-3 Werktagen bei dir</span>
-          {% endif %}
-        {% endif %}
-      {% else %}
-        <span class="out-of-stock">Zurzeit nicht verfügbar</span>
-      {% endif %}
-    </span>
-  </span>
-</div>
-
 <!-- Verkaufsanzeige (Sales Counter & Last Sale) -->
 <div id="sales-box-{{ product.id }}" class="verkaufs-box fade-in">
   <div class="verkaufs-icon-wrapper">
@@ -1950,6 +1909,47 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   </style>
 {%- endif -%}
+
+<!-- ===== Produktinfos (Barcode, Marke, Versanddatum, Lieferbar) MOVED TO BOTTOM ===== -->
+{% if product.selected_or_first_available_variant.barcode != blank %}
+  <div class="product-info-line">
+    <i class="fa-solid fa-barcode"></i>
+    <span class="info-pair"><strong>EAN:</strong><span id="eanValue" class="info-value">{{ product.selected_or_first_available_variant.barcode }}</span></span>
+  </div>
+{% endif %}
+{% if product.vendor != blank %}
+  <div class="product-info-line">
+    <i class="fa-solid fa-tag"></i>
+    <span class="info-pair"><strong>Marke:</strong><span class="info-value"><a class="product-brand-link" href="/collections/vendors?q={{ product.vendor | url_encode }}">{{ product.vendor }}</a></span></span>
+  </div>
+{% endif %}
+{% if ship_dt != blank %}
+  <div class="product-info-line">
+    <i class="fa-solid fa-calendar-alt"></i>
+    <span class="info-pair"><strong>Versanddatum / Angebotsende:</strong><span id="shippingDateValue" class="info-value">{{ ship_dt | date: "%-d. %B %Y" }}</span></span>
+  </div>
+{% endif %}
+<div class="product-info-line" style="margin-bottom: 20px;">
+  <i class="fas {% if is_digital %}fa-download{% else %}fa-truck{% endif %}"></i>
+  <span class="info-pair">
+    <strong>Lieferbar:</strong>
+    <span id="availabilityValue" class="info-value">
+      {% if product.selected_or_first_available_variant.available %}
+        {% if is_digital %}
+          <span class="in-stock">Versand per E-Mail sofort nach Zahlung</span>
+        {% else %}
+          {% if long_shipping and ship_dt != blank %}
+            <span class="out-of-stock">Lieferbar ab {{ ship_dt | date: "%-d. %B %Y" }}</span>
+          {% else %}
+            <span class="in-stock">in 1-3 Werktagen bei dir</span>
+          {% endif %}
+        {% endif %}
+      {% else %}
+        <span class="out-of-stock">Zurzeit nicht verfügbar</span>
+      {% endif %}
+    </span>
+  </span>
+</div>
 <!-- ===== H I G H L I G H T S ===== -->
 <ul class="highlights-list">
   {%- if is_digital -%}
