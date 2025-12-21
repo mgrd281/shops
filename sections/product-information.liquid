@@ -2040,6 +2040,79 @@ document.addEventListener("DOMContentLoaded", function () {
     </span>
   </span>
 </div>
+
+<!-- ===== Preisbox (Horizontal) + CTA  MOVED UP ===== -->
+<div class="price-box" aria-live="polite">
+  <div class="price-horizontal">
+    {% assign cap = product.selected_or_first_available_variant.compare_at_price | default: product.compare_at_price %}
+    {% assign cur = product.selected_or_first_available_variant.price | default: product.price %}
+    {% assign pct = 0 %}
+    {% if cap and cap > cur %}
+      {% assign diff = cap | minus: cur %}
+      {% assign pct_raw = diff | times: 100.0 | divided_by: cap %}
+      {% assign pct = pct_raw | round %}
+    {% endif %}
+    {% assign pct_string = pct | prepend: '-' | append: '%' %}
+
+    <div class="price-container">
+      <div class="price-main-row">
+        <span class="current-price">{{ cur | money }}</span>
+        {% if cap and cap > cur %}
+          <span class="discount-pill-simple">-{{ pct }}%</span>
+        {% endif %}
+      </div>
+      
+      {% if cap and cap > cur %}
+        <div class="price-sub-row">
+          <span class="old-price">{{ cap | money }}</span>
+          <span class="price-sep">•</span>
+          <span class="savings-text">Du sparst: <strong>{{ cap | minus: cur | money }}</strong></span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  {% if is_digital %}
+    <div class="price-meta" style="margin-top:2px;">inkl. MwSt.</div>
+  {% else %}
+    <div class="price-meta" style="margin-top:2px;">inkl. MwSt. zzgl. Versandkosten</div>
+  {% endif %}
+</div>
+<style>
+  .price-box {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+  }
+</style>
+<!-- In den Warenkorb Button -->
+<form method="post" action="/cart/add" id="add-to-cart-form">
+  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+   <button type="submit" class="buy-btn pulse">
+    <i class="fa-solid fa-shopping-cart"></i> <span class="btn-text">In den Warenkorb</span>
+  </button>
+</form>
+<!-- Jetzt kaufen Button -->
+<form method="post" action="/cart/add" id="buy-now-form">
+  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+  <button type="submit" class="buy-btn buy-now">
+    <i class="fa-solid fa-rocket"></i> <span class="btn-text">Jetzt kaufen</span>
+  </button>
+</form>
+<script>
+  document.getElementById('buy-now-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: document.querySelector('#buy-now-form input[name="id"]').value,
+        quantity: 1
+      })
+    }).then(function() {
+      window.location.href = '/checkout';
+    });
+  });
+</script>
 <!-- ===== H I G H L I G H T S ===== -->
 <ul class="highlights-list">
   {%- if is_digital -%}
@@ -2321,78 +2394,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if(initial) updateUI(initial);
   })();
 </script>
-<!-- ===== Preisbox (Horizontal) + CTA ===== -->
-<div class="price-box" aria-live="polite">
-  <div class="price-horizontal">
-    {% assign cap = product.selected_or_first_available_variant.compare_at_price | default: product.compare_at_price %}
-    {% assign cur = product.selected_or_first_available_variant.price | default: product.price %}
-    {% assign pct = 0 %}
-    {% if cap and cap > cur %}
-      {% assign diff = cap | minus: cur %}
-      {% assign pct_raw = diff | times: 100.0 | divided_by: cap %}
-      {% assign pct = pct_raw | round %}
-    {% endif %}
-    {% assign pct_string = pct | prepend: '-' | append: '%' %}
 
-    <div class="price-container">
-      <div class="price-main-row">
-        <span class="current-price">{{ cur | money }}</span>
-        {% if cap and cap > cur %}
-          <span class="discount-pill-simple">-{{ pct }}%</span>
-        {% endif %}
-      </div>
-      
-      {% if cap and cap > cur %}
-        <div class="price-sub-row">
-          <span class="old-price">{{ cap | money }}</span>
-          <span class="price-sep">•</span>
-          <span class="savings-text">Du sparst: <strong>{{ cap | minus: cur | money }}</strong></span>
-        </div>
-      {% endif %}
-    </div>
-  </div>
-  {% if is_digital %}
-    <div class="price-meta" style="margin-top:2px;">inkl. MwSt.</div>
-  {% else %}
-    <div class="price-meta" style="margin-top:2px;">inkl. MwSt. zzgl. Versandkosten</div>
-  {% endif %}
-</div>
-<style>
-  .price-box {
-    display: flex;
-    flex-direction: column;
-    margin-top: 10px;
-  }
-</style>
-<!-- In den Warenkorb Button -->
-<form method="post" action="/cart/add" id="add-to-cart-form">
-  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-   <button type="submit" class="buy-btn pulse">
-    <i class="fa-solid fa-shopping-cart"></i> <span class="btn-text">In den Warenkorb</span>
-  </button>
-</form>
-<!-- Jetzt kaufen Button -->
-<form method="post" action="/cart/add" id="buy-now-form">
-  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-  <button type="submit" class="buy-btn buy-now">
-    <i class="fa-solid fa-rocket"></i> <span class="btn-text">Jetzt kaufen</span>
-  </button>
-</form>
-<script>
-  document.getElementById('buy-now-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    fetch('/cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: document.querySelector('#buy-now-form input[name="id"]').value,
-        quantity: 1
-      })
-    }).then(function() {
-      window.location.href = '/checkout';
-    });
-  });
-</script>
 
 <!-- Wird oft zusammen gekauft (Tag-based: einfacher!) -->
 {%- assign fbt_products = '' | split: '' -%}
