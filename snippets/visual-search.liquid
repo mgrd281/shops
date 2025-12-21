@@ -432,14 +432,24 @@
        defaultView.style.display = 'block';
        resultsView.style.display = 'none';
        
-       // Populate Recent (Row 1) - Use Fallback if empty
+       // Categories to pick from for "Random" effect
+       const categories = ['Game', 'Lego', 'Software', 'Windows', 'Office', 'Watch', 'Bestseller', 'Home'];
+
+       // 1. Recent (Top Row) - Randomize
+       const recentQ = categories[Math.floor(Math.random() * categories.length)];
        if (recentGrid.innerHTML.trim() === '') {
-           fetchAndPopulate(recentGrid, 'Office', 'Microsoft');
+           fetchAndPopulate(recentGrid, recentQ, 'Microsoft');
        }
 
-       // Populate Trending (Row 2) - Use Fallback if empty
+       // 2. Produkte (Bottom Row) - Randomize
+       const trendingQ = categories[Math.floor(Math.random() * categories.length)];
+       
        if (trendingGrid.innerHTML.trim() === '') {
-           fetchAndPopulate(trendingGrid, 'Windows', 'Bestseller');
+           // Try to pick a different category if possible
+           let finalQ = trendingQ;
+           if(finalQ === recentQ && categories.indexOf('Sale') !== -1) finalQ = 'Sale'; 
+           
+           fetchAndPopulate(trendingGrid, finalQ, 'Featured');
        }
     }
     
@@ -485,7 +495,17 @@
       overlay.classList.add('active');
       input.focus();
       
-      if (!input.value) showDefaultView();
+      // If we want random products EVERY time, we can clear the grids here
+      // But for better UX (no flash), let's keep them if populated, 
+      // or optionally clear them.
+      // Based on "different products every time", let's leave them if already there 
+      // because re-fetching causes a blank flash.
+      // However, if the user reloads the page, they will definitely change.
+      
+      if (!input.value && (recentGrid.innerHTML === '' || trendingGrid.innerHTML === '')) {
+          showDefaultView();
+      }
+      
       document.body.style.overflow = 'hidden';
 
       const otherModals = document.querySelectorAll('details-modal, .search-modal');
