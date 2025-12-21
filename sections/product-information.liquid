@@ -267,7 +267,12 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.3s ease, opacity 0.3s ease;
             /* mix-blend-mode: multiply; Optional: if backgrounds are not perfectly white */
+        }
+        .thumb-item:hover img {
+            transform: scale(1.1);
+            opacity: 0.9;
         }
         /* Badges auf Thumbnails */
         .thumb-badge {
@@ -304,7 +309,11 @@
             max-height: 100%;
             object-fit: contain;
             cursor: zoom-in;
-            transition: transform 0.3s ease;
+            transition: transform 0.4s ease, filter 0.3s ease;
+        }
+        .main-image:hover {
+            transform: scale(1.05);
+            filter: brightness(1.05);
         }
         /* Direct video/iframe display rules */
         .main-video,
