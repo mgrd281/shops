@@ -3,7 +3,8 @@
   Features:
   1. "ZULETZT ANGESEHEN": Real history + Smart Backfill (Always shows 4 cards).
   2. "PRODUKTE": Contextual Suggestions (Always shows 4 cards).
-  3. Hybrid Liquid/JS Data: Passes Liquid product data to JS for instant rendering.
+  3. Hybrid Liquid/JS Data: Passthrough safe fallback products to JS.
+  4. VISUAL SEARCH SIMULATION: Simulates image analysis and returns related results.
 {% endcomment %}
 
 {% assign source_products = empty %}
@@ -69,9 +70,9 @@
 {% endif %}
 
 <script>
-  // Pass safe fallback products to JS for "Recently Viewed" backfill
+  // Pass safe fallback products to JS for "Recently Viewed" backfill AND visual search simulation
   window.vsFallbackProducts = [
-    {% for p in source_products limit: 8 %}
+    {% for p in source_products limit: 12 %}
     {
       id: {{ p.id }},
       title: `{{ p.title | escape }}`,
@@ -416,6 +417,14 @@
           Keine Ergebnisse gefunden.
         </div>
       </div>
+      
+      <!-- VISUAL SEARCH ANALYZING VIEW -->
+      <div id="vs-analyzing-view" style="display: none; text-align: center; padding: 40px;">
+        <div style="font-size: 14px; color: #555; margin-bottom: 20px;">
+           <span style="display: inline-block; animation: pulse 1.5s infinite;">📷</span>
+           <span>Bild wird analysiert...</span>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -455,9 +464,12 @@
     const cameraBtn = document.getElementById('vs-camera-btn');
     const fileInput = document.getElementById('vs-image-upload');
     
-    // Grids
+    // Views
     const defaultView = document.getElementById('vs-default-view');
     const resultsView = document.getElementById('vs-results-view');
+    const analyzingView = document.getElementById('vs-analyzing-view');
+    
+    // Grids
     const resultsGrid = document.getElementById('vs-results-grid');
     const recentGrid = document.getElementById('vs-recent-grid');
 
@@ -472,6 +484,7 @@
         return;
       }
       defaultView.style.display = 'none';
+      analyzingView.style.display = 'none';
       resultsView.style.display = 'block';
 
       try {
@@ -494,7 +507,6 @@
       container.innerHTML = products.map(p => {
         const stars = "★★★★★";
         const count = Math.floor(Math.random() * 50) + 10;
-        // Check image property structure depending on source (API vs Liquid vs LocalStorage)
         const img = p.image || p.featured_image || p.image; 
         const price = p.price;
         const oldPrice = p.compare_at_price || p.compare_at || '';
@@ -523,10 +535,8 @@
        try {
          let viewed = JSON.parse(localStorage.getItem('vs_recently_viewed')) || [];
          
-         // Backfill: If less than 4, fill with fallback products (but no duplicates)
          if (viewed.length < 4 && window.vsFallbackProducts) {
              const viewedIds = new Set(viewed.map(v => v.id));
-             
              for (const fallback of window.vsFallbackProducts) {
                  if (viewed.length >= 4) break;
                  if (!viewedIds.has(fallback.id)) {
@@ -536,7 +546,6 @@
              }
          }
          
-         // Limit to 4 for the grid
          viewed = viewed.slice(0, 4);
          
          if (viewed.length === 0) {
@@ -544,14 +553,45 @@
          } else {
             renderGrid(viewed, recentGrid);
          }
-
        } catch(e) { console.error(e); }
     }
 
     function showDefaultView() {
        defaultView.style.display = 'block';
        resultsView.style.display = 'none';
+       analyzingView.style.display = 'none';
        renderRecent(); 
+    }
+    
+    // --- Visual Search Simulation ---
+    function handleImageUpload() {
+       // 1. Show Analyzing View
+       defaultView.style.display = 'none';
+       resultsView.style.display = 'none';
+       analyzingView.style.display = 'block';
+       
+       // 2. Simulate Delay (1.5s)
+       setTimeout(() => {
+           // 3. Show Results (Visual Search - Simulated by showing fallback/random products)
+           analyzingView.style.display = 'none';
+           resultsView.style.display = 'block';
+           
+           document.querySelector('#vs-results-view h3').textContent = "ÄHNLICHE PRODUKTE GEFUNDEN";
+
+           // Shuffle fallback products for variety
+           let simulatedResults = [];
+           if (window.vsFallbackProducts) {
+               simulatedResults = [...window.vsFallbackProducts].sort(() => 0.5 - Math.random()).slice(0, 4);
+           }
+           
+           if (simulatedResults.length > 0) {
+              renderGrid(simulatedResults, resultsGrid);
+              document.getElementById('vs-no-results').style.display = 'none';
+           } else {
+              document.getElementById('vs-no-results').style.display = 'block';
+           }
+           
+       }, 1500);
     }
 
     // --- Interaction ---
@@ -601,7 +641,7 @@
     }
     
     if (cameraBtn) cameraBtn.addEventListener('click', () => fileInput.click());
-    if (fileInput) fileInput.addEventListener('change', () => alert("📷 Bild wird analysiert..."));
+    if (fileInput) fileInput.addEventListener('change', handleImageUpload);
 
   })();
 </script>
