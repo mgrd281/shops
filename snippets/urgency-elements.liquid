@@ -38,6 +38,8 @@
   const timeKey = 'sale_time_' + pid;
   const dateKey = 'sales_date_' + pid;
   const startKey = 'sales_start_' + pid;
+  const visitKey = 'visit_count_' + pid;
+  const lastVisitKey = 'last_visit_' + pid;
   
   // Get today's date
   const today = new Date().toDateString();
@@ -48,32 +50,45 @@
     localStorage.removeItem(key);
     localStorage.removeItem(timeKey);
     localStorage.removeItem(startKey);
+    localStorage.removeItem(visitKey);
+    localStorage.removeItem(lastVisitKey);
     localStorage.setItem(dateKey, today);
+  }
+  
+  // Track visits and time between visits
+  let visitCount = parseInt(localStorage.getItem(visitKey)) || 0;
+  const lastVisit = parseInt(localStorage.getItem(lastVisitKey)) || 0;
+  const now = Date.now();
+  const timeSinceLastVisit = now - lastVisit; // in milliseconds
+  
+  // Increment visit if more than 2 minutes passed
+  if (timeSinceLastVisit > 120000 || visitCount === 0) {
+    visitCount++;
+    localStorage.setItem(visitKey, visitCount);
+    localStorage.setItem(lastVisitKey, now);
   }
   
   // Get rating from page (ddreviews or metafields)
   let rating = 0;
   try {
-    // Try to get from metafields first
     rating = {{ product.metafields.ddreviews.content.average_star | default: 0 }};
-    // If not available, try from reviews count
     if (!rating || rating === 0) {
       const reviewCount = {{ product.metafields.ddreviews.content.total_reviews | default: 0 }};
-      if (reviewCount > 0) rating = 4.5; // assume good rating if reviews exist
+      if (reviewCount > 0) rating = 4.5;
     }
   } catch(e) {}
   
   // Calculate base sales based on rating
-  let baseSales = 40 + (pid % 56); // default: 40-96
+  let baseSales = 40 + (pid % 56);
   
   if (rating >= 4.5) {
-    baseSales = 150 + (pid % 100); // 150-250 for excellent products
+    baseSales = 150 + (pid % 100);
   } else if (rating >= 4.0) {
-    baseSales = 100 + (pid % 80);  // 100-180 for good products
+    baseSales = 100 + (pid % 80);
   } else if (rating >= 3.5) {
-    baseSales = 70 + (pid % 60);   // 70-130 for average products
+    baseSales = 70 + (pid % 60);
   } else if (rating > 0) {
-    baseSales = 40 + (pid % 40);   // 40-80 for low-rated products
+    baseSales = 40 + (pid % 40);
   }
   
   // Store initial base if not exists
@@ -84,17 +99,22 @@
   }
   
   // Calculate gradual growth throughout the day
-  const now = new Date();
-  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+  const midnight = new Date(now);
+  midnight.setHours(0, 0, 0, 0);
   const minutesSinceMidnight = Math.floor((now - midnight) / 60000);
   
-  // Growth rate: +1 sale every 3-5 minutes (depends on rating)
   const growthRate = rating >= 4.5 ? 3 : rating >= 4.0 ? 4 : 5;
   const growth = Math.floor(minutesSinceMidnight / growthRate);
   
+  // Add progressive increment based on visit count (FOMO effect)
+  // Each visit adds 3-8 sales (more for highly rated products)
+  const visitBonus = rating >= 4.5 ? (visitCount - 1) * 8 : 
+                     rating >= 4.0 ? (visitCount - 1) * 6 : 
+                     (visitCount - 1) * 4;
+  
   // Calculate current count with cap
   const maxSales = rating >= 4.5 ? 400 : rating >= 4.0 ? 300 : rating >= 3.5 ? 200 : 150;
-  let currentCount = Math.min(startSales + growth, maxSales);
+  let currentCount = Math.min(startSales + growth + visitBonus, maxSales);
   
   // Store and display
   localStorage.setItem(key, currentCount);
