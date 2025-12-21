@@ -1,45 +1,21 @@
 {% comment %}
-  Visual Search System
-  Design: Compact Popup Overlay (Centered)
-  Features: Recents (Top), Trending (Bottom - labeled 'Produkte'), Search Results, Ratings
-  Fallback: Uses Liquid pre-rendered products if JS fetch fails or returns 0 results.
+  Visual Search System - Guaranteed Content Version
+  Logic: Uses Server-Side Liquid to pre-render products. No dependence on JS fetch for default view.
 {% endcomment %}
 
-<!-- Pre-render fallback products from Shopify to ensure cards ALWAYS show up -->
-<div id="vs-static-fallback" style="display:none;">
-  {% assign fallback_products = collections['all'].products %}
-  {% if fallback_products.size == 0 %}
-    {% assign fallback_products = collections['frontpage'].products %}
-  {% endif %}
-  
-  {% if fallback_products.size == 0 %}
-     {% for c in collections %}
-       {% if c.products.size > 0 %}
-         {% assign fallback_products = c.products %}
-         {% break %}
-       {% endif %}
-     {% endfor %}
-  {% endif %}
-
-  {% for p in fallback_products limit: 4 %}
-      <a href="{{ p.url }}" class="vs-card">
-          <div class="vs-image-wrapper">
-            <img src="{{ p.featured_image | img_url: '400x' }}" class="vs-image" loading="lazy" alt="{{ p.title | escape }}">
-          </div>
-          <div class="vs-card-title">{{ p.title }}</div>
-          <div class="vs-rating">
-             <span>★★★★★</span>
-             <span class="vs-rating-count">({{ "now" | date: "%S" | plus: 10 }})</span>
-          </div>
-          <div class="vs-price-row">
-             {% if p.compare_at_price > p.price %}
-             <span class="vs-price-old">{{ p.compare_at_price | money }}</span>
-             {% endif %}
-             <span class="vs-price-new">{{ p.price | money }}</span>
-          </div>
-        </a>
+{% assign source_products = collections['all'].products %}
+{% if source_products.size == 0 %}
+  {% comment %} Fallback if 'all' is empty or inaccessible {% endcomment %}
+  {% assign source_products = collections['frontpage'].products %}
+{% endif %}
+{% if source_products.size == 0 %}
+  {% for c in collections %}
+    {% if c.products.size > 0 %}
+      {% assign source_products = c.products %}
+      {% break %}
+    {% endif %}
   {% endfor %}
-</div>
+{% endif %}
 
 <style>
   /* Overlay - Fixed Position */
@@ -49,11 +25,11 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.5); /* Clear darker backdrop */
+    background: rgba(0, 0, 0, 0.5);
     z-index: 2147483647;
     display: none;
-    align-items: center; /* Center Vertically */
-    justify-content: center; /* Center Horizontally */
+    align-items: center;
+    justify-content: center;
     opacity: 0;
     transition: opacity 0.2s ease-out;
   }
@@ -69,7 +45,7 @@
     width: 85%; 
     max-width: 720px; 
     height: auto;
-    max-height: 85vh; /* Increased slightly to fit two rows comfortably */
+    max-height: 85vh;
     border-radius: 8px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.25);
     display: flex;
@@ -313,23 +289,57 @@
       <!-- DEFAULT VIEW CONTAINER -->
       <div id="vs-default-view">
         
-        <!-- Top Row: Recently Viewed -->
+        <!-- Top Row: Recently Viewed (Pseudo - Filled with Products 1-4) -->
         <div id="vs-recent-section" class="vs-section">
           <div class="vs-section-header">
             <h3>ZULETZT ANGESEHEN</h3>
           </div>
           <div class="vs-grid" id="vs-recent-grid">
-             <!-- JS Populated -->
+            {% for p in source_products limit: 4 %}
+             <a href="{{ p.url }}" class="vs-card">
+              <div class="vs-image-wrapper">
+                <img src="{{ p.featured_image | img_url: '400x' }}" class="vs-image" loading="lazy" alt="{{ p.title | escape }}">
+              </div>
+              <div class="vs-card-title">{{ p.title }}</div>
+              <div class="vs-rating">
+                 <span>★★★★★</span>
+                 <span class="vs-rating-count">({{ "now" | date: "%S" | plus: 12 }})</span>
+              </div>
+              <div class="vs-price-row">
+                 {% if p.compare_at_price > p.price %}
+                 <span class="vs-price-old">{{ p.compare_at_price | money }}</span>
+                 {% endif %}
+                 <span class="vs-price-new">{{ p.price | money }}</span>
+              </div>
+             </a>
+            {% endfor %}
           </div>
         </div>
 
-        <!-- Bottom Row: Products -->
+        <!-- Bottom Row: Produkte (Filled with Products 5-8) -->
         <div id="vs-trending-section" class="vs-section">
           <div class="vs-section-header">
             <h3>PRODUKTE</h3>
           </div>
           <div class="vs-grid" id="vs-trending-grid">
-             <!-- JS Populated -->
+             {% for p in source_products offset: 4 limit: 4 %}
+             <a href="{{ p.url }}" class="vs-card">
+              <div class="vs-image-wrapper">
+                <img src="{{ p.featured_image | img_url: '400x' }}" class="vs-image" loading="lazy" alt="{{ p.title | escape }}">
+              </div>
+              <div class="vs-card-title">{{ p.title }}</div>
+              <div class="vs-rating">
+                 <span>★★★★★</span>
+                 <span class="vs-rating-count">({{ "now" | date: "%S" | plus: 5 }})</span>
+              </div>
+              <div class="vs-price-row">
+                 {% if p.compare_at_price > p.price %}
+                 <span class="vs-price-old">{{ p.compare_at_price | money }}</span>
+                 {% endif %}
+                 <span class="vs-price-new">{{ p.price | money }}</span>
+              </div>
+             </a>
+            {% endfor %}
           </div>
         </div>
 
@@ -363,14 +373,7 @@
     // Views
     const defaultView = document.getElementById('vs-default-view');
     const resultsView = document.getElementById('vs-results-view');
-
-    // Grids
-    const recentGrid = document.getElementById('vs-recent-grid');
-    const trendingGrid = document.getElementById('vs-trending-grid');
     const resultsGrid = document.getElementById('vs-results-grid');
-    
-    // Fallback Content (Pre-rendered via Liquid)
-    const staticFallback = document.getElementById('vs-static-fallback');
 
     if (!overlay || !input) return;
 
@@ -427,65 +430,11 @@
       }).join('');
     }
 
-    // --- Show Default (Recent + Trending) ---
+    // --- Show Default (Static) ---
     function showDefaultView() {
        defaultView.style.display = 'block';
        resultsView.style.display = 'none';
-       
-       // Categories to pick from for "Random" effect
-       const categories = ['Game', 'Lego', 'Software', 'Windows', 'Office', 'Watch', 'Bestseller', 'Home'];
-
-       // 1. Recent (Top Row) - Randomize
-       const recentQ = categories[Math.floor(Math.random() * categories.length)];
-       if (recentGrid.innerHTML.trim() === '') {
-           fetchAndPopulate(recentGrid, recentQ, 'Microsoft');
-       }
-
-       // 2. Produkte (Bottom Row) - Randomize
-       const trendingQ = categories[Math.floor(Math.random() * categories.length)];
-       
-       if (trendingGrid.innerHTML.trim() === '') {
-           // Try to pick a different category if possible
-           let finalQ = trendingQ;
-           if(finalQ === recentQ && categories.indexOf('Sale') !== -1) finalQ = 'Sale'; 
-           
-           fetchAndPopulate(trendingGrid, finalQ, 'Featured');
-       }
-    }
-    
-    // Robust fetcher with fallback to STATIC LIQUID
-    function fetchAndPopulate(gridElement, primaryQuery, secondaryQuery) {
-        
-        // 1. Try Primary Query
-        fetch(`/search/suggest.json?q=${primaryQuery}&resources[type]=product&resources[limit]=4`)
-          .then(r => r.json())
-          .then(d => {
-             const prods = d.resources.results.products;
-             if(prods && prods.length > 0) {
-                 renderGrid(prods, gridElement);
-             } else {
-                 // 2. Try Secondary Query
-                 fetch(`/search/suggest.json?q=${secondaryQuery}&resources[type]=product&resources[limit]=4`)
-                 .then(r2 => r2.json())
-                 .then(d2 => {
-                     const prods2 = d2.resources.results.products;
-                     if(prods2 && prods2.length > 0) {
-                        renderGrid(prods2, gridElement);
-                     } else {
-                        // 3. Fallback to Static Data (Guaranteed)
-                        if (staticFallback && staticFallback.innerHTML.trim() !== "") {
-                           gridElement.innerHTML = staticFallback.innerHTML;
-                        }
-                     }
-                 });
-             }
-          })
-          .catch(() => {
-              // On Error, use Static Fallback
-              if (staticFallback && staticFallback.innerHTML.trim() !== "") {
-                   gridElement.innerHTML = staticFallback.innerHTML;
-              }
-          });
+       // Content is already rendered by Liquid! No fetch needed.
     }
 
     // --- Interaction ---
@@ -495,17 +444,7 @@
       overlay.classList.add('active');
       input.focus();
       
-      // If we want random products EVERY time, we can clear the grids here
-      // But for better UX (no flash), let's keep them if populated, 
-      // or optionally clear them.
-      // Based on "different products every time", let's leave them if already there 
-      // because re-fetching causes a blank flash.
-      // However, if the user reloads the page, they will definitely change.
-      
-      if (!input.value && (recentGrid.innerHTML === '' || trendingGrid.innerHTML === '')) {
-          showDefaultView();
-      }
-      
+      if (!input.value) showDefaultView();
       document.body.style.overflow = 'hidden';
 
       const otherModals = document.querySelectorAll('details-modal, .search-modal');
