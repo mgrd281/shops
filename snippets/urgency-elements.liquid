@@ -13,14 +13,6 @@
   </span>
 </div>
 
-{%- if product.title contains " " or product.title contains "LEGO" -%}
-<!-- Compact Countdown -->
-<div class="countdown-compact">
-  🔥 <strong>Angebot endet in:</strong>
-  <span id="countdown-{{ product.id }}">02:44:30</span>
-</div>
-{%- endif -%}
-
 <style>
 .sales-compact {
   display: flex;
@@ -35,26 +27,6 @@
 .sales-text { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
 .sales-text strong { font-weight: 700; }
 .sales-time { font-size: 13px; color: #666; }
-
-.countdown-compact {
-  background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
-  border-left: 3px solid #ff5252;
-  padding: 10px 14px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #d32f2f;
-  margin: 10px 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-.countdown-compact span {
-  font-family: 'Courier New', monospace;
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 1px;
-}
 </style>
 
 <script>
@@ -87,22 +59,5 @@
   }
   updateSaleTime();
   setInterval(updateSaleTime, 60000);
-  
-  // Countdown Logic
-  {%- if product.title contains " " or product.title contains "LEGO" -%}
-  const cdEl = document.getElementById('countdown-{{ product.id }}');
-  if (cdEl) {
-    function updateCountdown() {
-      const periodMs = 3 * 60 * 60 * 1000;
-      const timeLeft = periodMs - (Date.now() % periodMs);
-      const h = Math.floor(timeLeft / 3600000);
-      const m = Math.floor((timeLeft % 3600000) / 60000);
-      const s = Math.floor((timeLeft % 60000) / 1000);
-      cdEl.textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
-    }
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-  }
-  {%- endif -%}
 })();
 </script>
