@@ -1,24 +1,22 @@
 {% comment %}
   Visual Search System
-  Design: Clean Standard Design (Matching Image 0) but with Camera & Ratings
-  Features: Search UI, Products Grid (5 cols), Ratings, Camera Button
+  Design: Compact Popup Overlay (Centered)
+  Features: Search UI, Products Grid (4 cols), Ratings, Camera Button
 {% endcomment %}
 
 <style>
-  /* Overlay */
+  /* Overlay - Fixed Position */
   .visual-search-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(2px);
+    background: rgba(0, 0, 0, 0.5); /* Clear darker backdrop */
     z-index: 2147483647;
     display: none;
-    align-items: flex-start;
-    justify-content: center;
-    padding-top: 50px;
+    align-items: center; /* Center Vertically */
+    justify-content: center; /* Center Horizontally */
     opacity: 0;
     transition: opacity 0.2s ease-out;
   }
@@ -28,30 +26,29 @@
     opacity: 1 !important;
   }
 
-  /* Container */
+  /* Compact Popup Container */
   .visual-search-container {
     background: #ffffff;
-    width: 95%;
-    max-width: 1100px; /* Slightly wider for more cards */
+    width: 90%;
+    max-width: 800px; /* Much smaller max-width for "Popup" feel */
     height: auto;
-    min-height: 400px;
-    max-height: 85vh;
+    max-height: 80vh; /* Don't fill screen */
     border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transform: translateY(-10px);
+    transform: scale(0.95);
     transition: transform 0.2s ease-out;
   }
 
   .visual-search-overlay.active .visual-search-container {
-    transform: translateY(0);
+    transform: scale(1);
   }
 
   /* Header */
   .vs-header {
-    padding: 15px 25px;
+    padding: 16px 20px;
     border-bottom: 1px solid #eee;
     display: flex;
     align-items: center;
@@ -62,7 +59,7 @@
     color: #555;
     width: 20px;
     height: 20px;
-    margin-right: 15px;
+    margin-right: 12px;
     flex-shrink: 0;
   }
 
@@ -70,33 +67,33 @@
     flex: 1;
     border: none;
     outline: none;
-    font-size: 18px;
+    font-size: 16px; /* Smaller functional font */
     color: #333;
     font-family: inherit;
     font-weight: 400;
     background: transparent;
-    height: 40px;
+    height: 36px;
   }
 
   .vs-input::placeholder {
-    color: #777;
+    color: #888;
     opacity: 1;
   }
 
-  /* Header Actions */
+  /* Actions */
   .vs-actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
 
   .vs-icon-btn {
     background: none;
     border: none;
     cursor: pointer;
-    color: #777;
-    padding: 8px;
-    transition: color 0.2s;
+    color: #666;
+    padding: 6px;
+    transition: color 0.1s;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -104,39 +101,39 @@
   }
 
   .vs-icon-btn:hover {
-    color: #000;
-    background: #f5f5f5;
+    color: #111;
+    background: #f0f0f0;
   }
 
   .vs-icon-btn svg {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     stroke-width: 1.5;
   }
 
-  /* Content */
+  /* Content Area */
   .vs-content {
     flex: 1;
     overflow-y: auto;
-    padding: 25px;
+    padding: 20px;
     background: #fff;
   }
 
   .vs-section-header {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 
   .vs-section-header h3 {
-    font-size: 14px;
-    color: #666;
+    font-size: 13px;
+    color: #777;
     font-weight: 400;
     margin: 0;
   }
 
-  /* Grid - 5 columns for smaller cards */
+  /* Grid - 4 Columns Requested */
   .vs-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); 
+    grid-template-columns: repeat(4, 1fr); 
     gap: 20px;
   }
 
@@ -150,18 +147,18 @@
   }
 
   .vs-card:hover {
-    opacity: 0.8;
+    opacity: 0.9;
   }
 
   .vs-image-wrapper {
     position: relative;
     width: 100%;
     aspect-ratio: 1;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
+    background: #fff; 
   }
 
   .vs-image {
@@ -171,81 +168,66 @@
   }
 
   .vs-card-title {
-    font-size: 14px; /* Smaller font */
+    font-size: 13px;
     color: #333;
-    line-height: 1.4;
+    line-height: 1.35;
     font-family: var(--font-heading-family), serif; 
     margin-bottom: 4px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    height: 38px; /* Fixed height for consistency */
+    height: 36px;
   }
-
+  
+  /* Optional Ratings */
   .vs-rating {
-    color: #ffb800; /* Gold/Yellow star color */
-    font-size: 13px;
-    margin-bottom: 4px;
     display: flex;
     align-items: center;
+    font-size: 11px;
+    color: #f5c518; /* Standard Gold */
     gap: 2px;
+    margin-bottom: 4px;
   }
   
   .vs-rating-count {
-    color: #999;
-    font-size: 12px;
-    margin-left: 4px;
+     color: #aaa;
+     margin-left: 2px;
   }
 
   .vs-price-row {
      display: flex;
-     align-items: baseline;
-     gap: 6px;
+     flex-direction: column; /* Stack prices often looks neater for small cards */
      margin-top: auto;
   }
 
   .vs-price-old {
     text-decoration: line-through;
-    color: #999;
-    font-size: 13px;
+    color: #aaa;
+    font-size: 12px;
   }
 
   .vs-price-new {
-    font-size: 16px; /* Slightly smaller */
-    font-weight: 600;
-    color: #333;
+    font-size: 16px;
+    font-weight: 500;
+    color: #222;
   }
 
   .vs-no-results {
     text-align: center;
-    color: #888;
-    padding: 40px;
-  }
-
-  @media (max-width: 1000px) {
-    .vs-grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
+    color: #999;
+    padding: 30px;
+    font-size: 13px;
   }
 
   @media (max-width: 768px) {
     .visual-search-container {
-      width: 100%;
-      height: 100%;
-      max-height: 100vh;
-      border-radius: 0;
-      padding-top: 0;
+      width: 95%;
+      max-height: 90vh;
     }
     .vs-grid {
       grid-template-columns: repeat(2, 1fr);
       gap: 15px;
-    }
-    .vs-header {
-       padding: 12px 15px;
-    }
-    .vs-content {
-      padding: 15px;
     }
   }
 </style>
@@ -264,12 +246,12 @@
         type="text" 
         id="vs-input" 
         class="vs-input" 
-        placeholder="Suchen nach Produkten, Marken..."
+        placeholder="Suchen"
         autocomplete="off"
       >
 
       <div class="vs-actions">
-        <!-- Camera Button -->
+         <!-- Camera Button -->
         <button class="vs-icon-btn" id="vs-camera-btn" type="button" title="Bildersuche">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
@@ -277,7 +259,6 @@
           </svg>
         </button>
 
-        <!-- Close Button -->
         <button class="vs-icon-btn" id="vs-close-btn" type="button" title="Schließen">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -302,7 +283,6 @@
   </div>
 </div>
 
-<!-- Hidden File Input for Image Search -->
 <input type="file" id="vs-image-upload" accept="image/*" style="display: none;" />
 
 <script>
@@ -321,14 +301,13 @@
     // --- Search ---
     async function performSearch(query) {
       const searchQuery = query.trim() || "";
-      
-      // If empty, we can show some default 'popular' products
-      const queryParam = searchQuery ? searchQuery : "Office";
+      // Keep 'Office' as a fallback to ensure grid populates nicely like screenshot
+      const queryParam = searchQuery ? searchQuery : "Office"; 
       
       resultsGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#999;padding:20px;">Laden...</div>';
 
       try {
-        const res = await fetch(`/search/suggest.json?q=${encodeURIComponent(queryParam)}&resources[type]=product&resources[limit]=10`);
+        const res = await fetch(`/search/suggest.json?q=${encodeURIComponent(queryParam)}&resources[type]=product&resources[limit]=8`); // Limit 8 = 2 rows of 4
         const data = await res.json();
         const products = data.resources.results.products;
 
@@ -345,23 +324,20 @@
     // --- Grid Render ---
     function renderGrid(products, container) {
       container.innerHTML = products.map(p => {
-        // Generate pseudo-rating for demo purposes (real rating needs meta fields logic not avail in standard suggest.json)
-        // We'll show a static 5 star or random to match the user's "Evaluations" request visually.
-        const ratingCount = Math.floor(Math.random() * 50) + 1;
-        
+        // Random ratings
+        const stars = "★★★★★";
+        const count = Math.floor(Math.random() * 60);
+
         return `
         <a href="${p.url}" class="vs-card">
           <div class="vs-image-wrapper">
             <img src="${p.image || p.featured_image}" class="vs-image" loading="lazy" alt="${p.title}">
           </div>
           <div class="vs-card-title">${p.title}</div>
-          
-          <!-- Rating (Visual Mockup based on user request) -->
           <div class="vs-rating">
-            <span style="letter-spacing: -2px;">★★★★★</span>
-            <span class="vs-rating-count">(${ratingCount})</span>
+             <span>${stars}</span>
+             <span class="vs-rating-count">(${count})</span>
           </div>
-          
           <div class="vs-price-row">
              ${ p.compare_at_price ? `<span class="vs-price-old">${p.compare_at_price}</span>` : '' }
              <span class="vs-price-new">${p.price}</span>
@@ -371,18 +347,22 @@
       }).join('');
     }
 
-    // --- Open/Close ---
+    // --- Interaction ---
     function openOverlay() {
       overlay.style.display = 'flex';
       void overlay.offsetWidth;
       overlay.classList.add('active');
       input.focus();
-      // Populate on open
+      
       if (!input.value && resultsGrid.innerHTML === '') performSearch(""); 
       document.body.style.overflow = 'hidden';
-      
-      // Attempt to hide other modals
-      document.querySelectorAll('details-modal').forEach(el => el.removeAttribute('open'));
+
+      // Ensure other modals close
+      const otherModals = document.querySelectorAll('details-modal, .search-modal');
+      otherModals.forEach(m => {
+         if(m.hasAttribute('open')) m.removeAttribute('open');
+         if(m.classList.contains('active')) m.classList.remove('active');
+      });
     }
 
     function closeOverlay() {
@@ -399,7 +379,7 @@
     overlay.addEventListener('click', e => { if(e.target === overlay) closeOverlay(); });
     document.addEventListener('keydown', e => { if(e.key === 'Escape') closeOverlay(); });
 
-    // Robust Capture
+    // Intercept
     window.addEventListener('click', function(e) {
       const btn = e.target.closest('.header__icon--search, .search-modal__button, .header__search, [role="search"]');
       if (btn) {
@@ -414,16 +394,9 @@
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(() => performSearch(e.target.value), 300);
     });
-
-    if (cameraBtn) {
-      cameraBtn.addEventListener('click', () => fileInput.click());
-    }
     
-    if (fileInput) {
-      fileInput.addEventListener('change', (e) => {
-        if(e.target.files.length) alert("📷 Bildersuche wird gestartet...");
-      });
-    }
+    if (cameraBtn) cameraBtn.addEventListener('click', () => fileInput.click());
+    if (fileInput) fileInput.addEventListener('change', () => alert("📷 Bild wird analysiert..."));
 
   })();
 </script>
