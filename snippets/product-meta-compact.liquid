@@ -15,7 +15,8 @@
     <span class="meta-item">
       <i class="fa-solid fa-tag"></i>
       <strong>Marke:</strong> 
-      <a class="brand-link" href="/collections/vendors?q={{ product.vendor | url_encode }}">{{ product.vendor }}</a>
+      {% assign vendor_handle = product.vendor | handleize %}
+      <a class="brand-link" href="/collections/{{ vendor_handle }}">{{ product.vendor }}</a>
     </span>
   {% endif %}
   
