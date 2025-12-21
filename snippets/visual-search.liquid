@@ -1,0 +1,453 @@
+{% comment %}
+  Visual Search System
+  Design: Full-screen overlay with grid layout (like Otto/Amazon)
+  Features: Image Search UI, Recently Viewed, Instant Results
+{% endcomment %}
+
+<div id="visual-search-overlay" class="visual-search-overlay" style="display: none; opacity: 0;">
+  <div class="visual-search-container">
+    
+    <!-- Header: Search Input -->
+    <div class="vs-header">
+      <div class="vs-input-wrapper">
+        <svg class="vs-search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        
+        <input 
+          type="text" 
+          id="vs-input" 
+          class="vs-input" 
+          placeholder="Suchen nach Produkten, Marken..."
+          autocomplete="off"
+        >
+
+        <!-- Image Search Button -->
+        <button class="vs-camera-btn" id="vs-camera-btn" title="Suche mit Bild">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <button class="vs-close-btn" id="vs-close-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="vs-content">
+      
+      <!-- Section: Recently Viewed (Zuletzt angesehen) -->
+      <div id="vs-recent-section" class="vs-section">
+        <div class="vs-section-header">
+          <h3>Zuletzt angesehen</h3>
+          <button class="vs-clear-btn" id="vs-clear-history">Löschen</button>
+        </div>
+        <div class="vs-grid" id="vs-recent-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Section: Search Results -->
+      <div id="vs-results-section" class="vs-section" style="display: none;">
+        <div class="vs-section-header">
+          <h3>Produkte (<span id="vs-count">0</span>)</h3>
+        </div>
+        <div class="vs-grid" id="vs-results-grid">
+          <!-- Populated by JS -->
+        </div>
+        <!-- No Results -->
+        <div id="vs-no-results" class="vs-no-results" style="display: none;">
+          <p>Keine Ergebnisse gefunden.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Image Upload Input (Hidden) -->
+<input type="file" id="vs-image-upload" accept="image/*" style="display: none;">
+
+<style>
+  /* Overlay */
+  .visual-search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 99999;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .visual-search-overlay.active {
+    opacity: 1;
+  }
+
+  /* Main Container */
+  .visual-search-container {
+    background: #fff;
+    width: 100%;
+    max-width: 1000px; /* Wide layout like the image */
+    min-height: 50vh;
+    max-height: 90vh;
+    margin-top: 60px; /* Offset from top */
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header & Input */
+  .vs-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .vs-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .vs-search-icon {
+    color: #666;
+    flex-shrink: 0;
+  }
+
+  .vs-input {
+    flex: 1;
+    border: none;
+    font-size: 24px; /* Large text like image */
+    font-weight: 300;
+    color: #333;
+    outline: none;
+    background: transparent;
+  }
+
+  .vs-input::placeholder {
+    color: #999;
+  }
+
+  .vs-camera-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+  }
+
+  .vs-camera-btn:hover {
+    background: #f5f5f5;
+    color: #333;
+  }
+
+  .vs-close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+
+  .vs-close-btn:hover {
+    color: #333;
+  }
+
+  /* Content */
+  .vs-content {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+  }
+
+  .vs-section {
+    margin-bottom: 40px;
+  }
+
+  .vs-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .vs-section-header h3 {
+    font-size: 16px;
+    color: #666;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .vs-clear-btn {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .vs-clear-btn:hover {
+    color: #666;
+  }
+
+  /* Product Grid */
+  .vs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns like image */
+    gap: 24px;
+  }
+
+  /* Product Card */
+  .vs-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s;
+  }
+
+  .vs-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .vs-image-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* square */
+    background: #f8f8f8;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .vs-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 16px;
+    mix-blend-mode: multiply;
+  }
+
+  .vs-card-title {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.4;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .vs-card-price-row {
+    margin-top: auto;
+  }
+
+  .vs-price-old {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 13px;
+    margin-right: 6px;
+  }
+
+  .vs-price-new {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .vs-no-results {
+    text-align: center;
+    color: #999;
+    padding: 40px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .visual-search-container {
+      margin-top: 0;
+      height: 100%;
+      max-height: 100%;
+      border-radius: 0;
+    }
+    .vs-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .vs-input {
+      font-size: 18px;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    const overlay = document.getElementById('visual-search-overlay');
+    const input = document.getElementById('vs-input');
+    const closeBtn = document.getElementById('vs-close-btn');
+    const clearBtn = document.getElementById('vs-clear-history');
+    const recentSection = document.getElementById('vs-recent-section');
+    const recentGrid = document.getElementById('vs-recent-grid');
+    const resultsSection = document.getElementById('vs-results-section');
+    const resultsGrid = document.getElementById('vs-results-grid');
+    const cameraBtn = document.getElementById('vs-camera-btn');
+    const fileInput = document.getElementById('vs-image-upload');
+    const searchIcons = document.querySelectorAll('.header__icon--search, .search-modal__button'); // Selectors for theme search buttons
+
+    let searchTimeout;
+
+    // --- Search Logic ---
+    async function performSearch(query) {
+      if (!query.trim()) {
+        showRecentlyViewed();
+        return;
+      }
+
+      recentSection.style.display = 'none';
+      resultsSection.style.display = 'block';
+      resultsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center;">Laden...</div>';
+
+      try {
+        const res = await fetch(`/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=8`);
+        const data = await res.json();
+        const products = data.resources.results.products;
+
+        if (products && products.length > 0) {
+          renderGrid(products, resultsGrid);
+          document.getElementById('vs-count').textContent = products.length;
+          document.getElementById('vs-no-results').style.display = 'none';
+        } else {
+          resultsGrid.innerHTML = '';
+          document.getElementById('vs-count').textContent = '0';
+          document.getElementById('vs-no-results').style.display = 'block';
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // --- Render Grid ---
+    function renderGrid(products, container) {
+      container.innerHTML = products.map(p => {
+        // Price Formatting (Basic simulation if raw price is cents)
+        let price = p.price; 
+        // Note: Shopify search API returns different price formats. 
+        // We'll format simply here.
+        
+        return `
+        <a href="${p.url}" class="vs-card">
+          <div class="vs-image-wrapper">
+            <img src="${p.image || p.featured_image}" class="vs-image" alt="${p.title}" loading="lazy">
+          </div>
+          <div class="vs-card-title">${p.title}</div>
+          <div class="vs-card-price-row">
+            <span class="vs-price-new">${p.price}</span>
+          </div>
+        </a>
+        `;
+      }).join('');
+    }
+
+    // --- Recently Viewed Logic (Mockup for now, uses search history products) ---
+    // Ideally this pulls from localStorage 'recently_viewed' if implemented in theme
+    function showRecentlyViewed() {
+      // For this demo, we'll try to fetch some popular products to simulate "Recently Viewed" 
+      // if no specific history exists, to match the layout image provided.
+      recentSection.style.display = 'block';
+      resultsSection.style.display = 'none';
+      
+      // Simulate fetching some "default" products to fill the grid if empty
+      // In a real scenario, this would read from a cookie or localStorage
+      fetch(`/search/suggest.json?q=Office&resources[type]=product&resources[limit]=4`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.resources.results.products) {
+             renderGrid(data.resources.results.products, recentGrid);
+          }
+        });
+    }
+
+    // --- Event Listeners ---
+    
+    // Open Overlay
+    function openOverlay() {
+      overlay.style.display = 'flex';
+      // Small timeout for fading effect
+      setTimeout(() => overlay.classList.add('active'), 10);
+      input.focus();
+      showRecentlyViewed();
+      
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Close Overlay
+    function closeOverlay() {
+      overlay.classList.remove('active');
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        document.body.style.overflow = '';
+      }, 300);
+      input.value = '';
+    }
+
+    // Attach to existing theme search buttons
+    searchIcons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault(); // Stop default theme search
+        openOverlay();
+      });
+    });
+
+    closeBtn.addEventListener('click', closeOverlay);
+    
+    // Close on click outside
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeOverlay();
+    });
+
+    // Close on ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeOverlay();
+    });
+
+    // Input Typing
+    input.addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        performSearch(e.target.value);
+      }, 300);
+    });
+
+    // Camera Button (Image Search)
+    cameraBtn.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        alert("📷 Bilderkennung wird gestartet...\n(Hinweis: Für eine echte Bildsuche wird eine externe API wie Google Cloud Vision benötigt. Dies ist eine Demo der Benutzeroberfläche.)");
+        // Here you would upload the file to your backend/API
+      }
+    });
+
+  })();
+</script>
