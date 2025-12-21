@@ -116,23 +116,31 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center; /* Center content vertically */
       line-height: 1;
+      min-width: 24px;
     }
 
     .timer-value {
       font-weight: 700;
-      font-size: 14px;
+      font-size: 13px; /* Slightly smaller to fit better */
+      line-height: 1.1;
     }
 
     .timer-label {
-      font-size: 9px;
-      margin-top: 2px;
+      font-size: 8px;
+      margin-top: 1px;
       opacity: 0.8;
+      text-transform: uppercase;
     }
 
     .timer-separator {
       font-weight: 700;
-      margin-bottom: 8px; /* Align with numbers */
+      font-size: 13px;
+      align-self: flex-start; /* Align with top numbers */
+      padding-top: 2px; /* Fine-tune alignment */
+      display: flex;
+      align-items: center;
     }
 
     @media (max-width: 768px) {
