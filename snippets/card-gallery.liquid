@@ -159,9 +159,9 @@
         assign slideshow_attributes = slideshow_attributes | append: ' disabled="true"'
       endif
     %}
-    <!-- card-gallery updated -->
+    <!-- card-gallery accessibility fix v2 -->
     <div
-      class="contents"
+      class="contents aria-fixed"
       ref="cardGalleryLink"
       data-href="{{ product.selected_or_first_available_variant.url }}"
     >
