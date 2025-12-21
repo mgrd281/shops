@@ -9,7 +9,7 @@
   "@type": "Organization",
   "name": "Karinex",
   "url": "{{ shop.url }}",
-  "logo": "{{ 'logo.png' | asset_url }}",
+  "logo": "{% if settings.logo %}{{ settings.logo | image_url: width: 500 }}{% else %}{{ shop.brand.logo | image_url: width: 500 }}{% endif %}",
   "description": "Karinex - Ihr vertrauenswürdiger Online-Shop für Microsoft Software, Windows Lizenzen und Office Produkte. Sofortiger Download, günstige Preise, deutscher Support.",
   "email": "info@karinex.de",
   "address": {
