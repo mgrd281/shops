@@ -145,7 +145,7 @@
           endif
 
           capture slideshow_children
-            echo '<a href="' | append: product.selected_or_first_available_variant.url | append: '" class="media-link" tabindex="-1" aria-hidden="true">'
+            echo '<a href="' | append: product.selected_or_first_available_variant.url | append: '" class="media-link" tabindex="-1">'
             render 'product-media', media: media, sizes: sizes, loading: loading, preview_image_only: true
             echo '</a>'
           endcapture
