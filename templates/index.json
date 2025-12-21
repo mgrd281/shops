@@ -1102,10 +1102,10 @@
       "type": "black-friday-grid",
       "name": "BF Slider",
       "settings": {
-        "heading": "Aktuelle Deals für dich",
+        "heading": "Unsere Top-Angebote",
         "collection": "black-friday",
         "show_subheading": true,
-        "subheading": "Alle Black Friday Deals auf einen Blick.",
+        "subheading": "Unsere besten Preise für Sie",
         "zoom_enable": true,
         "zoom_scale": "1.15",
         "show_badge": true,
