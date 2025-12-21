@@ -7,7 +7,33 @@
   lang="{{ request.locale.iso_code }}"
 >
   <head>
-    <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="e83f2376-0309-485b-96d5-6f1db86db8ee" data-blockingmode="auto" type="text/javascript" async defer></script>
+    <script>
+      // Delay Cookiebot loading until user interaction
+      (function() {
+        let cookiebotLoaded = false;
+        
+        function loadCookiebot() {
+          if (cookiebotLoaded) return;
+          cookiebotLoaded = true;
+          
+          const script = document.createElement('script');
+          script.id = 'Cookiebot';
+          script.src = 'https://consent.cookiebot.com/uc.js';
+          script.setAttribute('data-cbid', 'e83f2376-0309-485b-96d5-6f1db86db8ee');
+          script.setAttribute('data-blockingmode', 'auto');
+          script.type = 'text/javascript';
+          document.head.appendChild(script);
+        }
+        
+        // Load on first user interaction
+        ['mousedown', 'touchstart', 'keydown', 'scroll'].forEach(event => {
+          window.addEventListener(event, loadCookiebot, { once: true, passive: true });
+        });
+        
+        // Fallback: load after 3 seconds if no interaction
+        setTimeout(loadCookiebot, 3000);
+      })();
+    </script>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
@@ -29,6 +55,34 @@
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    
+    <!-- Critical CSS - Inline for instant rendering -->
+    <style>
+      /* Critical above-the-fold styles */
+      *{margin:0;padding:0;box-sizing:border-box}
+      body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;line-height:1.6;color:#333;background:#fff}
+      header{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid #e5e5e5}
+      .header-wrapper{max-width:1280px;margin:0 auto;padding:1rem 20px;display:flex;align-items:center;justify-content:space-between}
+      .header__heading-logo{font-size:1.5rem;font-weight:700;color:#1D4739}
+      nav{display:flex;gap:2rem}
+      nav a{text-decoration:none;color:#333;font-weight:500;transition:color .2s}
+      nav a:hover{color:#1D4739}
+      .n2-ss-slider-3{position:relative;width:100%;height:600px;overflow:hidden}
+      .slide{position:absolute;inset:0;display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;padding:40px;color:#fff;background-size:cover;background-position:50% 45%}
+      .slide.active{opacity:1;transform:translate3d(0,0,0)}
+      .btn-slider{display:inline-block;padding:12px 32px;background:#4169E1;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;transition:all .3s}
+      .btn-slider:hover{background:#3154C6;transform:translateY(-2px)}
+      .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;padding:40px 20px;max-width:1280px;margin:0 auto}
+      .product-card{background:#fff;border:1px solid #e5e5e5;border-radius:8px;overflow:hidden;transition:transform .3s,box-shadow .3s}
+      .product-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.1)}
+      .product-card img{width:100%;height:auto;display:block}
+      @media (max-width:749px){
+        .header-wrapper{padding:.75rem 15px}
+        nav{gap:1rem;font-size:.9rem}
+        .slide{grid-template-columns:1fr;padding:20px;height:auto;min-height:400px}
+        .product-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;padding:20px 15px}
+      }
+    </style>
     {%- assign favicon = settings.favicon | default: settings.logo -%}
     {%- if favicon != blank -%}
       <link
@@ -68,9 +122,13 @@
     {{ content_for_header }}
   </head>
 
-
-    <link rel="preconnect" href="https://widgets.trustedshops.com">
-    <link rel="preconnect" href="https://consent.cookiebot.com">
+    <!-- Resource Hints for Performance -->
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    <link rel="dns-prefetch" href="https://widgets.trustedshops.com">
+    <link rel="dns-prefetch" href="https://consent.cookiebot.com">
+    
+    <!-- Preload critical images -->
+    <link rel="preload" as="image" href="https://cdn.shopify.com/s/files/1/0917/5328/3851/files/mgrdegh.png?v=1761674227&width=1920" fetchpriority="high">
     <script>
       function loadReviewWidget() {
         if (window.reviewWidgetLoaded) return;
