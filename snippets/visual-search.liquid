@@ -10,7 +10,7 @@
     <!-- Header: Search Input -->
     <div class="vs-header">
       <div class="vs-input-wrapper">
-        <svg class="vs-search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <svg class="vs-search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
         
@@ -23,15 +23,15 @@
         >
 
         <!-- Image Search Button -->
-        <button class="vs-camera-btn" id="vs-camera-btn" title="Suche mit Bild">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <button class="vs-camera-btn" id="vs-camera-btn" title="Suche mit Bild" type="button">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
 
-        <button class="vs-close-btn" id="vs-close-btn">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <button class="vs-close-btn" id="vs-close-btn" type="button">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </button>
@@ -124,16 +124,19 @@
   .vs-search-icon {
     color: #666;
     flex-shrink: 0;
+    width: 24px;
+    height: 24px;
   }
 
   .vs-input {
     flex: 1;
     border: none;
-    font-size: 24px; /* Large text like image */
+    font-size: 24px;
     font-weight: 300;
     color: #333;
     outline: none;
     background: transparent;
+    min-width: 0; /* Fix flex child overflow */
   }
 
   .vs-input::placeholder {
@@ -147,12 +150,24 @@
     color: #666;
     padding: 8px;
     border-radius: 50%;
-    transition: background 0.2s;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0; /* Prevent crushing */
+    width: 44px; /* Explicit touch target */
+    height: 44px;
   }
 
   .vs-camera-btn:hover {
     background: #f5f5f5;
-    color: #333;
+    color: #000;
+  }
+  
+  .vs-camera-btn svg {
+     width: 24px;
+     height: 24px;
+     display: block;
   }
 
   .vs-close-btn {
@@ -162,6 +177,7 @@
     color: #999;
     padding: 4px;
     transition: color 0.2s;
+    flex-shrink: 0;
   }
 
   .vs-close-btn:hover {
@@ -310,7 +326,6 @@
     const resultsGrid = document.getElementById('vs-results-grid');
     const cameraBtn = document.getElementById('vs-camera-btn');
     const fileInput = document.getElementById('vs-image-upload');
-    const searchIcons = document.querySelectorAll('.header__icon--search, .search-modal__button'); // Selectors for theme search buttons
 
     let searchTimeout;
 
@@ -347,11 +362,6 @@
     // --- Render Grid ---
     function renderGrid(products, container) {
       container.innerHTML = products.map(p => {
-        // Price Formatting (Basic simulation if raw price is cents)
-        let price = p.price; 
-        // Note: Shopify search API returns different price formats. 
-        // We'll format simply here.
-        
         return `
         <a href="${p.url}" class="vs-card">
           <div class="vs-image-wrapper">
@@ -367,15 +377,11 @@
     }
 
     // --- Recently Viewed Logic (Mockup for now, uses search history products) ---
-    // Ideally this pulls from localStorage 'recently_viewed' if implemented in theme
     function showRecentlyViewed() {
-      // For this demo, we'll try to fetch some popular products to simulate "Recently Viewed" 
-      // if no specific history exists, to match the layout image provided.
       recentSection.style.display = 'block';
       resultsSection.style.display = 'none';
       
-      // Simulate fetching some "default" products to fill the grid if empty
-      // In a real scenario, this would read from a cookie or localStorage
+      // Simulate fetching popular products to display as "Recently Viewed"
       fetch(`/search/suggest.json?q=Office&resources[type]=product&resources[limit]=4`)
         .then(res => res.json())
         .then(data => {
@@ -409,12 +415,18 @@
       input.value = '';
     }
 
-    // Attach to existing theme search buttons
-    searchIcons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault(); // Stop default theme search
+    // Event Delegation for Search Buttons
+    document.addEventListener('click', function(e) {
+      // Catch common theme search button selectors
+      const btn = e.target.closest('.header__icon--search, .search-modal__button, .header__search, [aria-label="Search"], [role="search"]');
+      if (btn) {
+        e.preventDefault(); 
+        // Force closing any existing search modal if it opened quickly
+        const existingModal = document.querySelector('details-modal[open], .search-modal--active');
+        if(existingModal) existingModal.removeAttribute('open');
+        
         openOverlay();
-      });
+      }
     });
 
     closeBtn.addEventListener('click', closeOverlay);
@@ -444,7 +456,7 @@
 
     fileInput.addEventListener('change', (e) => {
       if (e.target.files && e.target.files[0]) {
-        alert("📷 Bilderkennung wird gestartet...\n(Hinweis: Für eine echte Bildsuche wird eine externe API wie Google Cloud Vision benötigt. Dies ist eine Demo der Benutzeroberfläche.)");
+        alert("📷 Bilderkennung wird gestartet...\n(Hinweis: Für eine echte Bildsuche wird eine externe API benötigt.)");
         // Here you would upload the file to your backend/API
       }
     });
