@@ -1,0 +1,89 @@
+{% comment %}
+  Enhanced Product Schema for Elite SEO
+  Includes additional fields for better rich snippets
+{% endcomment %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "{{ product.title | escape }}",
+  "image": [
+    {% if product.featured_image %}
+      "{{ product.featured_image | image_url: width: 1200 }}",
+      "{{ product.featured_image | image_url: width: 800 }}",
+      "{{ product.featured_image | image_url: width: 500 }}"
+    {% endif %}
+  ],
+  "description": "{{ product.description | strip_html | truncate: 300 | escape }}",
+  "sku": "{{ product.selected_or_first_available_variant.sku | default: product.id }}",
+  "mpn": "{{ product.selected_or_first_available_variant.barcode | default: product.id }}",
+  "brand": {
+    "@type": "Brand",
+    "name": "{% if product.vendor != blank %}{{ product.vendor | escape }}{% else %}Microsoft{% endif %}"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "{{ shop.url }}{{ product.url }}",
+    "priceCurrency": "EUR",
+    "price": "{{ product.selected_or_first_available_variant.price | divided_by: 100.0 | replace: ',', '.' }}",
+    {% if product.selected_or_first_available_variant.compare_at_price %}
+    "priceValidUntil": "{{ 'now' | date: '%s' | plus: 2592000 | date: '%Y-%m-%d' }}",
+    {% endif %}
+    "availability": "{% if product.selected_or_first_available_variant.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "itemCondition": "https://schema.org/NewCondition",
+    "seller": {
+      "@type": "Organization",
+      "name": "Karinex"
+    },
+    "priceSpecification": {
+      "@type": "PriceSpecification",
+      "price": "{{ product.selected_or_first_available_variant.price | divided_by: 100.0 | replace: ',', '.' }}",
+      "priceCurrency": "EUR"
+    },
+    "shippingDetails": {
+      "@type": "OfferShippingDetails",
+      "shippingRate": {
+        "@type": "MonetaryAmount",
+        "value": "0",
+        "currency": "EUR"
+      },
+      "shippingDestination": {
+        "@type": "DefinedRegion",
+        "addressCountry": "DE"
+      },
+      "deliveryTime": {
+        "@type": "ShippingDeliveryTime",
+        "handlingTime": {
+          "@type": "QuantitativeValue",
+          "minValue": 0,
+          "maxValue": 0,
+          "unitCode": "MIN"
+        },
+        "transitTime": {
+          "@type": "QuantitativeValue",
+          "minValue": 0,
+          "maxValue": 5,
+          "unitCode": "MIN"
+        }
+      }
+    },
+    "hasMerchantReturnPolicy": {
+      "@type": "MerchantReturnPolicy",
+      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+      "merchantReturnDays": 30,
+      "returnMethod": "https://schema.org/ReturnByMail",
+      "returnFees": "https://schema.org/FreeReturn"
+    }
+  }
+  {% if product.metafields.ddreviews.content.average_star %}
+  ,"aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{ product.metafields.ddreviews.content.average_star }}",
+    "reviewCount": "{{ product.metafields.ddreviews.content.total_reviews | default: 1 }}",
+    "bestRating": "5",
+    "worstRating": "1"
+  }
+  {% endif %}
+}
+</script>

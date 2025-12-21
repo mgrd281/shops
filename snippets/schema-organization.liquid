@@ -1,0 +1,44 @@
+{% comment %}
+  Organization Schema for Elite SEO
+  Helps Google understand your business and display it in Knowledge Panel
+{% endcomment %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Karinex",
+  "url": "{{ shop.url }}",
+  "logo": "{{ 'logo.png' | asset_url }}",
+  "description": "Karinex - Ihr vertrauenswürdiger Online-Shop für Microsoft Software, Windows Lizenzen und Office Produkte. Sofortiger Download, günstige Preise, deutscher Support.",
+  "email": "info@karinex.de",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "DE",
+    "addressLocality": "Deutschland"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "Customer Service",
+    "email": "support@karinex.de",
+    "areaServed": "DE",
+    "availableLanguage": ["German", "English"]
+  },
+  "sameAs": [
+    "https://www.trustedshops.de/bewertung/karinex.de"
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.71",
+    "reviewCount": "1000",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "priceRange": "€€",
+  "paymentAccepted": ["PayPal", "Credit Card", "Bank Transfer"],
+  "currenciesAccepted": "EUR",
+  "openingHours": "Mo-Fr 09:00-18:00",
+  "foundingDate": "2020",
+  "slogan": "Premium Software zum besten Preis"
+}
+</script>
