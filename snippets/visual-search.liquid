@@ -1,13 +1,56 @@
 {% comment %}
-  Visual Search System - Final Real Implementation
+  Visual Search System - Smart Contextual Version
   Features:
-  1. "ZULETZT ANGESEHEN": Uses localStorage to show ACTUAL recently viewed products.
-  2. "PRODUKTE": Uses server-side Liquid fallback to guarantee 4 products always shown.
+  1. "ZULETZT ANGESEHEN": Real history via localStorage.
+  2. "PRODUKTE": Smart Contextual Suggestions based on current page.
+     - Product Page -> Shows related products from same vendor/collection.
+     - Collection Page -> Shows products from that collection.
+     - Home/Other -> Shows Bestsellers/Frontpage.
 {% endcomment %}
 
-{% assign source_products = collections['all'].products %}
-{% if source_products.size == 0 %}
+{% assign source_products = empty %}
+
+{% if template.name == 'product' %}
+  {% comment %} Context: Product Page - Show related from same collection or vendor {% endcomment %}
+  
+  {% assign related_collection = product.collections.first %}
+  {% if related_collection and related_collection.products.size > 0 %}
+    {% assign source_products = related_collection.products %}
+  {% else %}
+    {% comment %} Fallback: Find any collection with this product {% endcomment %}
+    {% for c in collections %}
+      {% if c.handle != 'all' and c.products contains product %}
+        {% assign source_products = c.products %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% comment %} Verify we have products, else fall back to vendor search logic if possible, or 'all' {% endcomment %}
+  {% if source_products == empty %}
+     {% assign source_products = collections['all'].products %} 
+  {% endif %}
+
+{% elsif template.name == 'collection' %}
+  {% comment %} Context: Collection Page - Show products from this collection {% endcomment %}
+  {% assign source_products = collection.products %}
+
+{% else %}
+  {% comment %} Context: Home or Other - Show Bestsellers/Frontpage {% endcomment %}
   {% assign source_products = collections['frontpage'].products %}
+  {% if source_products.size == 0 %}
+    {% assign source_products = collections['all'].products %}
+  {% endif %}
+{% endif %}
+
+{% comment %} Final Fallback {% endcomment %}
+{% if source_products.size == 0 or source_products == empty %}
+   {% for c in collections %}
+     {% if c.products.size > 0 %}
+       {% assign source_products = c.products %}
+       {% break %}
+     {% endif %}
+   {% endfor %}
 {% endif %}
 
 <style>
@@ -155,7 +198,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr); 
     gap: 16px; 
-    min-height: 100px; /* Prevent collapse */
+    min-height: 100px; 
   }
 
   /* Card */
@@ -302,10 +345,19 @@
           </div>
         </div>
 
-        <!-- ROW 2: PRODUKTE (SERVER-SIDE LIQUID) -->
+        <!-- ROW 2: PRODUKTE (CONTEXTUAL LIQUID) -->
         <div id="vs-trending-section" class="vs-section">
           <div class="vs-section-header">
-            <h3>PRODUKTE</h3>
+            <!-- Dynamic Title based on Context -->
+            <h3>
+              {% if template.name == 'product' %}
+                DAS KÖNNTE DIR AUCH GEFALLEN
+              {% elsif template.name == 'collection' %}
+                EMPFEHLUNGEN AUS {{ collection.title | upcase }}
+              {% else %}
+                BELIEBTE PRODUKTE
+              {% endif %}
+            </h3>
           </div>
           <div class="vs-grid" id="vs-trending-grid">
              {% for p in source_products limit: 4 %}
@@ -463,7 +515,7 @@
               <div class="vs-card-title">${p.title}</div>
               <div class="vs-rating">
                  <span>★★★★★</span>
-                 <span class="vs-rating-count">(Recently Viewed)</span>
+                 <span class="vs-rating-count">(Zuletzt angesehen)</span>
               </div>
               <div class="vs-price-row">
                  ${ p.compare_at ? `<span class="vs-price-old">${p.compare_at}</span>` : '' }
