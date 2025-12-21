@@ -1517,176 +1517,271 @@ nav[aria-label="Breadcrumb"],
     {% else %}Dauerlizenz – Kein Abo – Sofort per E-Mail{% endif %}
   </p>
 {% endif %}
-{%- comment -%}
-/ sections/shipping-card.liquid
-Diese Section kann in jeder Vorlage eingebunden werden
-und zeigt die Shipping-Card nur, wenn die Bedingungen erfüllt sind.
-{%- endcomment -%}
-{% schema %}
-{
-  "name": "Versandinformation",
-  "settings": [
-    {
-      "type": "checkbox",
-      "id": "show_on_tagged_articles",
-      "label": "Nur in Artikeln mit bestimmtem Tag anzeigen",
-      "default": false
-    },
-    {
-      "type": "text",
-      "id": "required_tag",
-      "label": "Tag-Name für Artikel",
-      "info": "Shipping-Card erscheint nur in Artikeln mit diesem Tag",
-      "default": "email-shared"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_on_query",
-      "label": "Nur bei URL-Parameter anzeigen",
-      "default": false
-    },
-    {
-      "type": "text",
-      "id": "query_param",
-      "label": "URL-Parameter",
-      "info": "z. B. `?show_shipping=1`",
-      "default": "show_shipping"
-    },
-    {
-      "type": "range",
-      "id": "max_products",
-      "label": "Maximale Anzahl Produkte",
-      "min": 1,
-      "max": 10,
-      "step": 1,
-      "default": 3
-    }
-  ],
-  "blocks": [
-    {
-      "type": "system_requirements",
-      "name": "Systemanforderungen",
-      "settings": [
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Titel",
-          "default": "Systemanforderungen"
-        },
-        {
-          "type": "text",
-          "id": "os",
-          "label": "Betriebssystem",
-          "default": "Windows 10 / 11"
-        },
-        {
-          "type": "text",
-          "id": "cpu",
-          "label": "Prozessor",
-          "default": "1 GHz oder schneller"
-        },
-        {
-          "type": "text",
-          "id": "ram",
-          "label": "Arbeitsspeicher",
-          "default": "4 GB RAM"
-        },
-        {
-          "type": "text",
-          "id": "storage",
-          "label": "Festplattenspeicher",
-          "default": "64 GB"
-        },
-        {
-          "type": "text",
-          "id": "gpu",
-          "label": "Grafikkarte",
-          "default": "DirectX 12 kompatibel"
-        }
-      ]
-    }
-  ],
-  "presets": [
-    {
-      "name": "Versandinformation",
-      "category": "Custom"
-    }
-  ]
-}
-{% endschema %}
 {% comment %}
-  Ablauf:
-  1) Stelle sicher, dass wir uns in einer Artikel-Vorlage befinden.
-  2) Bei aktivem show_on_tagged_articles: prüfe article.tags.
-  3) Bei aktivem show_on_query: prüfe request.query[query_param].
-  4) Anzeige: Falls ein product-Objekt existiert, zeige dessen Daten;
-     sonst first N Produkte aus collections.all (N = max_products).
+  Secondary info (EAN, Brand, Shipping, Sales, Countdown) moved to bottom
 {% endcomment %}
-{%- assign show_card = false -%}
-{%- if template.name == 'article' -%}
-  {%- assign show_card = true -%}
-  {%- if section.settings.show_on_tagged_articles and
-       article.tags contains section.settings.required_tag -%}
-    {%- comment -%} OK: Tag vorhanden {%- endcomment -%}
-  {%- elsif section.settings.show_on_tagged_articles -%}
-    {%- assign show_card = false -%}
-  {%- endif -%}
-  {%- if section.settings.show_on_query and
-       request.query[section.settings.query_param] == '1' -%}
-    {%- comment -%} OK: Query-Parameter stimmt {%- endcomment -%}
-  {%- elsif section.settings.show_on_query -%}
-    {%- assign show_card = false -%}
+
+
+<!-- === Icons & Webfont === -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --row-gap: 10px;
+    --block-gap: 22px;
+    --card-gap: 6px;
+    --drawer-width: 420px;
+    --slant: 8px;
+    --card-radius: 10px;
+    --card-border: 1px;
+    --brand: #1d4739;
+  }
+  .product-info-line{display:flex;align-items:center;gap:6px;font-size:13px;color:#333;margin:0;padding: calc(var(--row-gap)/2) 0;}
+  .product-info-line i{margin:0;color:var(--brand);font-size:15px;min-width:16px;line-height:1;}
+  .info-pair{display:inline-flex;align-items:baseline;gap:6px}
+  .info-pair strong{font-weight:600;margin:0}
+  .info-value{margin:0;padding:0}
+  /* Standard icons (EAN, Brand, Truck) -> Brand Green */
+  .product-info-line i { color: #1d4739; min-width: 20px; text-align: center; }
+  .product-brand-link{color:#1d4739;text-decoration:none;font-weight:600;}
+  .product-brand-link:hover{text-decoration:underline;color:#000;}
+  .in-stock{color:#1d7a34;font-weight:600}
+  .out-of-stock{color:#c00;font-weight:600}
+  .highlights-list{list-style:none;padding-left:0;margin:0;display:grid;grid-template-columns:1fr;gap:0;margin-bottom:8px;}
+  .highlights-list li{display:flex;align-items:center;gap:8px;font-size:13px;color:#222;margin:0;padding: calc(var(--row-gap)/2) 0;line-height:1.35;}
+  .highlights-list i{min-width:18px;font-size:16px;line-height:1;margin:0;text-align:center;}
+  .highlights-list li>*{margin:0}
+  .highlights-list a.open-return-drawer{text-decoration:none;text-underline-offset:2px;color:#1a1a1a}
+  .highlights-list a.open-return-drawer:hover{opacity:.85}
+  .kvp-pro__group{ margin-block: var(--block-gap); }
+  .kvp-pro__group + .kvp-pro__group{ margin-block-start: calc(var(--block-gap)*0.7); }
+  .kvp-pro__legend{margin:0 0 6px;font-weight:800;font-size:13px;letter-spacing:.2px;}
+  .kvp-pro__grid{display:grid;grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));gap: var(--card-gap);align-items: stretch;}
+  .kvp-pro__card{position:relative;display:flex;flex-direction:column;margin:0;border-radius:var(--card-radius);border: var(--card-border) solid #E6E6E6;background:#fff;cursor:pointer;transition:box-shadow .15s ease, border-color .15s ease, transform .05s ease;padding:6px;}
+  .kvp-pro__card:hover{ box-shadow:0 6px 18px rgba(0,0,0,.08) }
+  .kvp-pro__card.is-active{ border-color: var(--brand); box-shadow:0 0 0 3px rgba(29,71,57,.12) inset }
+  .kvp-pro__card:active{ transform: translateY(1px) }
+  .kvp-pro__thumb{width:100%;height:72px;display:block;object-fit:contain;object-position:center;margin:2px 0 6px;}
+  .kvp-pro__label{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:12.5px;font-weight:600;color:#1a1a1a;margin:0;}
+  .kvp-pro__radio{ position:absolute;inset:0;opacity:0;pointer-events:none; }
+  .kvp-pro__price{ font-size:12.5px;font-weight:700;margin-top:5px;color:#1a1a1a }
+  .kvp-pro__price del{ margin-left:6px;color:#777;font-weight:500 }
+  .krx-drawer[hidden]{display:none}
+  .krx-drawer__backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;transition:opacity .2s ease;z-index:1100}
+  .krx-drawer__panel{position:fixed;top:0;right:0;height:100vh;width:var(--drawer-width);max-width:92vw;background:#fff;overflow:auto;z-index:1110;box-shadow:-12px 0 36px rgba(0,0,0,.12);transform:translateX(100%);transition:transform .25s ease;border-left:1px solid #E6E6E6;font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji";}
+  @supports (clip-path: polygon(0 0)){
+    .krx-drawer__panel{border-left:none;clip-path:polygon(var(--slant) 0,100% 0,100% 100%,var(--slant) 100%,0 calc(100% - var(--slant)),0 var(--slant));}
+  }
+  .krx-drawer.is-open .krx-drawer__backdrop{opacity:1}
+  .krx-drawer.is-open .krx-drawer__panel{transform:translateX(0)}
+  .krx-drawer__header{position:sticky;top:0;background:#fff;z-index:1;padding:14px 54px 6px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+  .krx-drawer__title{margin:0;font-size:22px;line-height:1.22;font-weight:800;color:#1a1a1a;letter-spacing:.1px;flex:1}
+  .krx-drawer__icon{min-width:48px;display:flex;align-items:flex-start;justify-content:center}
+  .krx-drawer__icon img{width:48px;height:48px;display:block;object-fit:contain}
+  .krx-drawer__close{position:absolute;right:8px;top:8px;width:34px;height:34px;border:0;background:transparent;cursor:pointer;color:#2c2c2c;border-radius:999px;display:inline-grid;place-items:center;z-index:2;}
+  .krx-drawer__close:hover{background:#f4f4f4}
+  .krx-drawer__close:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .krx-drawer__close *{pointer-events:none;}
+  .krx-drawer__body{padding:8px 14px 14px;color:#1a1a1a;font-size:14px;line-height:1.6;font-weight:400}
+  .krx-drawer__body p{margin:0 0 10px}
+  .krx-drawer__body strong{font-weight:700}
+  .krx-sectionTitle{margin:14px 0 8px;font-size:16px;line-height:1.35;font-weight:700;letter-spacing:.1px;color:#1a1a1a}
+  .krx-steps{margin:0 0 10px;padding-left:20px;list-style:decimal}
+  .krx-steps li{margin:5px 0}
+  .krx-steps li::marker{font-weight:600;color:#1a1a1a}
+  .krx-note{background:#E9E9E9;border:none;border-radius:10px;padding:10px 12px;margin-top:8px}
+  .krx-note strong{display:block;margin-bottom:6px;font-weight:700}
+  .krx-note ul{margin:0;padding-left:18px}
+  .krx-note li{margin:6px 0}
+  .krx-note--small{font-size:13px;line-height:1.5;padding:8px 10px;border-radius:8px}
+  .krx-note--small strong{margin-bottom:6px}
+  .krx-note--small li{margin:6px 0}
+  .krx-drawer__footer{padding:0 14px 14px;display:flex;justify-content:flex-end}
+  .krx-btn{appearance:none;border:0;border-radius:999px;padding:7px 12px;cursor:pointer;background:var(--brand);color:#fff;font-weight:700;font-size:13px;font-family:inherit}
+  @media (max-width:480px){
+    .krx-drawer__title{font-size:19px}
+    :root{ --drawer-width:92vw; }
+  }
+</style>
+{%- comment -%} ===== Flags & Metadaten ===== {%- endcomment -%}
+{%- assign collection_handles = product.collections | map: 'handle' -%}
+{%- assign is_digital = false -%}
+{%- comment -%} detect digital by collections {%- endcomment -%}
+{%- if collection_handles contains 'software'
+   or collection_handles contains 'digitale-produkte'
+   or collection_handles contains 'digital'
+   or collection_handles contains 'keys' -%}
+  {%- assign is_digital = true -%}
+{%- endif -%}
+{%- comment -%} also detect by product type {%- endcomment -%}
+{%- assign ptype = product.type | downcase -%}
+{%- if is_digital == false -%}
+  {%- if ptype contains 'software' or ptype contains 'digital' or ptype contains 'license' or ptype contains 'lizenz' or ptype contains 'key' -%}
+    {%- assign is_digital = true -%}
   {%- endif -%}
 {%- endif -%}
-{% if show_card %}
-  <div class="shipping-card">
-    <!-- Haupt-Icon -->
-    <svg class="shipping-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" fill="#4CAF50">
-      <path d="M12 0a12 12 0 1 0 12 12A12 12 0 0 0 12 0Zm-1.2 17.6-4.8-4.8 1.7-1.7 3.1 3.1 6.9-6.9 1.7 1.7Z"/>
-    </svg>
-    <div class="shipping-info">
-      <!-- Lieferumfang -->
-      <div class="shipping-info__section">
-        <span class="shipping-info__label">Lieferumfang</span>
-        <span class="shipping-info__content">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M.5 9.9a.5.5 0 0 1 .5-.4h3.5V1.5a.5.5 0 0 1 1 0V9.5h3.5a.5.5 0 0 1 .4.8l-4 5a.5.5 0 0 1-.8 0l-4-5a.5.5 0 0 1-.1-.4z"/>
-          </svg>
-          {{ 'Sofortdownload + Produktschlüssel' }}
-        </span>
+{%- comment -%} also detect by tags (case-insensitive) {%- endcomment -%}
+{%- assign tags_csv = product.tags | join: ',' | downcase -%}
+{%- if is_digital == false -%}
+  {%- if tags_csv contains 'software' or tags_csv contains 'digital' or tags_csv contains 'license' or tags_csv contains 'lizenz' or tags_csv contains 'key' or tags_csv contains 'download' -%}
+    {%- assign is_digital = true -%}
+  {%- endif -%}
+{%- endif -%}
+
+
+<!-- ===== Preisbox (Horizontal) + CTA  MOVED UP ===== -->
+<div class="price-box" aria-live="polite">
+  <div class="price-horizontal">
+    {% assign cap = product.selected_or_first_available_variant.compare_at_price | default: product.compare_at_price %}
+    {% assign cur = product.selected_or_first_available_variant.price | default: product.price %}
+    {% assign pct = 0 %}
+    {% if cap and cap > cur %}
+      {% assign diff = cap | minus: cur %}
+      {% assign pct_raw = diff | times: 100.0 | divided_by: cap %}
+      {% assign pct = pct_raw | round %}
+    {% endif %}
+    {% assign pct_string = pct | prepend: '-' | append: '%' %}
+
+    <div class="price-container">
+      <div class="price-main-row">
+        <span class="current-price">{{ cur | money }}</span>
+        {% if cap and cap > cur %}
+          <span class="discount-pill-simple">-{{ pct }}%</span>
+        {% endif %}
       </div>
-      <!-- Lieferzeit -->
-      <div class="shipping-info__section">
-        <span class="shipping-info__label">Lieferzeit</span>
-        <span class="shipping-info__content">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          <span class="shipping-info__subtext">5–20 Minuten</span>
-        </span>
-      </div>
-      <!-- Empfohlene Produkte -->
-      <div class="shipping-info__section">
-        <span class="shipping-info__label">Empfohlen für</span>
-        <div class="shipping-info__content">
-          <ul>
-            {%- if product -%}
-                            <li>{{ product.title }}</li>
-<div data-shop-id="{{shop.id}}" product-id="{{product.id }}" data-page="{{request.page_type}}" class="ddreview-star"></div>
-                          {%- else -%}
-              {%- assign products = collections.all.products | slice: 0, section.settings.max_products -%}
-              {%- for prod in products -%}
-                <li>{{ prod.title }}</li>
-              {%- endfor -%}
-            {%- endif -%}
-          </ul>
+      
+      {% if cap and cap > cur %}
+        <div class="price-sub-row">
+          <span class="old-price">{{ cap | money }}</span>
+          <span class="price-sep">•</span>
+          <span class="savings-text">Du sparst: <strong>{{ cap | minus: cur | money }}</strong></span>
         </div>
-      </div>
+      {% endif %}
     </div>
   </div>
+  {% if is_digital %}
+    <div class="price-meta" style="margin-top:2px;">inkl. MwSt.</div>
+  {% else %}
+    <div class="price-meta" style="margin-top:2px;">inkl. MwSt. zzgl. Versandkosten</div>
+  {% endif %}
+</div>
+<style>
+  .price-box {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+  }
+</style>
+<!-- In den Warenkorb Button -->
+<form method="post" action="/cart/add" id="add-to-cart-form">
+  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+   <button type="submit" class="buy-btn pulse">
+    <i class="fa-solid fa-shopping-cart"></i> <span class="btn-text">In den Warenkorb</span>
+  </button>
+</form>
+<!-- Jetzt kaufen Button -->
+<form method="post" action="/cart/add" id="buy-now-form">
+  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+  <button type="submit" class="buy-btn buy-now">
+    <i class="fa-solid fa-rocket"></i> <span class="btn-text">Jetzt kaufen</span>
+  </button>
+</form>
+<script>
+  document.getElementById('buy-now-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: document.querySelector('#buy-now-form input[name="id"]').value,
+        quantity: 1
+      })
+  });
+</script>
+
+<!-- ===== USK / Altersprüfung ===== -->
+{%- assign usk_age = nil -%}
+{%- if tags_csv contains 'usk-0' -%}{%- assign usk_age = '0' -%}{%- endif -%}
+{%- if tags_csv contains 'usk-6' -%}{%- assign usk_age = '6' -%}{%- endif -%}
+{%- if tags_csv contains 'usk-12' -%}{%- assign usk_age = '12' -%}{%- endif -%}
+{%- if tags_csv contains 'usk-16' -%}{%- assign usk_age = '16' -%}{%- endif -%}
+{%- if tags_csv contains 'usk-18' -%}{%- assign usk_age = '18' -%}{%- endif -%}
+
+{%- if usk_age -%}
+  <div class="product-info-line usk-info" style="align-items: center;">
+    <span class="usk-badge usk-{{ usk_age }}">USK {{ usk_age }}</span>
+    {%- if usk_age == '18' -%}
+      <span class="usk-warning"><i class="fa-solid fa-exclamation-triangle"></i> Altersprüfung erforderlich</span>
+    {%- endif -%}
+  </div>
+  <style>
+    .usk-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+      margin-right: 10px;
+      transform: rotate(-3deg);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+    .usk-0 { background-color: #f0f0f0; color: #000; border: 2px solid #fff; } 
+    .usk-6 { background-color: #ffcc00; color: #000; border: 2px solid #fff; }
+    .usk-12 { background-color: #66cc33; border: 2px solid #fff; }
+    .usk-16 { background-color: #0066cc; border: 2px solid #fff; }
+    .usk-18 { background-color: #cc0000; border: 2px solid #fff; }
+    .usk-warning { color: #d32f2f; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 5px; }
+  </style>
+{%- endif -%}
+
+<!-- ===== Produktinfos (Barcode, Marke, Versanddatum, Lieferbar) MOVED HERE ===== -->
+{% if product.selected_or_first_available_variant.barcode != blank %}
+  <div class="product-info-line">
+    <i class="fa-solid fa-barcode"></i>
+    <span class="info-pair"><strong>EAN:</strong><span id="eanValue" class="info-value">{{ product.selected_or_first_available_variant.barcode }}</span></span>
+  </div>
 {% endif %}
-<!-- Verkaufsanzeige -->
+{% if product.vendor != blank %}
+  <div class="product-info-line">
+    <i class="fa-solid fa-tag"></i>
+    <span class="info-pair"><strong>Marke:</strong><span class="info-value"><a class="product-brand-link" href="/collections/vendors?q={{ product.vendor | url_encode }}">{{ product.vendor }}</a></span></span>
+  </div>
+{% endif %}
+{% if ship_dt != blank %}
+  <div class="product-info-line">
+    <i class="fa-solid fa-calendar-alt"></i>
+    <span class="info-pair"><strong>Versanddatum / Angebotsende:</strong><span id="shippingDateValue" class="info-value">{{ ship_dt | date: "%-d. %B %Y" }}</span></span>
+  </div>
+{% endif %}
+<div class="product-info-line" style="margin-bottom: 20px;">
+  <i class="fas {% if is_digital %}fa-download{% else %}fa-truck{% endif %}"></i>
+  <span class="info-pair">
+    <strong>Lieferbar:</strong>
+    <span id="availabilityValue" class="info-value">
+      {% if product.selected_or_first_available_variant.available %}
+        {% if is_digital %}
+          <span class="in-stock">Versand per E-Mail sofort nach Zahlung</span>
+        {% else %}
+          {% if long_shipping and ship_dt != blank %}
+            <span class="out-of-stock">Lieferbar ab {{ ship_dt | date: "%-d. %B %Y" }}</span>
+          {% else %}
+            <span class="in-stock">in 1-3 Werktagen bei dir</span>
+          {% endif %}
+        {% endif %}
+      {% else %}
+        <span class="out-of-stock">Zurzeit nicht verfügbar</span>
+      {% endif %}
+    </span>
+  </span>
+</div>
+
+<!-- Verkaufsanzeige (Sales Counter & Last Sale) -->
 <div id="sales-box-{{ product.id }}" class="verkaufs-box fade-in">
   <div class="verkaufs-icon-wrapper">
     <svg class="verkaufs-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="#4CAF50">
@@ -1705,7 +1800,7 @@ und zeigt die Shipping-Card nur, wenn die Bedingungen erfüllt sind.
 .verkaufs-box {
   display: flex;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 10px;
   margin-bottom: 10px;
   font-family: 'Inter', sans-serif;
   flex-wrap: wrap;
@@ -1850,269 +1945,11 @@ document.addEventListener("DOMContentLoaded", function () {
   </script>
   <style>
     .countdown-timer {
-      margin-bottom: 0 !important;
+      margin-top: 10px;
+      margin-bottom: 20px !important;
     }
   </style>
 {%- endif -%}
-
-<!-- === Icons & Webfont === -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --row-gap: 10px;
-    --block-gap: 22px;
-    --card-gap: 6px;
-    --drawer-width: 420px;
-    --slant: 8px;
-    --card-radius: 10px;
-    --card-border: 1px;
-    --brand: #1d4739;
-  }
-  .product-info-line{display:flex;align-items:center;gap:6px;font-size:13px;color:#333;margin:0;padding: calc(var(--row-gap)/2) 0;}
-  .product-info-line i{margin:0;color:var(--brand);font-size:15px;min-width:16px;line-height:1;}
-  .info-pair{display:inline-flex;align-items:baseline;gap:6px}
-  .info-pair strong{font-weight:600;margin:0}
-  .info-value{margin:0;padding:0}
-  /* Standard icons (EAN, Brand, Truck) -> Brand Green */
-  .product-info-line i { color: #1d4739; min-width: 20px; text-align: center; }
-  .product-brand-link{color:#1d4739;text-decoration:none;font-weight:600;}
-  .product-brand-link:hover{text-decoration:underline;color:#000;}
-  .in-stock{color:#1d7a34;font-weight:600}
-  .out-of-stock{color:#c00;font-weight:600}
-  .highlights-list{list-style:none;padding-left:0;margin:0;display:grid;grid-template-columns:1fr;gap:0;margin-bottom:8px;}
-  .highlights-list li{display:flex;align-items:center;gap:8px;font-size:13px;color:#222;margin:0;padding: calc(var(--row-gap)/2) 0;line-height:1.35;}
-  .highlights-list i{min-width:18px;font-size:16px;line-height:1;margin:0;text-align:center;}
-  .highlights-list li>*{margin:0}
-  .highlights-list a.open-return-drawer{text-decoration:none;text-underline-offset:2px;color:#1a1a1a}
-  .highlights-list a.open-return-drawer:hover{opacity:.85}
-  .kvp-pro__group{ margin-block: var(--block-gap); }
-  .kvp-pro__group + .kvp-pro__group{ margin-block-start: calc(var(--block-gap)*0.7); }
-  .kvp-pro__legend{margin:0 0 6px;font-weight:800;font-size:13px;letter-spacing:.2px;}
-  .kvp-pro__grid{display:grid;grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));gap: var(--card-gap);align-items: stretch;}
-  .kvp-pro__card{position:relative;display:flex;flex-direction:column;margin:0;border-radius:var(--card-radius);border: var(--card-border) solid #E6E6E6;background:#fff;cursor:pointer;transition:box-shadow .15s ease, border-color .15s ease, transform .05s ease;padding:6px;}
-  .kvp-pro__card:hover{ box-shadow:0 6px 18px rgba(0,0,0,.08) }
-  .kvp-pro__card.is-active{ border-color: var(--brand); box-shadow:0 0 0 3px rgba(29,71,57,.12) inset }
-  .kvp-pro__card:active{ transform: translateY(1px) }
-  .kvp-pro__thumb{width:100%;height:72px;display:block;object-fit:contain;object-position:center;margin:2px 0 6px;}
-  .kvp-pro__label{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:12.5px;font-weight:600;color:#1a1a1a;margin:0;}
-  .kvp-pro__radio{ position:absolute;inset:0;opacity:0;pointer-events:none; }
-  .kvp-pro__price{ font-size:12.5px;font-weight:700;margin-top:5px;color:#1a1a1a }
-  .kvp-pro__price del{ margin-left:6px;color:#777;font-weight:500 }
-  .krx-drawer[hidden]{display:none}
-  .krx-drawer__backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;transition:opacity .2s ease;z-index:1100}
-  .krx-drawer__panel{position:fixed;top:0;right:0;height:100vh;width:var(--drawer-width);max-width:92vw;background:#fff;overflow:auto;z-index:1110;box-shadow:-12px 0 36px rgba(0,0,0,.12);transform:translateX(100%);transition:transform .25s ease;border-left:1px solid #E6E6E6;font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji";}
-  @supports (clip-path: polygon(0 0)){
-    .krx-drawer__panel{border-left:none;clip-path:polygon(var(--slant) 0,100% 0,100% 100%,var(--slant) 100%,0 calc(100% - var(--slant)),0 var(--slant));}
-  }
-  .krx-drawer.is-open .krx-drawer__backdrop{opacity:1}
-  .krx-drawer.is-open .krx-drawer__panel{transform:translateX(0)}
-  .krx-drawer__header{position:sticky;top:0;background:#fff;z-index:1;padding:14px 54px 6px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-  .krx-drawer__title{margin:0;font-size:22px;line-height:1.22;font-weight:800;color:#1a1a1a;letter-spacing:.1px;flex:1}
-  .krx-drawer__icon{min-width:48px;display:flex;align-items:flex-start;justify-content:center}
-  .krx-drawer__icon img{width:48px;height:48px;display:block;object-fit:contain}
-  .krx-drawer__close{position:absolute;right:8px;top:8px;width:34px;height:34px;border:0;background:transparent;cursor:pointer;color:#2c2c2c;border-radius:999px;display:inline-grid;place-items:center;z-index:2;}
-  .krx-drawer__close:hover{background:#f4f4f4}
-  .krx-drawer__close:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
-  .krx-drawer__close *{pointer-events:none;}
-  .krx-drawer__body{padding:8px 14px 14px;color:#1a1a1a;font-size:14px;line-height:1.6;font-weight:400}
-  .krx-drawer__body p{margin:0 0 10px}
-  .krx-drawer__body strong{font-weight:700}
-  .krx-sectionTitle{margin:14px 0 8px;font-size:16px;line-height:1.35;font-weight:700;letter-spacing:.1px;color:#1a1a1a}
-  .krx-steps{margin:0 0 10px;padding-left:20px;list-style:decimal}
-  .krx-steps li{margin:5px 0}
-  .krx-steps li::marker{font-weight:600;color:#1a1a1a}
-  .krx-note{background:#E9E9E9;border:none;border-radius:10px;padding:10px 12px;margin-top:8px}
-  .krx-note strong{display:block;margin-bottom:6px;font-weight:700}
-  .krx-note ul{margin:0;padding-left:18px}
-  .krx-note li{margin:6px 0}
-  .krx-note--small{font-size:13px;line-height:1.5;padding:8px 10px;border-radius:8px}
-  .krx-note--small strong{margin-bottom:6px}
-  .krx-note--small li{margin:6px 0}
-  .krx-drawer__footer{padding:0 14px 14px;display:flex;justify-content:flex-end}
-  .krx-btn{appearance:none;border:0;border-radius:999px;padding:7px 12px;cursor:pointer;background:var(--brand);color:#fff;font-weight:700;font-size:13px;font-family:inherit}
-  @media (max-width:480px){
-    .krx-drawer__title{font-size:19px}
-    :root{ --drawer-width:92vw; }
-  }
-</style>
-{%- comment -%} ===== Flags & Metadaten ===== {%- endcomment -%}
-{%- assign collection_handles = product.collections | map: 'handle' -%}
-{%- assign is_digital = false -%}
-{%- comment -%} detect digital by collections {%- endcomment -%}
-{%- if collection_handles contains 'software'
-   or collection_handles contains 'digitale-produkte'
-   or collection_handles contains 'digital'
-   or collection_handles contains 'keys' -%}
-  {%- assign is_digital = true -%}
-{%- endif -%}
-{%- comment -%} also detect by product type {%- endcomment -%}
-{%- assign ptype = product.type | downcase -%}
-{%- if is_digital == false -%}
-  {%- if ptype contains 'software' or ptype contains 'digital' or ptype contains 'license' or ptype contains 'lizenz' or ptype contains 'key' -%}
-    {%- assign is_digital = true -%}
-  {%- endif -%}
-{%- endif -%}
-{%- comment -%} also detect by tags (case-insensitive) {%- endcomment -%}
-{%- assign tags_csv = product.tags | join: ',' | downcase -%}
-{%- if is_digital == false -%}
-  {%- if tags_csv contains 'software' or tags_csv contains 'digital' or tags_csv contains 'license' or tags_csv contains 'lizenz' or tags_csv contains 'key' or tags_csv contains 'download' -%}
-    {%- assign is_digital = true -%}
-  {%- endif -%}
-{%- endif -%}
-<!-- ===== USK / Altersprüfung ===== -->
-{%- assign usk_age = nil -%}
-{%- if tags_csv contains 'usk-0' -%}{%- assign usk_age = '0' -%}{%- endif -%}
-{%- if tags_csv contains 'usk-6' -%}{%- assign usk_age = '6' -%}{%- endif -%}
-{%- if tags_csv contains 'usk-12' -%}{%- assign usk_age = '12' -%}{%- endif -%}
-{%- if tags_csv contains 'usk-16' -%}{%- assign usk_age = '16' -%}{%- endif -%}
-{%- if tags_csv contains 'usk-18' -%}{%- assign usk_age = '18' -%}{%- endif -%}
-
-{%- if usk_age -%}
-  <div class="product-info-line usk-info" style="align-items: center;">
-    <span class="usk-badge usk-{{ usk_age }}">USK {{ usk_age }}</span>
-    {%- if usk_age == '18' -%}
-      <span class="usk-warning"><i class="fa-solid fa-exclamation-triangle"></i> Altersprüfung erforderlich</span>
-    {%- endif -%}
-  </div>
-  <style>
-    .usk-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      border-radius: 4px;
-      color: #fff;
-      font-weight: 800;
-      font-size: 14px;
-      margin-right: 10px;
-      transform: rotate(-3deg);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-    }
-    .usk-0 { background-color: #f0f0f0; color: #000; border: 2px solid #fff; } 
-    .usk-6 { background-color: #ffcc00; color: #000; border: 2px solid #fff; }
-    .usk-12 { background-color: #66cc33; border: 2px solid #fff; }
-    .usk-16 { background-color: #0066cc; border: 2px solid #fff; }
-    .usk-18 { background-color: #cc0000; border: 2px solid #fff; }
-    .usk-warning { color: #d32f2f; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 5px; }
-  </style>
-{%- endif -%}
-<!-- ===== Produktinfos (Barcode, Marke, Versanddatum, Lieferbar) ===== -->
-{% if product.selected_or_first_available_variant.barcode != blank %}
-  <div class="product-info-line">
-    <i class="fa-solid fa-barcode"></i>
-    <span class="info-pair"><strong>EAN:</strong><span id="eanValue" class="info-value">{{ product.selected_or_first_available_variant.barcode }}</span></span>
-  </div>
-{% endif %}
-{% if product.vendor != blank %}
-  <div class="product-info-line">
-    <i class="fa-solid fa-tag"></i>
-    <span class="info-pair"><strong>Marke:</strong><span class="info-value"><a class="product-brand-link" href="/collections/vendors?q={{ product.vendor | url_encode }}">{{ product.vendor }}</a></span></span>
-  </div>
-{% endif %}
-{% if ship_dt != blank %}
-  <div class="product-info-line">
-    <i class="fa-solid fa-calendar-alt"></i>
-    <span class="info-pair"><strong>Versanddatum / Angebotsende:</strong><span id="shippingDateValue" class="info-value">{{ ship_dt | date: "%-d. %B %Y" }}</span></span>
-  </div>
-{% endif %}
-<div class="product-info-line">
-  <i class="fas {% if is_digital %}fa-download{% else %}fa-truck{% endif %}"></i>
-  <span class="info-pair">
-    <strong>Lieferbar:</strong>
-    <span id="availabilityValue" class="info-value">
-      {% if product.selected_or_first_available_variant.available %}
-        {% if is_digital %}
-          <span class="in-stock">Versand per E-Mail sofort nach Zahlung</span>
-        {% else %}
-          {% if long_shipping and ship_dt != blank %}
-            <span class="out-of-stock">Lieferbar ab {{ ship_dt | date: "%-d. %B %Y" }}</span>
-          {% else %}
-            <span class="in-stock">in 1-3 Werktagen bei dir</span>
-          {% endif %}
-        {% endif %}
-      {% else %}
-        <span class="out-of-stock">Zurzeit nicht verfügbar</span>
-      {% endif %}
-    </span>
-  </span>
-</div>
-
-<!-- ===== Preisbox (Horizontal) + CTA  MOVED UP ===== -->
-<div class="price-box" aria-live="polite">
-  <div class="price-horizontal">
-    {% assign cap = product.selected_or_first_available_variant.compare_at_price | default: product.compare_at_price %}
-    {% assign cur = product.selected_or_first_available_variant.price | default: product.price %}
-    {% assign pct = 0 %}
-    {% if cap and cap > cur %}
-      {% assign diff = cap | minus: cur %}
-      {% assign pct_raw = diff | times: 100.0 | divided_by: cap %}
-      {% assign pct = pct_raw | round %}
-    {% endif %}
-    {% assign pct_string = pct | prepend: '-' | append: '%' %}
-
-    <div class="price-container">
-      <div class="price-main-row">
-        <span class="current-price">{{ cur | money }}</span>
-        {% if cap and cap > cur %}
-          <span class="discount-pill-simple">-{{ pct }}%</span>
-        {% endif %}
-      </div>
-      
-      {% if cap and cap > cur %}
-        <div class="price-sub-row">
-          <span class="old-price">{{ cap | money }}</span>
-          <span class="price-sep">•</span>
-          <span class="savings-text">Du sparst: <strong>{{ cap | minus: cur | money }}</strong></span>
-        </div>
-      {% endif %}
-    </div>
-  </div>
-  {% if is_digital %}
-    <div class="price-meta" style="margin-top:2px;">inkl. MwSt.</div>
-  {% else %}
-    <div class="price-meta" style="margin-top:2px;">inkl. MwSt. zzgl. Versandkosten</div>
-  {% endif %}
-</div>
-<style>
-  .price-box {
-    display: flex;
-    flex-direction: column;
-    margin-top: 10px;
-  }
-</style>
-<!-- In den Warenkorb Button -->
-<form method="post" action="/cart/add" id="add-to-cart-form">
-  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-   <button type="submit" class="buy-btn pulse">
-    <i class="fa-solid fa-shopping-cart"></i> <span class="btn-text">In den Warenkorb</span>
-  </button>
-</form>
-<!-- Jetzt kaufen Button -->
-<form method="post" action="/cart/add" id="buy-now-form">
-  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-  <button type="submit" class="buy-btn buy-now">
-    <i class="fa-solid fa-rocket"></i> <span class="btn-text">Jetzt kaufen</span>
-  </button>
-</form>
-<script>
-  document.getElementById('buy-now-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    fetch('/cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: document.querySelector('#buy-now-form input[name="id"]').value,
-        quantity: 1
-      })
-    }).then(function() {
-      window.location.href = '/checkout';
-    });
-  });
-</script>
 <!-- ===== H I G H L I G H T S ===== -->
 <ul class="highlights-list">
   {%- if is_digital -%}
