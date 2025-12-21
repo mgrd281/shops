@@ -50,11 +50,16 @@
   
   const today = new Date();
   const christmas = new Date('2025-12-24');
+  const dec22 = new Date('2025-12-22');
   
   let text = 'in 1-3 Werktagen bei dir';
   
-  // Only add vor/nach text if TODAY is before Christmas
-  if (today < christmas) {
+  // Special rule: Between Dec 22-24, always show "nach Weihnachten"
+  if (today >= dec22 && today <= christmas) {
+    text += ' (nach Weihnachten)';
+  }
+  // Only add vor/nach text if TODAY is before Dec 22
+  else if (today < christmas) {
     let deliveryDate = new Date(today);
     deliveryDate.setDate(deliveryDate.getDate() + 1); // Next day
     
