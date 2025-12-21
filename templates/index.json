@@ -1102,7 +1102,7 @@
       "type": "black-friday-grid",
       "name": "BF Slider",
       "settings": {
-        "heading": "Unsere Top-Angebote",
+        "heading": "",
         "collection": "black-friday",
         "show_subheading": true,
         "subheading": "Unsere besten Preise für Sie",
