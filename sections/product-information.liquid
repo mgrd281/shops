@@ -1744,64 +1744,21 @@ nav[aria-label="Breadcrumb"],
 
 
 
-<!-- ===== Produktinfos (Barcode, Marke, Versanddatum, Lieferbar) MOVED TO BOTTOM ===== -->
-{% if product.selected_or_first_available_variant.barcode != blank %}
-  <div class="product-info-line">
-    <i class="fa-solid fa-barcode"></i>
-    <span class="info-pair"><strong>EAN:</strong><span id="eanValue" class="info-value">{{ product.selected_or_first_available_variant.barcode }}</span></span>
-  </div>
-{% endif %}
-{% if product.vendor != blank %}
-  <div class="product-info-line">
-    <i class="fa-solid fa-tag"></i>
-    <span class="info-pair"><strong>Marke:</strong><span class="info-value"><a class="product-brand-link" href="/collections/vendors?q={{ product.vendor | url_encode }}">{{ product.vendor }}</a></span></span>
-  </div>
-{% endif %}
-{% if ship_dt != blank %}
-  <div class="product-info-line">
-    <i class="fa-solid fa-calendar-alt"></i>
-    <span class="info-pair"><strong>Versanddatum / Angebotsende:</strong><span id="shippingDateValue" class="info-value">{{ ship_dt | date: "%-d. %B %Y" }}</span></span>
-  </div>
-{% endif %}
-<div class="product-info-line">
-  <i class="fas {% if is_digital %}fa-download{% else %}fa-truck{% endif %}"></i>
-  <span class="info-pair">
-    <strong>Lieferbar:</strong>
-    <span id="availabilityValue" class="info-value">
-      {% if product.selected_or_first_available_variant.available %}
-        {% if is_digital %}
-          <span class="in-stock">Versand per E-Mail sofort nach Zahlung</span>
-        {% else %}
-          {% if long_shipping and ship_dt != blank %}
-            <span class="out-of-stock">Lieferbar ab {{ ship_dt | date: "%-d. %B %Y" }}</span>
-          {% else %}
-            <span class="in-stock">in 1-3 Werktagen bei dir</span>
-          {% endif %}
-        {% endif %}
-      {% else %}
-        <span class="out-of-stock">Zurzeit nicht verfügbar</span>
-      {% endif %}
-    </span>
-  </span>
-</div>
-<!-- ===== H I G H L I G H T S ===== -->
+<!-- Compact Product Meta (EAN, Marke, Lieferbar) -->
+{% render 'product-meta-compact' %}
+<!-- ===== H I G H L I G H T S (Top 3) ===== -->
 <ul class="highlights-list">
   {%- if is_digital -%}
     <li><i class="fa-solid fa-check-circle" style="color:#1D4739;"></i> Einmalige Zahlung – keine Folgekosten</li>
     <li><i class="fa-solid fa-envelope" style="color:#1D4739;"></i> Lizenzschlüssel sofort per E-Mail</li>
-    <li><i class="fa-solid fa-file-alt" style="color:#1D4739;"></i> Inklusive Download-Anleitung</li>
     <li><i class="fa-solid fa-shield-alt" style="color:#1D4739;"></i> DSGVO-konform & rechtlich geprüft</li>
-    <li><i class="fa-solid fa-credit-card" style="color:#1D4739;"></i> Sicher bezahlen (Klarna, Kreditkarte, Überweisung u. m.)</li>
-    <li><i class="fa-solid fa-headset" style="color:#1D4739;"></i> Deutscher Support & kompetente Beratung</li>
   {%- else -%}
-    <li><i class="fa-solid fa-box" style="color:#1D4739;"></i> Original Neuware im Karton</li>
     <li><i class="fa-solid fa-shipping-fast" style="color:#1D4739;"></i> Schneller & kostenloser Versand aus DE</li>
     <li><i class="fa-solid fa-undo-alt" style="color:#1D4739;"></i>
       <a href="#" class="open-return-drawer" aria-haspopup="dialog" aria-controls="returnPolicyDrawer" aria-expanded="false" style="color:#222; text-decoration: none;">
         100 Tage Widerrufsrecht & kostenfreie Retoure
       </a>
     </li>
-    <li><i class="fa-solid fa-credit-card" style="color:#1D4739;"></i> Sicher bezahlen (Rechnung, Kreditkarte u. m.)</li>
     <li><i class="fa-solid fa-headset" style="color:#1D4739;"></i> Deutscher Support & kompetente Beratung</li>
   {%- endif -%}
 </ul>
