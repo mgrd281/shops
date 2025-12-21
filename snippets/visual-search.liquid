@@ -3,8 +3,8 @@
   Features:
   1. "ZULETZT ANGESEHEN": Real history + Smart Backfill (Always shows 4 cards).
   2. "PRODUKTE": Contextual Suggestions (Always shows 4 cards).
-  3. Hybrid Liquid/JS Data: Passthrough safe fallback products to JS.
-  4. VISUAL SEARCH SIMULATION: Smart filename-based recognition heuristic.
+  3. Hybrid Liquid/JS Data: Passthrough safe fallback products.
+  4. VISUAL SEARCH SIMULATION: Smart Heuristic + Coherent Category Fallback.
 {% endcomment %}
 
 {% assign source_products = empty %}
@@ -28,8 +28,6 @@
   {% if found_products %}
      {% assign handle_list = vendor_products | split: ',' %}
      {% assign source_products = handle_list %} 
-     {% comment %} Note: We can't easily iterate handles to get product objects without all_products lookups which are heavy. 
-         So we'll stick to collection strategy for reliability. {% endcomment %}
      {% for c in collections %}
         {% if c.title == current_vendor or c.title contains current_vendor %}
            {% assign source_products = c.products %}
@@ -70,7 +68,6 @@
 {% endif %}
 
 <script>
-  // Pass safe fallback products to JS for "Recently Viewed" backfill AND visual search simulation
   window.vsFallbackProducts = [
     {% for p in source_products limit: 12 %}
     {
@@ -279,7 +276,7 @@
   .vs-rating {
     display: flex;
     align-items: center;
-    font-size: 24px !important; /* FORCED HUGE STARS */
+    font-size: 24px !important;
     color: #f5c518;
     gap: 3px;
     margin-bottom: 8px;
@@ -363,22 +360,12 @@
       
       <!-- DEFAULT VIEW -->
       <div id="vs-default-view">
-        
-        <!-- ROW 1: ZULETZT ANGESEHEN (REAL JS + BACKFILL) -->
         <div id="vs-recent-section" class="vs-section">
-          <div class="vs-section-header">
-            <h3>ZULETZT ANGESEHEN</h3>
-          </div>
-          <div class="vs-grid" id="vs-recent-grid">
-            <!-- Populated via JS -->
-          </div>
+          <div class="vs-section-header"><h3>ZULETZT ANGESEHEN</h3></div>
+          <div class="vs-grid" id="vs-recent-grid"></div>
         </div>
-
-        <!-- ROW 2: PRODUKTE (SERVER-SIDE LIQUID) -->
         <div id="vs-trending-section" class="vs-section">
-          <div class="vs-section-header">
-            <h3>{{ smart_title }}</h3>
-          </div>
+          <div class="vs-section-header"><h3>{{ smart_title }}</h3></div>
           <div class="vs-grid" id="vs-trending-grid">
              {% assign count = 0 %}
              {% for p in source_products %}
@@ -388,44 +375,32 @@
                   <img src="{{ p.featured_image | img_url: '400x' }}" class="vs-image" loading="lazy" alt="{{ p.title | escape }}">
                 </div>
                 <div class="vs-card-title">{{ p.title }}</div>
-                <div class="vs-rating">
-                   <span>★★★★★</span>
-                   <span class="vs-rating-count">({{ "now" | date: "%S" | plus: 12 }})</span>
-                </div>
+                <div class="vs-rating"><span>★★★★★</span><span class="vs-rating-count">({{ "now" | date: "%S" | plus: 12 }})</span></div>
                 <div class="vs-price-row">
-                   {% if p.compare_at_price > p.price %}
-                   <span class="vs-price-old">{{ p.compare_at_price | money }}</span>
-                   {% endif %}
+                   {% if p.compare_at_price > p.price %}<span class="vs-price-old">{{ p.compare_at_price | money }}</span>{% endif %}
                    <span class="vs-price-new">{{ p.price | money }}</span>
                 </div>
                </a>
-               {% assign count = count | plus: 1 %}
-               {% if count == 4 %}{% break %}{% endif %}
+               {% assign count = count | plus: 1 %}{% if count == 4 %}{% break %}{% endif %}
             {% endfor %}
           </div>
         </div>
-
       </div>
 
-      <!-- SEARCH RESULTS -->
+      <!-- RESULTS -->
       <div id="vs-results-view" style="display: none;">
-        <div class="vs-section-header">
-          <h3>Suchergebnisse</h3>
-        </div>
+        <div class="vs-section-header"><h3>Suchergebnisse</h3></div>
         <div class="vs-grid" id="vs-results-grid"></div>
-        <div id="vs-no-results" class="vs-no-results" style="display: none;">
-          Keine Ergebnisse gefunden.
-        </div>
+        <div id="vs-no-results" class="vs-no-results" style="display: none;">Keine Ergebnisse gefunden.</div>
       </div>
       
-      <!-- VISUAL SEARCH ANALYZING VIEW -->
+      <!-- ANALYZING -->
       <div id="vs-analyzing-view" style="display: none; text-align: center; padding: 40px;">
         <div style="font-size: 14px; color: #555; margin-bottom: 20px;">
            <span style="display: inline-block; animation: pulse 1.5s infinite;">📷</span>
            <span>Bild wird analysiert...</span>
         </div>
       </div>
-
     </div>
   </div>
 </div>
@@ -433,51 +408,33 @@
 <input type="file" id="vs-image-upload" accept="image/*" style="display: none;" />
 
 <script>
-  // --- Tracking ---
   (function() {
     {% if template contains 'product' %}
       try {
-        const product = {
-          id: {{ product.id }},
-          title: `{{ product.title | escape }}`,
-          url: `{{ product.url }}`,
-          image: `{{ product.featured_image | img_url: '400x' }}`,
-          price: `{{ product.price | money }}`,
-          compare_at: `{% if product.compare_at_price > product.price %}{{ product.compare_at_price | money }}{% endif %}`
-        };
-        
-        let viewed = JSON.parse(localStorage.getItem('vs_recently_viewed')) || [];
-        viewed = viewed.filter(p => p.id !== product.id);
-        viewed.unshift(product);
-        if (viewed.length > 8) viewed.pop(); 
-        
-        localStorage.setItem('vs_recently_viewed', JSON.stringify(viewed));
+        const p = { id: {{ product.id }}, title: `{{ product.title | escape }}`, url: `{{ product.url }}`, image: `{{ product.featured_image | img_url: '400x' }}`, price: `{{ product.price | money }}`, compare_at: `{% if product.compare_at_price > product.price %}{{ product.compare_at_price | money }}{% endif %}` };
+        let v = JSON.parse(localStorage.getItem('vs_recently_viewed')) || [];
+        v = v.filter(i => i.id !== p.id); v.unshift(p); if (v.length > 8) v.pop();
+        localStorage.setItem('vs_recently_viewed', JSON.stringify(v));
       } catch(e) {}
     {% endif %}
   })();
 
-  // --- Visual Search Logic ---
   (function() {
     const overlay = document.getElementById('visual-search-overlay');
     const input = document.getElementById('vs-input');
     const closeBtn = document.getElementById('vs-close-btn');
     const cameraBtn = document.getElementById('vs-camera-btn');
     const fileInput = document.getElementById('vs-image-upload');
-    
-    // Views
     const defaultView = document.getElementById('vs-default-view');
     const resultsView = document.getElementById('vs-results-view');
     const analyzingView = document.getElementById('vs-analyzing-view');
-    
-    // Grids
     const resultsGrid = document.getElementById('vs-results-grid');
     const recentGrid = document.getElementById('vs-recent-grid');
 
     if (!overlay) return;
-
     let searchTimeout;
 
-    // --- Search ---
+    // --- Core Search ---
     async function performSearch(query) {
       if (!query.trim()) {
         showDefaultView();
@@ -491,7 +448,6 @@
         const res = await fetch(`/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=8`);
         const data = await res.json();
         const products = data.resources.results.products;
-
         if (products && products.length) {
           renderGrid(products, resultsGrid);
           document.getElementById('vs-no-results').style.display = 'none';
@@ -499,10 +455,9 @@
           resultsGrid.innerHTML = '';
           document.getElementById('vs-no-results').style.display = 'block';
         }
-      } catch (e) { console.error(e); }
+      } catch (e) {}
     }
 
-    // --- Render Grid Helper ---
     function renderGrid(products, container) {
       container.innerHTML = products.map(p => {
         const stars = "★★★★★";
@@ -510,50 +465,29 @@
         const img = p.image || p.featured_image || p.image; 
         const price = p.price;
         const oldPrice = p.compare_at_price || p.compare_at || '';
-
-        return `
-        <a href="${p.url}" class="vs-card">
-          <div class="vs-image-wrapper">
-            <img src="${img}" class="vs-image" loading="lazy" alt="${p.title}">
-          </div>
+        return `<a href="${p.url}" class="vs-card">
+          <div class="vs-image-wrapper"><img src="${img}" class="vs-image" loading="lazy" alt="${p.title}"></div>
           <div class="vs-card-title">${p.title}</div>
-          <div class="vs-rating">
-             <span>${stars}</span>
-             <span class="vs-rating-count">(${count})</span>
-          </div>
-          <div class="vs-price-row">
-             ${ oldPrice ? `<span class="vs-price-old">${oldPrice}</span>` : '' }
-             <span class="vs-price-new">${price}</span>
-          </div>
-        </a>
-        `;
+          <div class="vs-rating"><span>${stars}</span><span class="vs-rating-count">(${count})</span></div>
+          <div class="vs-price-row">${ oldPrice ? `<span class="vs-price-old">${oldPrice}</span>` : '' }<span class="vs-price-new">${price}</span></div>
+        </a>`;
       }).join('');
     }
     
-    // --- Render Recent (Smart Filling) ---
     function renderRecent() {
        try {
          let viewed = JSON.parse(localStorage.getItem('vs_recently_viewed')) || [];
-         
          if (viewed.length < 4 && window.vsFallbackProducts) {
-             const viewedIds = new Set(viewed.map(v => v.id));
-             for (const fallback of window.vsFallbackProducts) {
+             const vIds = new Set(viewed.map(v => v.id));
+             for (const f of window.vsFallbackProducts) {
                  if (viewed.length >= 4) break;
-                 if (!viewedIds.has(fallback.id)) {
-                     viewed.push(fallback);
-                     viewedIds.add(fallback.id);
-                 }
+                 if (!vIds.has(f.id)) { viewed.push(f); vIds.add(f.id); }
              }
          }
-         
          viewed = viewed.slice(0, 4);
-         
-         if (viewed.length === 0) {
-            recentGrid.innerHTML = '<div class="vs-no-text">Keine Produkte verfügbar</div>';
-         } else {
-            renderGrid(viewed, recentGrid);
-         }
-       } catch(e) { console.error(e); }
+         if (viewed.length === 0) recentGrid.innerHTML = '<div class="vs-no-text">Keine Produkte verfügbar</div>';
+         else renderGrid(viewed, recentGrid);
+       } catch(e) {}
     }
 
     function showDefaultView() {
@@ -563,80 +497,59 @@
        renderRecent(); 
     }
     
-    // --- SMART VISUAL SEARCH SIMULATION (Filename Trick) ---
+    // --- SMART VISUAL SEARCH (Coherent Categories Fallback) ---
     function handleImageUpload() {
        const file = fileInput.files[0];
        if (!file) return;
 
-       // 1. Show Analyzing UI
        defaultView.style.display = 'none';
        resultsView.style.display = 'none';
        analyzingView.style.display = 'block';
        
-       // 2. Extract potential keywords from filename (e.g., "iphone-15-pro.jpg" -> "iphone 15 pro")
        let keywords = file.name.split('.')[0].replace(/[-_]/g, ' ');
 
-       // 3. Simulate delay then REAL Search
        setTimeout(async () => {
            analyzingView.style.display = 'none';
            resultsView.style.display = 'block';
-           document.querySelector('#vs-results-view h3').textContent = "ERGEBNISSE FÜR: " + keywords.toUpperCase();
            
            try {
-             // Try a real search first
+             // 1. Try Filename Search
              const res = await fetch(`/search/suggest.json?q=${encodeURIComponent(keywords)}&resources[type]=product&resources[limit]=8`);
              const data = await res.json();
              const products = data.resources.results.products;
 
              if (products && products.length > 0) {
-                // Success: Found products matching the filename!
+                document.querySelector('#vs-results-view h3').textContent = "ERGEBNISSE FÜR: " + keywords.toUpperCase();
                 renderGrid(products, resultsGrid);
                 document.getElementById('vs-no-results').style.display = 'none';
              } else {
-                // Fallback: Random products if filename had no matches
-                document.querySelector('#vs-results-view h3').textContent = "ÄHNLICHE PRODUKTE"; 
-                let simulatedResults = [];
-                if (window.vsFallbackProducts) {
-                   simulatedResults = [...window.vsFallbackProducts].sort(() => 0.5 - Math.random()).slice(0, 4);
+                // 2. Fallback: Search for a random popular category to show COHERENT results
+                const categories = ['Watch', 'Office', 'Windows', 'Game', 'Software'];
+                const randomCat = categories[Math.floor(Math.random() * categories.length)];
+                
+                document.querySelector('#vs-results-view h3').textContent = "ÄHNLICHE PRODUKTE (" + randomCat.toUpperCase() + ")"; 
+
+                const res2 = await fetch(`/search/suggest.json?q=${randomCat}&resources[type]=product&resources[limit]=8`);
+                const data2 = await res2.json();
+                const products2 = data2.resources.results.products;
+                
+                if(products2 && products2.length > 0) {
+                     renderGrid(products2, resultsGrid);
+                     document.getElementById('vs-no-results').style.display = 'none';
+                } else {
+                     // 3. Last Resort: Local Fallback
+                     document.querySelector('#vs-results-view h3').textContent = "ÄHNLICHE PRODUKTE"; 
+                     if (window.vsFallbackProducts) renderGrid(window.vsFallbackProducts.slice(0,4), resultsGrid);
                 }
-                if(simulatedResults.length) renderGrid(simulatedResults, resultsGrid);
              }
-           } catch(e) {
-               console.error(e);
-           }
-           
+           } catch(e) {}
        }, 1500);
     }
 
-    // --- Interaction ---
-    function openOverlay() {
-      overlay.style.display = 'flex';
-      void overlay.offsetWidth;
-      overlay.classList.add('active');
-      if(input) {
-         input.focus();
-         if (!input.value) showDefaultView();
-      }
-      document.body.style.overflow = 'hidden';
-
-      document.querySelectorAll('details-modal, .search-modal').forEach(m => {
-         if(m.hasAttribute('open')) m.removeAttribute('open');
-      });
-    }
-
-    function closeOverlay() {
-      overlay.classList.remove('active');
-      setTimeout(() => {
-        overlay.style.display = 'none';
-        document.body.style.overflow = '';
-      }, 200);
-      if(input) input.value = '';
-    }
-
+    // --- Listeners ---
     if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
     overlay.addEventListener('click', e => { if(e.target === overlay) closeOverlay(); });
     document.addEventListener('keydown', e => { if(e.key === 'Escape') closeOverlay(); });
-
     window.addEventListener('click', function(e) {
       const btn = e.target.closest('.header__icon--search, .search-modal__button, .header__search, [role="search"]');
       if (btn) {
@@ -646,16 +559,11 @@
         openOverlay();
       }
     }, true);
-
-    if(input) {
-        input.addEventListener('input', (e) => {
+    if(input) input.addEventListener('input', (e) => {
           clearTimeout(searchTimeout);
           searchTimeout = setTimeout(() => performSearch(e.target.value), 300);
-        });
-    }
-    
+    });
     if (cameraBtn) cameraBtn.addEventListener('click', () => fileInput.click());
     if (fileInput) fileInput.addEventListener('change', handleImageUpload);
-
   })();
 </script>
