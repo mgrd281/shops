@@ -16,7 +16,7 @@
 
 <style>
 .countdown-timer-box {
-  display: flex;
+  display: flex !important;
   align-items: center;
   gap: 12px;
   background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
@@ -26,6 +26,8 @@
   margin: 12px 0;
   box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
   animation: pulse-border 2s ease-in-out infinite;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 @keyframes pulse-border {
