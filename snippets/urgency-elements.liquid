@@ -99,7 +99,7 @@
   </svg>
   <span class="sales-text">
     <strong id="sales-count-{{ product.id }}">--</strong> Verkäufe in den letzten 24 Stunden
-    <span class="sales-time">• Letzter Verkauf: <strong id="last-sale-{{ product.id }}">vor ...</strong></span>
+    <span class="sales-time">• Letzter Verkauf: <strong id="last-sale-{{ product.id }}">vor ...</strong> aus <strong id="sale-city-{{ product.id }}">...</strong></span>
   </span>
 </div>
 
@@ -285,19 +285,44 @@
   
   if (countEl) countEl.textContent = currentCount;
   
-  // Last sale time (more recent for popular products)
+  // Last sale time and city
+  const cityEl = document.getElementById('sale-city-' + pid);
+  const cityKey = 'sale_city_' + pid;
+  
+  // German cities
+  const cities = [
+    'Berlin', 'Hamburg', 'München', 'Köln', 'Frankfurt',
+    'Stuttgart', 'Düsseldorf', 'Dortmund', 'Essen', 'Leipzig',
+    'Bremen', 'Dresden', 'Hannover', 'Nürnberg', 'Duisburg',
+    'Bochum', 'Wuppertal', 'Bielefeld', 'Bonn', 'Münster'
+  ];
+  
   let saleTime = localStorage.getItem(timeKey);
-  if (!saleTime) {
+  let saleCity = localStorage.getItem(cityKey);
+  
+  if (!saleTime || !saleCity) {
     const maxMinutes = rating >= 4.5 ? 10 : rating >= 4.0 ? 20 : 40;
     saleTime = Date.now() - (Math.floor(Math.random() * maxMinutes) + 2) * 60000;
+    saleCity = cities[Math.floor(Math.random() * cities.length)];
     localStorage.setItem(timeKey, saleTime);
+    localStorage.setItem(cityKey, saleCity);
   }
   
   function updateSaleTime() {
     const diff = Math.floor((Date.now() - parseInt(saleTime)) / 60000);
     if (timeEl) timeEl.textContent = 'vor ' + (diff > 60 ? 60 : diff) + ' Min.';
+    if (cityEl) cityEl.textContent = saleCity;
+    
+    // Change city every 5-10 minutes
+    if (diff > 0 && diff % (5 + Math.floor(Math.random() * 6)) === 0) {
+      saleCity = cities[Math.floor(Math.random() * cities.length)];
+      localStorage.setItem(cityKey, saleCity);
+      saleTime = Date.now();
+      localStorage.setItem(timeKey, saleTime);
+    }
   }
   updateSaleTime();
   setInterval(updateSaleTime, 60000);
 })();
 </script>
+
