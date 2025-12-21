@@ -289,12 +289,28 @@
   const cityEl = document.getElementById('sale-city-' + pid);
   const cityKey = 'sale_city_' + pid;
   
-  // German cities
+  // Comprehensive German cities list (major and minor)
   const cities = [
-    'Berlin', 'Hamburg', 'München', 'Köln', 'Frankfurt',
+    // Major cities
+    'Berlin', 'Hamburg', 'München', 'Köln', 'Frankfurt am Main',
     'Stuttgart', 'Düsseldorf', 'Dortmund', 'Essen', 'Leipzig',
     'Bremen', 'Dresden', 'Hannover', 'Nürnberg', 'Duisburg',
-    'Bochum', 'Wuppertal', 'Bielefeld', 'Bonn', 'Münster'
+    // Large cities
+    'Bochum', 'Wuppertal', 'Bielefeld', 'Bonn', 'Münster',
+    'Karlsruhe', 'Mannheim', 'Augsburg', 'Wiesbaden', 'Gelsenkirchen',
+    'Mönchengladbach', 'Braunschweig', 'Chemnitz', 'Kiel', 'Aachen',
+    'Halle', 'Magdeburg', 'Freiburg', 'Krefeld', 'Lübeck',
+    'Oberhausen', 'Erfurt', 'Mainz', 'Rostock', 'Kassel',
+    // Medium cities
+    'Hagen', 'Hamm', 'Saarbrücken', 'Mülheim', 'Potsdam',
+    'Ludwigshafen', 'Oldenburg', 'Leverkusen', 'Osnabrück', 'Solingen',
+    'Heidelberg', 'Herne', 'Neuss', 'Darmstadt', 'Paderborn',
+    'Regensburg', 'Ingolstadt', 'Würzburg', 'Fürth', 'Wolfsburg',
+    'Offenbach', 'Ulm', 'Heilbronn', 'Pforzheim', 'Göttingen',
+    // Smaller cities
+    'Bottrop', 'Trier', 'Recklinghausen', 'Reutlingen', 'Bremerhaven',
+    'Koblenz', 'Bergisch Gladbach', 'Jena', 'Remscheid', 'Erlangen',
+    'Moers', 'Siegen', 'Hildesheim', 'Salzgitter', 'Cottbus'
   ];
   
   let saleTime = localStorage.getItem(timeKey);
