@@ -3,8 +3,8 @@
   Features:
   1. "ZULETZT ANGESEHEN": Real history + Smart Backfill (Always shows 4 cards).
   2. "PRODUKTE": Contextual Suggestions (Always shows 4 cards).
-  3. Hybrid Liquid/JS Data: Passthrough safe fallback products.
-  4. VISUAL SEARCH SIMULATION: Smart Heuristic + Coherent Category Fallback.
+  3. VISUAL SEARCH SIMULATION: Smart Heuristic (Filename -> Search -> Coherent Fallback).
+  4. Fix: Ensure Camera Button is Visible and Functional.
 {% endcomment %}
 
 {% assign source_products = empty %}
@@ -132,6 +132,8 @@
     align-items: center;
     background: #fff;
     flex-shrink: 0;
+    position: relative;
+    z-index: 10;
   }
 
   .vs-search-icon {
@@ -171,7 +173,7 @@
     border: none;
     cursor: pointer;
     color: #666;
-    padding: 6px;
+    padding: 8px; /* Increased padding for easier clicking */
     transition: color 0.1s;
     display: flex;
     align-items: center;
@@ -187,7 +189,12 @@
   .vs-icon-btn svg {
     width: 20px;
     height: 20px;
-    stroke-width: 1.5;
+    stroke-width: 2px; /* Thicker strokes */
+  }
+  
+  /* Ensure camera button specifically is visible */
+  #vs-camera-btn {
+     display: flex !important;
   }
 
   /* Content Area */
@@ -340,7 +347,8 @@
       </svg>
       <input type="text" id="vs-input" class="vs-input" placeholder="Suchen" autocomplete="off">
       <div class="vs-actions">
-        <button class="vs-icon-btn" id="vs-camera-btn" type="button" title="Bildersuche">
+        <!-- Force Image Button to be Visible -->
+        <button class="vs-icon-btn" id="vs-camera-btn" type="button" title="Bildersuche" style="display: flex !important;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
             <circle cx="12" cy="13" r="4"></circle>
@@ -563,7 +571,9 @@
           clearTimeout(searchTimeout);
           searchTimeout = setTimeout(() => performSearch(e.target.value), 300);
     });
-    if (cameraBtn) cameraBtn.addEventListener('click', () => fileInput.click());
+    // Re-attach listener specifically for the newly forced button
+    const camBtn = document.getElementById('vs-camera-btn');
+    if (camBtn) camBtn.addEventListener('click', () => fileInput.click());
     if (fileInput) fileInput.addEventListener('change', handleImageUpload);
   })();
 </script>
