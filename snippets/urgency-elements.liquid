@@ -1,78 +1,3 @@
-{% comment %}
-  Urgency Elements: Countdown Timer + Sales Counter
-  Version: 3.0 - Force Display Update
-{% endcomment %}
-
-<style>
-.urgency-countdown-box {
-  display: flex !important;
-  align-items: center;
-  gap: 12px;
-  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-  border: 2px solid #ff9800 !important;
-  border-radius: 10px;
-  padding: 12px 16px;
-  margin: 15px 0 !important;
-  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
-  position: relative !important;
-  z-index: 10 !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  min-height: 60px; /* Ensure height */
-  width: 100%;
-}
-
-.urgency-icon {
-  font-size: 28px;
-  line-height: 1;
-  animation: urgency-flash 1.5s ease-in-out infinite;
-}
-
-.urgency-content {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.urgency-label {
-  font-size: 15px;
-  font-weight: 700;
-  color: #e65100;
-  text-transform: uppercase;
-}
-
-.urgency-digits {
-  font-size: 22px;
-  font-weight: 800;
-  color: #bf360c;
-  font-family: monospace;
-  letter-spacing: 1px;
-}
-
-@keyframes urgency-flash {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.1); }
-}
-
-@media (max-width: 768px) {
-  .urgency-countdown-box { padding: 10px 14px; }
-  .urgency-label { font-size: 13px; }
-  .urgency-digits { font-size: 18px; }
-}
-</style>
-
-<!-- Countdown Timer for Special Price -->
-<div id="countdown-timer-{{ product.id }}" class="urgency-countdown-box">
-  <div class="urgency-icon">⚡</div>
-  <div class="urgency-content">
-    <div class="urgency-digits">
-      <span id="countdown-hours-{{ product.id }}">00</span>:<span id="countdown-minutes-{{ product.id }}">00</span>:<span id="countdown-seconds-{{ product.id }}">00</span>
-    </div>
-  </div>
-</div>
-
 <!-- Sales Counter -->
 <div id="sales-box-{{ product.id }}" class="sales-compact">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -87,71 +12,21 @@
 
 <style>
 .sales-compact {
-  display: flex;
+  display: flex !important;
   align-items: center;
   gap: 8px;
   padding: 8px 0;
   font-size: 14px;
   color: #d84315;
   margin: 8px 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 12px;
 }
 .sales-compact svg { flex-shrink: 0; }
 .sales-text { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
 .sales-text strong { font-weight: 700; }
 .sales-time { font-size: 13px; color: #666; }
 </style>
-
-<script>
-// Countdown Timer Logic
-(function() {
-  const pid = {{ product.id }};
-  const timerKey = 'countdown_end_' + pid;
-  const hoursEl = document.getElementById('countdown-hours-' + pid);
-  const minutesEl = document.getElementById('countdown-minutes-' + pid);
-  const secondsEl = document.getElementById('countdown-seconds-' + pid);
-  
-  if (!hoursEl || !minutesEl || !secondsEl) return;
-  
-  function pad(num) {
-    return String(num).padStart(2, '0');
-  }
-  
-  function getEndTime() {
-    let endTime = localStorage.getItem(timerKey);
-    if (!endTime) {
-      // Set random duration between 3-6 hours
-      const hours = 3 + Math.floor(Math.random() * 4);
-      endTime = Date.now() + (hours * 60 * 60 * 1000);
-      localStorage.setItem(timerKey, endTime);
-    }
-    return parseInt(endTime);
-  }
-  
-  function updateCountdown() {
-    const now = Date.now();
-    let endTime = getEndTime();
-    let remaining = endTime - now;
-    
-    // If expired, reset with new random duration
-    if (remaining <= 0) {
-      localStorage.removeItem(timerKey);
-      endTime = getEndTime();
-      remaining = endTime - now;
-    }
-    
-    const hours = Math.floor(remaining / (1000 * 60 * 60));
-    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
-    
-    hoursEl.textContent = pad(hours);
-    minutesEl.textContent = pad(minutes);
-    secondsEl.textContent = pad(seconds);
-  }
-  
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-})();
-</script>
 
 <script>
 (function() {
