@@ -49,23 +49,26 @@
   if (!deliveryEl) return;
   
   const today = new Date();
-  let deliveryDate = new Date(today);
-  deliveryDate.setDate(deliveryDate.getDate() + 1); // Next day
-  
-  // Skip Sunday (0)
-  if (deliveryDate.getDay() === 0) {
-    deliveryDate.setDate(deliveryDate.getDate() + 1); // Move to Monday
-  }
-  
   const christmas = new Date('2025-12-24');
   
   let text = 'in 1-3 Werktagen';
   
-  // Check if delivery will be before or after Christmas
-  if (deliveryDate < christmas) {
-    text += ' (vor Weihnachten)';
-  } else if (today < christmas && deliveryDate >= christmas) {
-    text += ' (nach Weihnachten)';
+  // Only add vor/nach text if TODAY is before Christmas
+  if (today < christmas) {
+    let deliveryDate = new Date(today);
+    deliveryDate.setDate(deliveryDate.getDate() + 1); // Next day
+    
+    // Skip Sunday (0)
+    if (deliveryDate.getDay() === 0) {
+      deliveryDate.setDate(deliveryDate.getDate() + 1); // Move to Monday
+    }
+    
+    // Check if delivery will be before or after Christmas
+    if (deliveryDate < christmas) {
+      text += ' (vor Weihnachten)';
+    } else {
+      text += ' (nach Weihnachten)';
+    }
   }
   
   deliveryEl.textContent = text;
