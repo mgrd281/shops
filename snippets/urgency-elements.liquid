@@ -79,7 +79,7 @@
   } catch(e) {}
   
   // Calculate base sales based on rating
-  let baseSales = 40 + (pid % 56);
+  let baseSales = 20 + (pid % 15); // no rating: 20-35
   
   if (rating >= 4.5) {
     baseSales = 150 + (pid % 100);
@@ -88,7 +88,7 @@
   } else if (rating >= 3.5) {
     baseSales = 70 + (pid % 60);
   } else if (rating > 0) {
-    baseSales = 40 + (pid % 40);
+    baseSales = 25 + (pid % 15); // low rating: 25-40
   }
   
   // Store initial base if not exists
@@ -107,13 +107,34 @@
   const growth = Math.floor(minutesSinceMidnight / growthRate);
   
   // Add progressive increment based on visit count (FOMO effect)
-  // Each visit adds 3-8 sales (more for highly rated products)
-  const visitBonus = rating >= 4.5 ? (visitCount - 1) * 8 : 
-                     rating >= 4.0 ? (visitCount - 1) * 6 : 
-                     (visitCount - 1) * 4;
+  // Smaller increments for low/no rating products
+  let visitBonus = 0;
+  if (rating >= 4.5) {
+    visitBonus = (visitCount - 1) * 8;
+  } else if (rating >= 4.0) {
+    visitBonus = (visitCount - 1) * 6;
+  } else if (rating >= 3.5) {
+    visitBonus = (visitCount - 1) * 4;
+  } else if (rating > 0) {
+    visitBonus = (visitCount - 1) * 2; // low rating: +2 per visit
+  } else {
+    visitBonus = (visitCount - 1) * 1; // no rating: +1 per visit
+  }
   
-  // Calculate current count with cap
-  const maxSales = rating >= 4.5 ? 400 : rating >= 4.0 ? 300 : rating >= 3.5 ? 200 : 150;
+  // Calculate current count with strict caps for low/no rating
+  let maxSales = 400; // default for high ratings
+  if (rating >= 4.5) {
+    maxSales = 400;
+  } else if (rating >= 4.0) {
+    maxSales = 300;
+  } else if (rating >= 3.5) {
+    maxSales = 200;
+  } else if (rating > 0) {
+    maxSales = 49; // low rating: max 49
+  } else {
+    maxSales = 39; // no rating: max 39
+  }
+  
   let currentCount = Math.min(startSales + growth + visitBonus, maxSales);
   
   // Store and display
