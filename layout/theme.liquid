@@ -58,6 +58,8 @@
   </head>
 
 
+    {% comment %}
+    <!-- 
     <link rel="preconnect" href="https://widgets.trustedshops.com">
     <link rel="preconnect" href="https://consent.cookiebot.com">
     <script>
@@ -76,6 +78,8 @@
       // Fallback load after 4 seconds if no interaction
       setTimeout(loadReviewWidget, 4000);
     </script>
+    -->
+    {% endcomment %}
 
       
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
@@ -154,5 +158,5 @@
       {% render 'quick-add-modal' %}
     {% endif %}
   </body>
-      <script src="https://invoice-production-8cd6.up.railway.app/exit-intent.js" defer></script>
+      <!-- <script src="https://invoice-production-8cd6.up.railway.app/exit-intent.js" defer></script> -->
 </html>
