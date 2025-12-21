@@ -35,11 +35,40 @@
 (function() {
   const pid = {{ product.id }};
   
-  // Sales Counter Logic
+  // Smart Sales Counter Logic
   const key = 'sales_' + pid;
   const timeKey = 'sale_time_' + pid;
-  const start = 40 + (pid % 56);
-  let count = parseInt(localStorage.getItem(key)) || start;
+  const dateKey = 'sales_date_' + pid;
+  
+  const today = new Date().toDateString();
+  const storedDate = localStorage.getItem(dateKey);
+  
+  // Reset counter if it's a new day
+  if (storedDate !== today) {
+    localStorage.removeItem(key);
+    localStorage.removeItem(timeKey);
+    localStorage.setItem(dateKey, today);
+  }
+  
+  // Calculate base sales count (varies by product ID)
+  const baseCount = 40 + (pid % 56);
+  
+  // Add time-based variation (more sales during peak hours)
+  const hour = new Date().getHours();
+  let timeBonus = 0;
+  if (hour >= 10 && hour <= 12) timeBonus = 5; // Morning peak
+  else if (hour >= 18 && hour <= 21) timeBonus = 8; // Evening peak
+  
+  // Calculate smart count
+  const smartCount = baseCount + timeBonus + Math.floor(Math.random() * 10);
+  
+  let count = parseInt(localStorage.getItem(key)) || smartCount;
+  
+  // Gradually increase count throughout the day
+  const minutesSinceMidnight = new Date().getHours() * 60 + new Date().getMinutes();
+  const increment = Math.floor(minutesSinceMidnight / 60); // +1 every hour
+  count = Math.min(count + increment, smartCount + 20);
+  
   localStorage.setItem(key, count);
   
   const countEl = document.getElementById('sales-count-' + pid);
@@ -47,11 +76,12 @@
   
   if (countEl) countEl.textContent = count;
   
-  // Last sale time
+  // Smart last sale time (more recent during peak hours)
   let saleTime = localStorage.getItem(timeKey);
   const now = Date.now();
   if (!saleTime) {
-    saleTime = now - (Math.floor(Math.random() * 3) + 3) * 60000;
+    const maxMinutes = (hour >= 10 && hour <= 21) ? 15 : 45; // Recent during peak
+    saleTime = now - (Math.floor(Math.random() * maxMinutes) + 3) * 60000;
     localStorage.setItem(timeKey, saleTime);
   }
   
@@ -63,3 +93,4 @@
   setInterval(updateSaleTime, 60000);
 })();
 </script>
+
