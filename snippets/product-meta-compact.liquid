@@ -22,7 +22,7 @@
   
   <span class="meta-item">
     <i class="fas {% if is_digital %}fa-download{% else %}fa-truck{% endif %}"></i>
-    <strong>Lieferbar:</strong>
+    <strong>{% if is_digital %}Verfügbarkeit:{% else %}Lieferbar:{% endif %}</strong>
     <span id="availabilityValue">
       {% if product.selected_or_first_available_variant.available %}
         {% if is_digital %}
