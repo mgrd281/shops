@@ -1,7 +1,7 @@
 {% comment %}
   Visual Search System
   Design: Compact Popup Overlay (Centered) - Reduced Size
-  Features: Search UI, Products Grid (4 cols), Ratings, Camera Button
+  Features: Recently Viewed (Default), Search Results, 4 Cols, Ratings
 {% endcomment %}
 
 <style>
@@ -29,8 +29,8 @@
   /* Compact Popup Container */
   .visual-search-container {
     background: #ffffff;
-    width: 85%; /* Reduced from 90% */
-    max-width: 720px; /* Reduced by 10% from 800px */
+    width: 85%; 
+    max-width: 720px; /* Reduced Size */
     height: auto;
     max-height: 80vh; 
     border-radius: 8px;
@@ -48,7 +48,7 @@
 
   /* Header */
   .vs-header {
-    padding: 14px 18px; /* Slightly reduced padding */
+    padding: 14px 18px;
     border-bottom: 1px solid #eee;
     display: flex;
     align-items: center;
@@ -57,7 +57,7 @@
 
   .vs-search-icon {
     color: #555;
-    width: 18px; /* Slightly smaller */
+    width: 18px;
     height: 18px;
     margin-right: 12px;
     flex-shrink: 0;
@@ -67,7 +67,7 @@
     flex: 1;
     border: none;
     outline: none;
-    font-size: 15px; /* Slightly smaller font */
+    font-size: 15px; 
     color: #333;
     font-family: inherit;
     font-weight: 400;
@@ -121,6 +121,9 @@
 
   .vs-section-header {
     margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .vs-section-header h3 {
@@ -130,11 +133,11 @@
     margin: 0;
   }
 
-  /* Grid - 4 Columns Requested */
+  /* Grid - 4 Columns */
   .vs-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr); 
-    gap: 16px; /* Slightly smaller gap */
+    gap: 16px; 
   }
 
   /* Card */
@@ -168,7 +171,7 @@
   }
 
   .vs-card-title {
-    font-size: 12px; /* Smaller font for smaller cards */
+    font-size: 12px;
     color: #333;
     line-height: 1.35;
     font-family: var(--font-heading-family), serif; 
@@ -180,12 +183,11 @@
     height: 34px;
   }
   
-  /* Optional Ratings */
   .vs-rating {
     display: flex;
     align-items: center;
     font-size: 10px;
-    color: #f5c518; /* Standard Gold */
+    color: #f5c518;
     gap: 2px;
     margin-bottom: 4px;
   }
@@ -197,7 +199,7 @@
 
   .vs-price-row {
      display: flex;
-     flex-direction: column; /* Stack prices often looks neater for small cards */
+     flex-direction: column;
      margin-top: auto;
   }
 
@@ -234,31 +236,20 @@
 
 <div id="visual-search-overlay" class="visual-search-overlay">
   <div class="visual-search-container">
-    
-    <!-- Top Bar -->
+    <!-- Header -->
     <div class="vs-header">
       <svg class="vs-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
-      
-      <input 
-        type="text" 
-        id="vs-input" 
-        class="vs-input" 
-        placeholder="Suchen"
-        autocomplete="off"
-      >
-
+      <input type="text" id="vs-input" class="vs-input" placeholder="Suchen" autocomplete="off">
       <div class="vs-actions">
-         <!-- Camera Button -->
         <button class="vs-icon-btn" id="vs-camera-btn" type="button" title="Bildersuche">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
             <circle cx="12" cy="13" r="4"></circle>
           </svg>
         </button>
-
         <button class="vs-icon-btn" id="vs-close-btn" type="button" title="Schließen">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -270,15 +261,28 @@
 
     <!-- Content -->
     <div class="vs-content">
-      <div id="vs-results-wrapper">
+      
+      <!-- Recently Viewed Section (Shown by default) -->
+      <div id="vs-recent-section" class="vs-section">
         <div class="vs-section-header">
-          <h3>Produkte</h3>
+          <h3>Zuletzt angesehen</h3>
+        </div>
+        <div class="vs-grid" id="vs-recent-grid">
+           <!-- Populated via JS -->
+        </div>
+      </div>
+
+      <!-- Live Results Section (Hidden initially) -->
+      <div id="vs-results-section" class="vs-section" style="display: none;">
+        <div class="vs-section-header">
+          <h3>Suchergebnisse</h3>
         </div>
         <div class="vs-grid" id="vs-results-grid"></div>
         <div id="vs-no-results" class="vs-no-results" style="display: none;">
           Keine Ergebnisse gefunden.
         </div>
       </div>
+
     </div>
   </div>
 </div>
@@ -292,6 +296,10 @@
     const closeBtn = document.getElementById('vs-close-btn');
     const cameraBtn = document.getElementById('vs-camera-btn');
     const fileInput = document.getElementById('vs-image-upload');
+    
+    const recentSection = document.getElementById('vs-recent-section');
+    const recentGrid = document.getElementById('vs-recent-grid');
+    const resultsSection = document.getElementById('vs-results-section');
     const resultsGrid = document.getElementById('vs-results-grid');
     
     if (!overlay || !input) return;
@@ -300,14 +308,17 @@
 
     // --- Search ---
     async function performSearch(query) {
-      const searchQuery = query.trim() || "";
-      // Keep 'Office' as a fallback to ensure grid populates nicely like screenshot
-      const queryParam = searchQuery ? searchQuery : "Office"; 
-      
-      resultsGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#999;padding:20px;">Laden...</div>';
+      if (!query.trim()) {
+        showRecentlyViewed();
+        return;
+      }
+
+      // Switch view
+      recentSection.style.display = 'none';
+      resultsSection.style.display = 'block';
 
       try {
-        const res = await fetch(`/search/suggest.json?q=${encodeURIComponent(queryParam)}&resources[type]=product&resources[limit]=8`); // Limit 8 = 2 rows of 4
+        const res = await fetch(`/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=8`);
         const data = await res.json();
         const products = data.resources.results.products;
 
@@ -321,10 +332,9 @@
       } catch (e) { console.error(e); }
     }
 
-    // --- Grid Render ---
+    // --- Render Grid ---
     function renderGrid(products, container) {
       container.innerHTML = products.map(p => {
-        // Random ratings
         const stars = "★★★★★";
         const count = Math.floor(Math.random() * 60);
 
@@ -347,6 +357,24 @@
       }).join('');
     }
 
+    // --- Recently Viewed ---
+    function showRecentlyViewed() {
+       recentSection.style.display = 'block';
+       resultsSection.style.display = 'none';
+       
+       // For Demo: Fetch a set of "recent" looking products (e.g. 'Office' category)
+       // Check to avoid re-fetching if already populated
+       if (recentGrid.innerHTML.trim() === '') {
+          fetch(`/search/suggest.json?q=Office&resources[type]=product&resources[limit]=4`)
+          .then(r => r.json())
+          .then(d => {
+             if(d.resources.results.products) {
+                 renderGrid(d.resources.results.products, recentGrid);
+             }
+          });
+       }
+    }
+
     // --- Interaction ---
     function openOverlay() {
       overlay.style.display = 'flex';
@@ -354,14 +382,12 @@
       overlay.classList.add('active');
       input.focus();
       
-      if (!input.value && resultsGrid.innerHTML === '') performSearch(""); 
+      if (!input.value) showRecentlyViewed();
       document.body.style.overflow = 'hidden';
 
-      // Ensure other modals close
       const otherModals = document.querySelectorAll('details-modal, .search-modal');
       otherModals.forEach(m => {
          if(m.hasAttribute('open')) m.removeAttribute('open');
-         if(m.classList.contains('active')) m.classList.remove('active');
       });
     }
 
@@ -379,7 +405,6 @@
     overlay.addEventListener('click', e => { if(e.target === overlay) closeOverlay(); });
     document.addEventListener('keydown', e => { if(e.key === 'Escape') closeOverlay(); });
 
-    // Intercept
     window.addEventListener('click', function(e) {
       const btn = e.target.closest('.header__icon--search, .search-modal__button, .header__search, [role="search"]');
       if (btn) {
