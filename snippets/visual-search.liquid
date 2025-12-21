@@ -279,17 +279,17 @@
         <!-- Top Row: Recently Viewed -->
         <div id="vs-recent-section" class="vs-section">
           <div class="vs-section-header">
-            <h3>Zuletzt angesehen</h3>
+            <h3>ZULETZT ANGESEHEN</h3>
           </div>
           <div class="vs-grid" id="vs-recent-grid">
              <!-- JS Populated -->
           </div>
         </div>
 
-        <!-- Bottom Row: Recommendations (Changed Title as requested) -->
+        <!-- Bottom Row: Products -->
         <div id="vs-trending-section" class="vs-section">
           <div class="vs-section-header">
-            <h3>Produkte</h3>
+            <h3>PRODUKTE</h3>
           </div>
           <div class="vs-grid" id="vs-trending-grid">
              <!-- JS Populated -->
@@ -392,23 +392,35 @@
        defaultView.style.display = 'block';
        resultsView.style.display = 'none';
        
-       // Populate Recent (Row 1) - e.g. "Office"
+       // Populate Recent (Row 1) - With fallback
        if (recentGrid.innerHTML.trim() === '') {
-          fetch(`/search/suggest.json?q=Office&resources[type]=product&resources[limit]=4`)
-          .then(r => r.json())
-          .then(d => {
-             if(d.resources.results.products) renderGrid(d.resources.results.products, recentGrid);
-          });
+          fetchAndPopulate(recentGrid, 'Office', 'Microsoft');
        }
 
-       // Populate Trending (Row 2) - e.g. "Windows"
+       // Populate Trending (Row 2) - "Produkte" - With fallback
        if (trendingGrid.innerHTML.trim() === '') {
-          fetch(`/search/suggest.json?q=Windows&resources[type]=product&resources[limit]=4`)
+          fetchAndPopulate(trendingGrid, 'Windows', 'Bestseller');
+       }
+    }
+    
+    // Robust fetcher with fallback
+    function fetchAndPopulate(gridElement, primaryQuery, secondaryQuery) {
+        fetch(`/search/suggest.json?q=${primaryQuery}&resources[type]=product&resources[limit]=4`)
           .then(r => r.json())
           .then(d => {
-             if(d.resources.results.products) renderGrid(d.resources.results.products, trendingGrid);
+             const prods = d.resources.results.products;
+             if(prods && prods.length > 0) {
+                 renderGrid(prods, gridElement);
+             } else {
+                 // Fallback
+                 fetch(`/search/suggest.json?q=${secondaryQuery}&resources[type]=product&resources[limit]=4`)
+                 .then(r2 => r2.json())
+                 .then(d2 => {
+                     const prods2 = d2.resources.results.products;
+                     if(prods2 && prods2.length > 0) renderGrid(prods2, gridElement);
+                 });
+             }
           });
-       }
     }
 
     // --- Interaction ---
