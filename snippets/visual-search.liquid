@@ -1,10 +1,10 @@
 {% comment %}
-  Visual Search System - Final Polish
+  Visual Search System - Aggressive Override
   Features:
-  1. "ZULETZT ANGESEHEN": Real history + Smart Backfill (Always shows 4 cards).
-  2. "PRODUKTE": Contextual Suggestions (Always shows 4 cards).
-  3. VISUAL SEARCH SIMULATION: Smart Heuristic (Filename -> Search -> Coherent Fallback).
-  4. Fix: Ensure Camera Button is Visible and Functional.
+  1. "ZULETZT ANGESEHEN": Real history.
+  2. "PRODUKTE": Contextual Suggestions.
+  3. VISUAL SEARCH SIMULATION: Smart Heuristic.
+  4. OVERRIDE: Aggressively blocks default theme search to show this custom overlay.
 {% endcomment %}
 
 {% assign source_products = empty %}
@@ -83,15 +83,16 @@
 </script>
 
 <style>
-  /* Overlay - Fixed Position */
+  /* Overlay - Fixed Position - FORCE TOP Z-INDEX */
   .visual-search-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 2147483647;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px); /* Modern blur effect */
+    z-index: 2147483647 !important; /* Maximum Z-Index */
     display: none;
     align-items: center;
     justify-content: center;
@@ -107,17 +108,18 @@
   /* Compact Popup Container */
   .visual-search-container {
     background: #ffffff;
-    width: 85%; 
-    max-width: 720px; 
+    width: 90%; 
+    max-width: 750px; 
     height: auto;
     max-height: 85vh;
-    border-radius: 8px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    border-radius: 12px; /* More rounded */
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     transform: scale(0.95);
     transition: transform 0.2s ease-out;
+    border: 1px solid rgba(0,0,0,0.1);
   }
 
   .visual-search-overlay.active .visual-search-container {
@@ -126,7 +128,7 @@
 
   /* Header */
   .vs-header {
-    padding: 14px 18px;
+    padding: 16px 20px;
     border-bottom: 1px solid #eee;
     display: flex;
     align-items: center;
@@ -138,9 +140,9 @@
 
   .vs-search-icon {
     color: #555;
-    width: 18px;
-    height: 18px;
-    margin-right: 12px;
+    width: 20px;
+    height: 20px;
+    margin-right: 14px;
     flex-shrink: 0;
   }
 
@@ -148,65 +150,62 @@
     flex: 1;
     border: none;
     outline: none;
-    font-size: 15px; 
+    font-size: 16px; 
     color: #333;
     font-family: inherit;
     font-weight: 400;
     background: transparent;
-    height: 36px;
+    height: 40px;
   }
 
   .vs-input::placeholder {
-    color: #888;
-    opacity: 1;
+    color: #999;
   }
 
   /* Actions */
   .vs-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
 
   .vs-icon-btn {
-    background: none;
+    background: #f5f5f5;
     border: none;
     cursor: pointer;
-    color: #666;
-    padding: 8px; /* Increased padding for easier clicking */
-    transition: color 0.1s;
+    color: #444;
+    padding: 8px; 
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
+    width: 36px;
+    height: 36px;
   }
 
   .vs-icon-btn:hover {
-    color: #111;
-    background: #f0f0f0;
+    color: #000;
+    background: #e0e0e0;
+    transform: scale(1.05);
   }
 
   .vs-icon-btn svg {
     width: 20px;
     height: 20px;
-    stroke-width: 2px; /* Thicker strokes */
-  }
-  
-  /* Ensure camera button specifically is visible */
-  #vs-camera-btn {
-     display: flex !important;
+    stroke-width: 2px;
   }
 
   /* Content Area */
   .vs-content {
     flex: 1;
     overflow-y: auto;
-    padding: 20px;
+    padding: 24px;
     background: #fff;
   }
 
   .vs-section {
-    margin-bottom: 24px;
+    margin-bottom: 28px;
   }
   
   .vs-section:last-child {
@@ -217,16 +216,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 8px;
   }
 
   .vs-section-header h3 {
-    font-size: 13px;
-    color: #777;
-    font-weight: 500;
+    font-size: 12px;
+    color: #666;
+    font-weight: 600;
     margin: 0;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
   }
 
   /* Grid - 4 Columns */
@@ -234,7 +235,6 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr); 
     gap: 16px; 
-    min-height: 100px; 
   }
 
   /* Card */
@@ -244,21 +244,25 @@
     text-decoration: none;
     color: inherit;
     transition: opacity 0.2s;
+    position: relative;
   }
 
   .vs-card:hover {
-    opacity: 0.9;
+    opacity: 0.8;
   }
 
   .vs-image-wrapper {
     position: relative;
     width: 100%;
     aspect-ratio: 1;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #fff; 
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #f5f5f5;
   }
 
   .vs-image {
@@ -268,36 +272,36 @@
   }
 
   .vs-card-title {
-    font-size: 12px;
-    color: #333;
-    line-height: 1.35;
+    font-size: 13px;
+    color: #222;
+    line-height: 1.4;
     font-family: var(--font-heading-family), serif; 
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    height: 34px;
+    height: 36px;
+    font-weight: 500;
   }
   
   .vs-rating {
     display: flex;
     align-items: center;
-    font-size: 24px !important;
+    font-size: 20px !important; /* Balanced Large size */
     color: #f5c518;
-    gap: 3px;
-    margin-bottom: 8px;
-    min-height: 24px;
+    gap: 2px;
+    margin-bottom: 6px;
     line-height: 1;
   }
   
   .vs-rating-count {
-     color: #aaa;
+     color: #999;
      font-size: 11px;
      margin-left: 6px;
      font-weight: 400;
      position: relative;
-     top: 4px; 
+     top: 3px; 
   }
 
   .vs-price-row {
@@ -308,27 +312,29 @@
 
   .vs-price-old {
     text-decoration: line-through;
-    color: #aaa;
-    font-size: 11px;
+    color: #bbb;
+    font-size: 12px;
   }
 
   .vs-price-new {
-    font-size: 15px;
-    font-weight: 500;
-    color: #222;
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
   }
 
   .vs-no-results {
     text-align: center;
-    color: #999;
-    padding: 30px;
-    font-size: 13px;
+    color: #888;
+    padding: 40px;
+    font-size: 14px;
   }
 
   @media (max-width: 768px) {
     .visual-search-container {
-      width: 95%;
-      max-height: 90vh;
+      width: 100%;
+      height: 100%;
+      max-height: 100vh;
+      border-radius: 0;
     }
     .vs-grid {
       grid-template-columns: repeat(2, 1fr);
@@ -345,15 +351,16 @@
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
-      <input type="text" id="vs-input" class="vs-input" placeholder="Suchen" autocomplete="off">
+      <input type="text" id="vs-input" class="vs-input" placeholder="Suchen Sie nach Produkten..." autocomplete="off">
       <div class="vs-actions">
-        <!-- Force Image Button to be Visible -->
+        <!-- Force Image Button -->
         <button class="vs-icon-btn" id="vs-camera-btn" type="button" title="Bildersuche" style="display: flex !important;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
             <circle cx="12" cy="13" r="4"></circle>
           </svg>
         </button>
+        <!-- Close Button -->
         <button class="vs-icon-btn" id="vs-close-btn" type="button" title="Schließen">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -404,8 +411,8 @@
       
       <!-- ANALYZING -->
       <div id="vs-analyzing-view" style="display: none; text-align: center; padding: 40px;">
-        <div style="font-size: 14px; color: #555; margin-bottom: 20px;">
-           <span style="display: inline-block; animation: pulse 1.5s infinite;">📷</span>
+        <div style="font-size: 16px; color: #555; margin-bottom: 20px; font-weight: 500;">
+           <span style="display: block; font-size: 40px; margin-bottom: 10px; animation: pulse 1.5s infinite;">📷</span>
            <span>Bild wird analysiert...</span>
         </div>
       </div>
@@ -416,6 +423,7 @@
 <input type="file" id="vs-image-upload" accept="image/*" style="display: none;" />
 
 <script>
+  // --- Tracking ---
   (function() {
     {% if template contains 'product' %}
       try {
@@ -427,6 +435,7 @@
     {% endif %}
   })();
 
+  // --- OVERLAY CONTROLLER ---
   (function() {
     const overlay = document.getElementById('visual-search-overlay');
     const input = document.getElementById('vs-input');
@@ -444,25 +453,14 @@
 
     // --- Core Search ---
     async function performSearch(query) {
-      if (!query.trim()) {
-        showDefaultView();
-        return;
-      }
-      defaultView.style.display = 'none';
-      analyzingView.style.display = 'none';
-      resultsView.style.display = 'block';
-
+      if (!query.trim()) { showDefaultView(); return; }
+      defaultView.style.display = 'none'; analyzingView.style.display = 'none'; resultsView.style.display = 'block';
       try {
         const res = await fetch(`/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=8`);
         const data = await res.json();
         const products = data.resources.results.products;
-        if (products && products.length) {
-          renderGrid(products, resultsGrid);
-          document.getElementById('vs-no-results').style.display = 'none';
-        } else {
-          resultsGrid.innerHTML = '';
-          document.getElementById('vs-no-results').style.display = 'block';
-        }
+        if (products && products.length) { renderGrid(products, resultsGrid); document.getElementById('vs-no-results').style.display = 'none'; }
+        else { resultsGrid.innerHTML = ''; document.getElementById('vs-no-results').style.display = 'block'; }
       } catch (e) {}
     }
 
@@ -499,81 +497,76 @@
     }
 
     function showDefaultView() {
-       defaultView.style.display = 'block';
-       resultsView.style.display = 'none';
-       analyzingView.style.display = 'none';
+       defaultView.style.display = 'block'; resultsView.style.display = 'none'; analyzingView.style.display = 'none';
        renderRecent(); 
     }
     
-    // --- SMART VISUAL SEARCH (Coherent Categories Fallback) ---
     function handleImageUpload() {
-       const file = fileInput.files[0];
-       if (!file) return;
-
-       defaultView.style.display = 'none';
-       resultsView.style.display = 'none';
-       analyzingView.style.display = 'block';
-       
+       const file = fileInput.files[0]; if (!file) return;
+       defaultView.style.display = 'none'; resultsView.style.display = 'none'; analyzingView.style.display = 'block';
        let keywords = file.name.split('.')[0].replace(/[-_]/g, ' ');
-
        setTimeout(async () => {
-           analyzingView.style.display = 'none';
-           resultsView.style.display = 'block';
-           
+           analyzingView.style.display = 'none'; resultsView.style.display = 'block';
            try {
-             // 1. Try Filename Search
              const res = await fetch(`/search/suggest.json?q=${encodeURIComponent(keywords)}&resources[type]=product&resources[limit]=8`);
              const data = await res.json();
              const products = data.resources.results.products;
-
              if (products && products.length > 0) {
                 document.querySelector('#vs-results-view h3').textContent = "ERGEBNISSE FÜR: " + keywords.toUpperCase();
-                renderGrid(products, resultsGrid);
-                document.getElementById('vs-no-results').style.display = 'none';
+                renderGrid(products, resultsGrid); document.getElementById('vs-no-results').style.display = 'none';
              } else {
-                // 2. Fallback: Search for a random popular category to show COHERENT results
                 const categories = ['Watch', 'Office', 'Windows', 'Game', 'Software'];
                 const randomCat = categories[Math.floor(Math.random() * categories.length)];
-                
                 document.querySelector('#vs-results-view h3').textContent = "ÄHNLICHE PRODUKTE (" + randomCat.toUpperCase() + ")"; 
-
                 const res2 = await fetch(`/search/suggest.json?q=${randomCat}&resources[type]=product&resources[limit]=8`);
                 const data2 = await res2.json();
                 const products2 = data2.resources.results.products;
-                
-                if(products2 && products2.length > 0) {
-                     renderGrid(products2, resultsGrid);
-                     document.getElementById('vs-no-results').style.display = 'none';
-                } else {
-                     // 3. Last Resort: Local Fallback
-                     document.querySelector('#vs-results-view h3').textContent = "ÄHNLICHE PRODUKTE"; 
-                     if (window.vsFallbackProducts) renderGrid(window.vsFallbackProducts.slice(0,4), resultsGrid);
-                }
+                if(products2 && products2.length > 0) { renderGrid(products2, resultsGrid); document.getElementById('vs-no-results').style.display = 'none'; }
+                else { document.querySelector('#vs-results-view h3').textContent = "ÄHNLICHE PRODUKTE"; if (window.vsFallbackProducts) renderGrid(window.vsFallbackProducts.slice(0,4), resultsGrid); }
              }
            } catch(e) {}
        }, 1500);
     }
 
-    // --- Listeners ---
+    // --- HIJACK LOGIC ---
+    function openOverlay() {
+      // 1. Force close any native details-modal
+      document.querySelectorAll('details-modal').forEach(m => {
+          if(m.close) m.close();
+          const d = m.querySelector('details');
+          if(d && d.hasAttribute('open')) d.removeAttribute('open');
+      });
+      // 2. Open My Overlay
+      overlay.style.display = 'flex'; void overlay.offsetWidth; overlay.classList.add('active');
+      if(input) { input.focus(); if (!input.value) showDefaultView(); }
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeOverlay() {
+      overlay.classList.remove('active');
+      setTimeout(() => { overlay.style.display = 'none'; document.body.style.overflow = ''; }, 200);
+      if(input) input.value = '';
+    }
+
+    // --- Event Listeners ---
     if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
     overlay.addEventListener('click', e => { if(e.target === overlay) closeOverlay(); });
     document.addEventListener('keydown', e => { if(e.key === 'Escape') closeOverlay(); });
-    window.addEventListener('click', function(e) {
-      const btn = e.target.closest('.header__icon--search, .search-modal__button, .header__search, [role="search"]');
-      if (btn) {
+    if(input) input.addEventListener('input', (e) => { clearTimeout(searchTimeout); searchTimeout = setTimeout(() => performSearch(e.target.value), 300); });
+    if (cameraBtn) cameraBtn.addEventListener('click', () => fileInput.click());
+    if (fileInput) fileInput.addEventListener('change', handleImageUpload);
+    
+    // AGGRESSIVE HIJACK OF SEARCH CLICK
+    document.addEventListener('click', function(e) {
+      // Check if clicked element is a search toggle
+      const toggle = e.target.closest('.header__icon--search, .search-modal__button, [href="/search"], .modal__toggle-open');
+      if (toggle) {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
         openOverlay();
       }
-    }, true);
-    if(input) input.addEventListener('input', (e) => {
-          clearTimeout(searchTimeout);
-          searchTimeout = setTimeout(() => performSearch(e.target.value), 300);
-    });
-    // Re-attach listener specifically for the newly forced button
-    const camBtn = document.getElementById('vs-camera-btn');
-    if (camBtn) camBtn.addEventListener('click', () => fileInput.click());
-    if (fileInput) fileInput.addEventListener('change', handleImageUpload);
+    }, true); // Capture phase to beat theme scripts
+    
   })();
 </script>
