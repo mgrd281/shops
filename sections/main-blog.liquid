@@ -242,6 +242,10 @@
                 # No auto-extraction from content to prevent layout issues
               -%}
 
+                  {%- endif -%}
+                </a>
+              </div>
+
               <div class="article-card__image-wrapper">
                 <a href="{{ article.url }}">
                   {%- if card_image != blank -%}
@@ -259,6 +263,21 @@
                       {% unless is_hero %}loading="lazy"{% endunless %}
                       width="{{ card_image.width }}"
                       height="{{ card_image.height }}"
+                    >
+                  {%- elsif section.settings.fallback_image != blank -%}
+                    <img
+                      srcset="{{ section.settings.fallback_image | image_url: width: 165 }} 165w,
+                        {{ section.settings.fallback_image | image_url: width: 360 }} 360w,
+                        {{ section.settings.fallback_image | image_url: width: 533 }} 533w,
+                        {{ section.settings.fallback_image | image_url: width: 720 }} 720w,
+                        {{ section.settings.fallback_image | image_url: width: 1000 }} 1000w"
+                      src="{{ section.settings.fallback_image | image_url: width: 533 }}"
+                      sizes="(min-width: 1200px) {% if is_hero %}50vw{% else %}33vw{% endif %}, (min-width: 750px) 50vw, 100vw"
+                      alt="Blog Post"
+                      class="{{ image_class }}"
+                      loading="lazy"
+                      width="{{ section.settings.fallback_image.width }}"
+                      height="{{ section.settings.fallback_image.height }}"
                     >
                   {%- endif -%}
                 </a>
@@ -326,6 +345,12 @@
       "id": "show_author",
       "default": false,
       "label": "t:sections.main-blog.settings.show_author.label"
+    },
+    {
+      "type": "image_picker",
+      "id": "fallback_image",
+      "label": "Default Blog Image",
+      "info": "Displayed when a blog post has no featured image."
     },
     {
         "type": "checkbox",
