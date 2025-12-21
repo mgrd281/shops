@@ -29,6 +29,10 @@
   }
 </script>
 
+<!-- Preload critical chained modules to avoid waterfalls -->
+<link rel="modulepreload" href="{{ 'section-hydration.js' | asset_url }}">
+<link rel="modulepreload" href="{{ 'focus.js' | asset_url }}">
+
 {% comment %}
 <script
   src="{{ 'view-transitions.js' | asset_url }}"
