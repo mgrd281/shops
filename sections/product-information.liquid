@@ -1098,11 +1098,22 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 16px;
+    padding: 16px;
     margin: 20px 0;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
+    border: 1px solid #E5E7EB; /* Subtle modern border */
+    border-radius: 8px; /* Smooth rounded corners */
+    background-color: #F8FAFC; /* clean light background */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03); /* micro shadow for depth */
+  }
+  .shipping-info .icon-container i {
+      color: #10B981; /* Emerald green for trust/success */
+      font-size: 18px;
+  }
+  .shipping-info .ship-claim {
+      color: #111827; /* Darker text for title */
+      font-size: 14px;
+      margin-bottom: 2px;
+      display: block;
   }
   .shipping-info .icon-container {
     width: 24px;
