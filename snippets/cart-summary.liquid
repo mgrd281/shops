@@ -23,14 +23,17 @@
     {% assign target_keyword = nil %}
 
     {% comment %} Define Rules: If buys X -> Suggest Y (with priority) {% endcomment %}
-    {% assign preferred_match = nil %}
+    {% assign preferred_match_1 = nil %}
+    {% assign preferred_match_2 = nil %}
     
     {% if ref_title contains 'office' %}
       {% assign target_keyword = 'windows' %}
-      {% assign preferred_match = '11' %} {% comment %} Try to find Windows 11 first {% endcomment %}
+      {% assign preferred_match_1 = '11 professional' %} {% comment %} Priority 1: Windows 11 Pro {% endcomment %}
+      {% assign preferred_match_2 = '10 pro' %}          {% comment %} Priority 2: Windows 10 Pro {% endcomment %}
     {% elsif ref_title contains 'windows' %}
       {% assign target_keyword = 'office' %}
-      {% assign preferred_match = '2024' %} {% comment %} Try to find Office 2024 first {% endcomment %}
+      {% assign preferred_match_1 = '2024' %}
+      {% assign preferred_match_2 = '2021' %}
     {% elsif ref_title contains 'server' %}
       {% assign target_keyword = 'cal' %}
     {% elsif ref_title contains 'visio' %}
@@ -42,25 +45,41 @@
     {% comment %} Search for target keyword in 'all' collection {% endcomment %}
     {% if target_keyword %}
       
-      {% comment %} PASS 1: Look for Preferred Match (e.g. Windows + 11) {% endcomment %}
-      {% if preferred_match %}
+      {% comment %} PASS 1: Look for Priority 1 Match {% endcomment %}
+      {% if preferred_match_1 %}
         {% for product in collections['all'].products limit: 50 %}
            {% assign p_title = product.title | downcase %}
-           {% if p_title contains target_keyword and p_title contains preferred_match and product.available %}
-              {% assign in_cart = false %}
-              {% for item in cart.items %}
-                {% if item.product.id == product.id %}{% assign in_cart = true %}{% endif %}
-              {% endfor %}
-              
-              {% if in_cart == false %}
-                 {% assign upsell_product = product %}
-                 {% break %}
-              {% endif %}
+           {% if p_title contains target_keyword and p_title contains preferred_match_1 and product.available %}
+                {% assign in_cart = false %}
+                {% for item in cart.items %}
+                    {% if item.product.id == product.id %}{% assign in_cart = true %}{% endif %}
+                {% endfor %}
+                {% if in_cart == false %}
+                    {% assign upsell_product = product %}
+                    {% break %}
+                {% endif %}
            {% endif %}
         {% endfor %}
       {% endif %}
 
-      {% comment %} PASS 2: Look for General Match if no preferred match found {% endcomment %}
+      {% comment %} PASS 2: Look for Priority 2 Match {% endcomment %}
+      {% if upsell_product == nil and preferred_match_2 %}
+        {% for product in collections['all'].products limit: 50 %}
+           {% assign p_title = product.title | downcase %}
+           {% if p_title contains target_keyword and p_title contains preferred_match_2 and product.available %}
+                {% assign in_cart = false %}
+                {% for item in cart.items %}
+                    {% if item.product.id == product.id %}{% assign in_cart = true %}{% endif %}
+                {% endfor %}
+                {% if in_cart == false %}
+                    {% assign upsell_product = product %}
+                    {% break %}
+                {% endif %}
+           {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% comment %} PASS 3: Look for General Match {% endcomment %}
       {% if upsell_product == nil %}
         {% for product in collections['all'].products limit: 50 %}
            {% assign p_title = product.title | downcase %}
