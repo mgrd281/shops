@@ -1,28 +1,44 @@
 {% comment %}
   ===========================================
-  UPSELL CONFIGURATION
-  Define your custom upsell rules here.
-  Format:
-  {% when 'product-handle-in-cart' %} {% assign upsell_handle = 'product-handle-to-recommend' %}
+  UPSELL CONFIGURATION (إعدادات المنتجات المقترحة)
+  ===========================================
+  
+  KIE WIR ES BENUTZEN (كيفية الاستخدام):
+  1. ابحث عن "Handle" المنتج الذي في السلة (Trigger).
+     - تجده في رابط المنتج: karinex.de/products/THIS-IS-THE-HANDLE
+     - أو في صفحة المنتج في الأسفل (SEO section).
+  
+  2. ابحث عن "Handle" المنتج الذي تريد اقتراحه (Upsell).
+  
+  3. أضف قاعدة جديدة في الأسفل بنفس الصيغة:
+     
+     {% when 'اسم-رابط-المنتج-في-السلة' %}
+        {% assign upsell_handle = 'اسم-رابط-المنتج-المقترح' %}
+
   ===========================================
 {% endcomment %}
 
 {% assign upsell_handle = nil %}
 
 {% case trigger_handle %}
-  
-  {% comment %} --- EXAMPLES (Replace with your actual product handles) --- {% endcomment %}
-  
-  {% when 'windows-10-enterprise-lizenz-32-64-bit-original-produktschlussel-sofort-e-mail-versand' %} 
-     {% assign upsell_handle = 'microsoft-office-2021-professional-plus' %}
 
-  {% when 'windows-11-professional' %} 
-     {% assign upsell_handle = 'microsoft-office-2021-professional-plus' %}
+  {% comment %} --- BEISPIELE (أمثلة) --- {% endcomment %}
 
-  {% when 'microsoft-office-2021-professional-plus' %}
+  {% comment %} If buying Windows 10 -> Suggest Office 2021 {% endcomment %}
+  {% when 'windows-10-pro' %} 
+     {% assign upsell_handle = 'microsoft-office-2021-professional' %}
+
+  {% comment %} If buying Office 2021 -> Suggest Windows 11 {% endcomment %}
+  {% when 'microsoft-office-2021-professional' %}
      {% assign upsell_handle = 'windows-11-professional' %}
 
-  {% comment %} --- ADD YOUR NEW RULES BELOW THIS LINE --- {% endcomment %}
+  {% comment %} Example with long handle (Real example) {% endcomment %}
+  {% when 'windows-10-enterprise-lizenz-32-64-bit-original-produktschlussel-sofort-e-mail-versand' %}
+     {% assign upsell_handle = 'microsoft-office-2021-professional-plus' %}
 
+  {% comment %} --- FÜGEN SIE HIER IHRE REGELN HINZU (أضف قواعدك هنا) --- {% endcomment %}
+  
+  {% when 'ضع-هنا-رابط-المنتج-الاصلي' %}
+     {% assign upsell_handle = 'ضع-هنا-رابط-المنتج-المقترح' %}
 
 {% endcase %}
