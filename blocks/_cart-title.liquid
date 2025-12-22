@@ -11,7 +11,7 @@
     {%- if cart.empty? -%}
       {{ 'content.your_cart_is_empty' | t }}
     {%- else -%}
-      {{ block_settings.title }}
+      Warenkorb
       {%- if block_settings.show_count -%}{% render 'cart-bubble' %}{%- endif -%}
     {%- endif -%}
   </h1>
