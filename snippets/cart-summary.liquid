@@ -14,6 +14,66 @@
 
 <div class="cart__summary-totals">
   
+  {% comment %} --- SMART UPSELL LOGIC --- {% endcomment %}
+  {% assign upsell_product = nil %}
+  {% assign reference_item = cart.items.first %}
+  
+  {% if reference_item %}
+    {% assign reference_collection = nil %}
+    
+    {% comment %} Find the most specific collection (skip 'all' or 'frontpage') {% endcomment %}
+    {% for col in reference_item.product.collections %}
+      {% if col.handle != 'all' and col.handle != 'frontpage' %}
+        {% assign reference_collection = col %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+    
+    {% comment %} Fallback if no specific collection found {% endcomment %}
+    {% if reference_collection == nil %}
+      {% assign reference_collection = reference_item.product.collections.first %}
+    {% endif %}
+
+    {% if reference_collection %}
+      {% for product in reference_collection.products limit: 10 %}
+        {% comment %} Skip the product itself if it's the same {% endcomment %}
+        {% if product.id == reference_item.product.id %}{% continue %}{% endif %}
+
+        {% assign in_cart = false %}
+        {% for item in cart.items %}
+          {% if item.product.id == product.id %}{% assign in_cart = true %}{% endif %}
+        {% endfor %}
+        
+        {% if in_cart == false and product.available %}
+          {% assign upsell_product = product %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% endif %}
+
+  {% if upsell_product %}
+    <div class="cart-upsell" style="border-bottom: 1px solid var(--color-border); padding: 15px 0; margin-bottom: 15px;">
+      <p style="font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--color-foreground);">Dazu passt perfekt: ✨</p>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <a href="{{ upsell_product.url }}" style="width: 60px; height: 60px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #f4f4f4; border: 1px solid var(--color-border);">
+          <img src="{{ upsell_product.featured_image | image_url: width: 120 }}" alt="{{ upsell_product.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+        </a>
+        <div style="flex-grow: 1;">
+          <a href="{{ upsell_product.url }}" style="text-decoration: none; color: var(--color-foreground); font-size: 13px; font-weight: 500; display: block; line-height: 1.2; margin-bottom: 4px;">{{ upsell_product.title | truncate: 30 }}</a>
+          <p style="font-size: 12px; color: rgb(var(--color-foreground-rgb) / 0.7); margin: 0;">{{ upsell_product.price | money }}</p>
+        </div>
+        <form method="post" action="/cart/add" style="flex-shrink: 0;">
+          <input type="hidden" name="id" value="{{ upsell_product.selected_or_first_available_variant.id }}">
+          <button type="submit" class="button button--secondary" style="padding: 0 12px; min-height: 32px; height: 32px; font-size: 12px; border-radius: 99px;">
+            Hinzufügen
+          </button>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+  {% comment %} --- END SMART UPSELL --- {% endcomment %}
+  
 
   {% # We need to keep this node in place to allow morphing to work properly # %}
   <div class="cart__original-total-container cart-primary-typography">
