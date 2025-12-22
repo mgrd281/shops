@@ -10,6 +10,20 @@
   </span>
 </div>
 
+<!-- Scarcity Progress Bar -->
+<div class="scarcity-bar-container">
+  <div class="scarcity-bar-header">
+    <span class="scarcity-icon">⚡</span>
+    <span class="scarcity-text" id="scarcity-text-{{ product.id }}">Wird geladen...</span>
+  </div>
+  <div class="scarcity-progress-wrapper">
+    <div class="scarcity-progress-bg">
+      <div class="scarcity-progress-fill" id="scarcity-bar-{{ product.id }}" style="width: 0%"></div>
+      <div class="scarcity-progress-glow"></div>
+    </div>
+  </div>
+</div>
+
 <style>
 .sales-compact {
   display: flex !important;
@@ -18,15 +32,91 @@
   padding: 8px 0;
   font-size: 14px;
   color: #d84315;
-  margin: 8px 0;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 12px;
+  margin: 8px 0 4px 0;
+  border-bottom: none;
+  padding-bottom: 8px;
 }
 .sales-compact svg { flex-shrink: 0; }
 .sales-text { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
 .sales-text strong { font-weight: 700; }
 .sales-time { font-size: 13px; color: #666; }
+
+/* Scarcity Progress Bar Styles */
+.scarcity-bar-container {
+  margin: 8px 0 16px 0;
+  padding: 12px;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+  border-radius: 8px;
+  border: 1px solid #ffcccc;
+}
+
+.scarcity-bar-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #d84315;
+}
+
+.scarcity-icon {
+  font-size: 16px;
+  animation: pulse-icon 2s ease-in-out infinite;
+}
+
+@keyframes pulse-icon {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+.scarcity-text {
+  flex: 1;
+  font-size: 13px;
+}
+
+.scarcity-progress-wrapper {
+  position: relative;
+}
+
+.scarcity-progress-bg {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background: #fff;
+  border-radius: 99px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.scarcity-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b35 0%, #ff8c42 50%, #ffa726 100%);
+  border-radius: 99px;
+  transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba(255, 107, 53, 0.4);
+}
+
+.scarcity-progress-glow {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 14px;
+  background: radial-gradient(circle, rgba(255, 107, 53, 0.6) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.scarcity-progress-fill[style*="width"] ~ .scarcity-progress-glow {
+  opacity: 1;
+}
 </style>
+
 
 <script>
 (function() {
@@ -196,6 +286,37 @@
   }
   updateSaleTime();
   setInterval(updateSaleTime, 60000);
+  
+  // === Scarcity Progress Bar Logic ===
+  const scarcityBar = document.getElementById('scarcity-bar-' + pid);
+  const scarcityText = document.getElementById('scarcity-text-' + pid);
+  
+  if (scarcityBar && scarcityText) {
+    // Calculate percentage sold (out of max capacity)
+    const maxCapacity = 500; // Assume max stock is 500
+    const soldPercentage = Math.min(Math.round((currentCount / maxCapacity) * 100), 100);
+    
+    // Determine message based on percentage
+    let message = '';
+    if (soldPercentage >= 95) {
+      message = `🔥 ${soldPercentage}% ausverkauft - Nur noch wenige verfügbar!`;
+    } else if (soldPercentage >= 85) {
+      message = `⚠️ ${soldPercentage}% verkauft - Begrenzter Vorrat!`;
+    } else if (soldPercentage >= 70) {
+      message = `${soldPercentage}% bereits verkauft - Schnell zugreifen!`;
+    } else if (soldPercentage >= 50) {
+      message = `${soldPercentage}% verkauft - Beliebtes Produkt!`;
+    } else {
+      message = `${soldPercentage}% verkauft - Vorrat verfügbar`;
+    }
+    
+    scarcityText.textContent = message;
+    
+    // Animate progress bar with delay for visual impact
+    setTimeout(() => {
+      scarcityBar.style.width = soldPercentage + '%';
+    }, 300);
+  }
 })();
 </script>
 
