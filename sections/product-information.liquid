@@ -1717,6 +1717,79 @@ nav[aria-label="Breadcrumb"],
   </button>
 </form>
 
+<!-- Modern Payment Methods -->
+<div class="payment-methods-modern">
+  <span class="payment-label">Sichere Zahlung mit:</span>
+  <div class="payment-icons">
+    <svg class="payment-icon" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg"><title>Visa</title><path d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z" fill="#1434CB"/><path d="M15.3 16.5l1.4-8.6h2.2l-1.4 8.6h-2.2zm10.7-8.4c-.4-.2-1.1-.4-2-.4-2.2 0-3.7 1.2-3.7 2.8 0 1.2 1.1 1.9 1.9 2.3.9.4 1.2.7 1.2 1.1 0 .6-.7.9-1.4.9-1 0-1.5-.1-2.3-.5l-.3-.2-.3 2c.5.2 1.5.4 2.5.4 2.3 0 3.8-1.1 3.8-2.9 0-1-.6-1.7-1.8-2.3-.7-.4-1.2-.6-1.2-1 0-.4.4-.7 1.3-.7.7 0 1.3.2 1.7.3l.2.1.4-1.9zm5.8-2.2h-1.7c-.5 0-.9.2-1.1.5l-3.2 7.6h2.3s.4-1 .5-1.3h2.8c.1.3.3 1.3.3 1.3h2l-1.9-8.1zm-2.5 5.3c.2-.5.9-2.4.9-2.4s.2-.5.3-.8l.2.8s.5 2.3.6 2.8h-2zm-13.1-5.3l-2.1 5.8-.2-1.2c-.4-1.3-1.6-2.7-3-3.4l2 7.9h2.3l3.5-8.6h-2.5z" fill="#fff"/></svg>
+    
+    <svg class="payment-icon" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg"><title>Mastercard</title><rect width="38" height="24" rx="3" fill="#000"/><circle cx="14" cy="12" r="7" fill="#EB001B"/><circle cx="24" cy="12" r="7" fill="#F79E1B"/><path d="M19 6.3c1.3 1.3 2.1 3.2 2.1 5.2s-.8 3.9-2.1 5.2c-1.3-1.3-2.1-3.2-2.1-5.2s.8-3.9 2.1-5.2z" fill="#FF5F00"/></svg>
+    
+    <svg class="payment-icon" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg"><title>PayPal</title><rect width="38" height="24" rx="3" fill="#003087"/><path d="M13.8 8.5c.2-1.3-.1-2.2-.8-2.8-.7-.7-2-1-3.7-1H6.2c-.3 0-.5.2-.5.5L4 16.5c0 .2.1.4.3.4h2l.5-3.2v.1c.1-.3.3-.5.5-.5h1.1c2.2 0 3.9-.9 4.4-3.5v-.3zm13.9 3.4c-.5 2.6-2.2 3.5-4.4 3.5h-1.1c-.3 0-.5.2-.5.5l-.5 3.2h-2c-.2 0-.3-.2-.3-.4l1.7-11.3c.1-.3.3-.5.5-.5h3.1c1.7 0 3 .3 3.7 1 .7.6 1 1.5.8 2.8v.2z" fill="#009CDE"/></svg>
+    
+    <svg class="payment-icon" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg"><title>Apple Pay</title><rect width="38" height="24" rx="3" fill="#000"/><path d="M11.3 10.2c-.1 1.4 1.2 2.1 2.2 2.5.9.4 1.3.7 1.3 1.1 0 .6-.7.9-1.4.9-1.2 0-1.9-.4-1.9-.4l-.3 1.6s.9.4 2.2.4c2.3 0 3.8-1.1 3.8-2.9 0-2.3-3.2-2.4-3.2-3.4 0-.3.3-.6 1-.7.4-.1 1.3-.1 2.4.4l.4-1.9c-.6-.2-1.3-.4-2.3-.4-2.2.1-3.8 1.2-3.8 2.8zm7.5-2.8c-.4 0-.8.2-1 .6l-2.8 6.7h2.3l.5-1.2h2.7l.3 1.2h2l-1.8-8.3h-2.2zm.4 2.1l.6 3h-1.8l1.2-3z" fill="#fff"/></svg>
+    
+    <svg class="payment-icon payment-icon-klarna" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg"><title>Klarna</title><rect width="38" height="24" rx="3" fill="#FFB3C7"/><text x="19" y="15" font-family="Arial,sans-serif" font-size="8" font-weight="bold" text-anchor="middle" fill="#000">Klarna</text></svg>
+  </div>
+</div>
+
+<style>
+.payment-methods-modern {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #e8e8e8;
+}
+
+.payment-label {
+  display: block;
+  font-size: 11px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.payment-icons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.payment-icon {
+  height: 22px;
+  width: auto;
+  opacity: 0.7;
+  filter: grayscale(0.3);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.payment-icon:hover {
+  opacity: 1;
+  filter: grayscale(0);
+  transform: scale(1.08);
+}
+
+.payment-icon-klarna {
+  height: 20px;
+}
+
+@media (max-width: 768px) {
+  .payment-methods-modern {
+    text-align: center;
+  }
+  
+  .payment-icons {
+    justify-content: center;
+  }
+  
+  .payment-icon {
+    height: 20px;
+  }
+}
+</style>
+
 
 <script>
   document.getElementById('buy-now-form').addEventListener('submit', function(e) {
