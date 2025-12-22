@@ -533,16 +533,29 @@ document.addEventListener('DOMContentLoaded', function() {
   window.addEventListener('resize', function(){ setTimeout(updateButtons, 100); });
   updateButtons();
 
-  /* ---------- Add to Cart (AJAX + DOM Update) ---------- */
+  /* ---------- Add to Cart (AJAX + DOM Update - ROBUST) ---------- */
   function openCartDrawer() {
     const drawer = document.querySelector('cart-drawer');
-    if (drawer) {
-       drawer.classList.add('active'); // Ensure active class if needed
-       if (drawer.open) drawer.open();    // Standard method
-    } else {
-       // Fallback for some themes
-       document.documentElement.classList.add('cart-open');
+    const drawerElement = document.querySelector('.cart-drawer');
+    
+    // 1. Try Standard Method
+    if (drawer && typeof drawer.open === 'function') {
+       drawer.open();
+    } 
+    // 2. Try adding active class (common fallback)
+    else if (drawer) {
+       drawer.classList.add('active');
+       drawer.setAttribute('open', '');
     }
+    // 3. Try legacy class
+    else if (drawerElement) {
+       drawerElement.classList.add('active');
+       drawerElement.classList.add('is-open'); // Some themes use this
+    }
+    
+    // 4. Dispatch Event (Broad Support)
+    document.dispatchEvent(new CustomEvent('cart:open', { bubbles: true }));
+    document.dispatchEvent(new CustomEvent('cart-drawer:open', { bubbles: true }));
   }
 
   function addToCart(variantId, btn) {
@@ -550,52 +563,79 @@ document.addEventListener('DOMContentLoaded', function() {
     btn.classList.add('loading');
     btn.disabled = true;
 
-    // 1. Prepare Data: items + sections to update
+    // We fetch the 'cart-drawer' and 'cart-notification' sections specifically
+    // Or 'header' if the cart bubble is there.
+    // 'cart-drawer' is the standard Dawn section name.
     const config = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
         items: [{ id: Number(variantId), quantity: 1 }],
-        sections: 'cart-drawer,cart-icon-bubble' 
+        sections: 'cart-drawer,cart-icon-bubble,cart-notification-product,header'
       })
     };
 
     fetch(window.Shopify.routes.root + 'cart/add.js', config)
     .then(res => res.json())
     .then(data => {
-      if (data.status) { throw new Error(data.description); }
+      if (data.status) throw new Error(data.description);
 
-      // 2. Update Cart Icon Bubble
-      const bubble = document.getElementById('cart-icon-bubble');
-      if (bubble && data.sections && data.sections['cart-icon-bubble']) {
-         bubble.innerHTML = data.sections['cart-icon-bubble']; // Standard Dawn
+      const parser = new DOMParser();
+
+      // --- Update Cart Icon / Bubble ---
+      // Try to find it in the returned sections
+      let updatedBubbleHTML = null;
+      if (data.sections['cart-icon-bubble']) updatedBubbleHTML = data.sections['cart-icon-bubble'];
+      else if (data.sections['header']) {
+         // If header was returned, extract bubble from it
+         const doc = parser.parseFromString(data.sections['header'], 'text/html');
+         const bubble = doc.getElementById('cart-icon-bubble');
+         if (bubble) updatedBubbleHTML = bubble.innerHTML;
       }
 
-      // 3. Update Cart Drawer Content
-      const drawer = document.querySelector('cart-drawer');
-      const drawerItems = document.getElementById('CartDrawer-CartItems'); // Dawn ID
-      const drawerFooter = document.getElementById('CartDrawer-Footer'); // Dawn ID (if exists)
-      
-      if (drawer && data.sections && data.sections['cart-drawer']) {
-         // Create a temporary parser
-         const parser = new DOMParser();
+      if (updatedBubbleHTML) {
+         const bubbleEl = document.getElementById('cart-icon-bubble');
+         if (bubbleEl) bubbleEl.innerHTML = updatedBubbleHTML;
+      }
+
+      // --- Update Cart Drawer ---
+      if (data.sections['cart-drawer']) {
          const doc = parser.parseFromString(data.sections['cart-drawer'], 'text/html');
+         const drawerCommon = document.querySelector('cart-drawer');
+         const newDrawer = doc.querySelector('cart-drawer');
          
-         // Update specific containers if they exist to avoid full replace flicker
-         const newItems = doc.getElementById('CartDrawer-CartItems');
-         const newFooter = doc.getElementById('CartDrawer-Footer');
+         // Dawn specific: The contents act inside cart-drawer
+         if (drawerCommon && newDrawer) {
+            // Replace inner content to keep event listeners on the custom element if possible, 
+            // but for Dawn strict structure, replacing specific children is safer:
+            const oldItems = drawerCommon.querySelector('.cart-drawer__items') || drawerCommon.querySelector('#CartDrawer-CartItems');
+            const newItems = newDrawer.querySelector('.cart-drawer__items') || newDrawer.querySelector('#CartDrawer-CartItems');
+            
+            const oldFooter = drawerCommon.querySelector('.cart-drawer__footer') || drawerCommon.querySelector('#CartDrawer-Footer');
+            const newFooter = newDrawer.querySelector('.cart-drawer__footer') || newDrawer.querySelector('#CartDrawer-Footer');
 
-         if (drawerItems && newItems) drawerItems.innerHTML = newItems.innerHTML;
-         else if (drawer) drawer.innerHTML = doc.querySelector('cart-drawer').innerHTML; // Fallback: replace inner
+            if (oldItems && newItems) oldItems.replaceWith(newItems);
+            if (oldFooter && newFooter) oldFooter.replaceWith(newFooter);
+            
+            // If could not find structure, unsafe innerHTML
+            if (!oldItems && !oldFooter) {
+               drawerCommon.innerHTML = newDrawer.innerHTML;
+            }
+         }
       }
 
-      // 4. Open Drawer
+      // --- Final Trigger ---
       openCartDrawer();
+      
+      // Dispatch cart updated event for other listeners
+      document.dispatchEvent(new CustomEvent('cart:updated', { 
+         bubbles: true, 
+         detail: { cart: data } 
+      }));
     })
     .catch(err => {
       console.error('AJAX Cart Error:', err);
-      // Fallback: Redirect if AJAX fails
-      window.location.href = '/cart'; 
+      window.location.href = '/cart'; // Fallback
     })
     .finally(() => {
       btn.classList.remove('loading');
