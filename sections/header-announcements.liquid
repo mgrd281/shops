@@ -53,21 +53,26 @@
   </div>
 
   <style>
+    /* GLOBAL FIXED HEIGHT & STYLE */
     .announcement-bar-wrapper {
       background-color: {{ section.settings.bg_color }};
       color: {{ section.settings.text_color }};
-      height: {{ section.settings.height }}px;
-      min-height: {{ section.settings.height }}px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      height: 38px !important;
+      min-height: 38px !important;
+      max-height: 38px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
       font-family: var(--font-body-family);
       font-size: 12px;
       letter-spacing: 1px;
       text-transform: uppercase;
       width: 100%;
-      padding: 0;
-      overflow: hidden; /* Ensure consistent height */
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow: hidden !important;
+      box-sizing: border-box !important;
+      line-height: normal !important;
     }
 
     .announcement-bar-content {
@@ -84,26 +89,27 @@
       display: flex;
       align-items: center;
       gap: 15px;
+      height: 100%;
     }
 
     .announcement-text {
       font-weight: 600;
-      white-space: nowrap; /* Prevent wrapping affecting height */
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      height: 100%;
     }
 
     .announcement-cta {
       color: inherit;
       text-decoration: none;
       border-bottom: 1px solid currentColor;
-      padding-bottom: 2px;
+      padding-bottom: 0;
       font-weight: 700;
       transition: all 0.3s ease;
-      position: relative;
-    }
-    .announcement-cta:hover {
-      opacity: 1;
-      padding-bottom: 4px;
-      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      height: 100%;
     }
 
     .announcement-right {
@@ -113,10 +119,13 @@
     }
 
     .countdown-timer {
-      display: flex;
-      align-items: center;
+      display: flex !important;
+      align-items: center !important;
       gap: 6px;
       height: 100%;
+      margin: 0 !important;
+      padding: 0 !important;
+      transform: none !important; /* Remove specific shifts */
     }
 
     .timer-block {
@@ -125,13 +134,16 @@
       align-items: center;
       justify-content: center;
       line-height: 1;
-      min-width: 24px;
+      min-width: 22px;
+      height: 100%;
+      padding-top: 2px; /* Visual center */
     }
 
     .timer-value {
       font-weight: 700;
       font-size: 13px;
       line-height: 1;
+      margin: 0;
     }
 
     .timer-label {
@@ -140,33 +152,49 @@
       opacity: 0.9;
       text-transform: uppercase;
       font-weight: 600;
+      line-height: 1;
     }
 
     .timer-separator {
       font-weight: 700;
       font-size: 13px;
       margin: 0 1px;
-      padding-bottom: 2px; /* Center with numbers */
+      padding-bottom: 4px;
+      display: flex;
+      align-items: center;
+      height: 100%;
     }
 
+    /* Mobile: Keep horizontal layout to maintain fixed height */
     @media (max-width: 768px) {
       .announcement-bar-content {
-        justify-content: center;
-        gap: 10px;
+        padding: 0 10px;
+        justify-content: space-between; /* Spread space */
+        gap: 5px;
       }
       .announcement-left {
-        gap: 8px;
+        gap: 5px;
+        flex: 1;
+        overflow: hidden; /* Prevent overflow */
       }
       .announcement-text {
         font-size: 10px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
       .announcement-cta {
-        font-size: 10px;
+        display: none; /* Hide CTA on mobile to save space if needed, or keep small */
       }
-      /* Ensure timer fits on mobile without stacking if possible, or scale down */
+      .announcement-right {
+        flex-shrink: 0; /* Keep timer visible */
+      }
       .countdown-timer {
-        transform: scale(0.9); /* Slight scale down to fit */
+        gap: 4px;
       }
+      .timer-value { font-size: 12px; }
+      .timer-block { min-width: 18px; }
+      .timer-label { font-size: 6px; }
     }
   </style>
 
