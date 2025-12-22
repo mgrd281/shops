@@ -398,6 +398,22 @@
         border-radius: 4px;
         animation: fillProgress var(--progress-duration) linear forwards;
     }
+    
+    .dot .progress-fill {
+        display: none;
+        position: absolute;
+         top: 0;
+        left: 0;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        width: 0%;
+        border-radius: 4px;
+    }
+
+    .dot.active .progress-fill {
+        display: block;
+        animation: fillProgress var(--progress-duration) linear forwards;
+    }
 
     @keyframes fillProgress {
         0% {
@@ -1023,6 +1039,22 @@
             transform: none;
         }
     }
+    .dot .progress-fill {
+        display: none;
+        position: absolute;
+         top: 0;
+        left: 0;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        width: 0%;
+        border-radius: 4px;
+        pointer-events: none;
+    }
+
+    .dot.active .progress-fill {
+        display: block;
+        animation: fillProgress var(--progress-duration) linear forwards;
+    }
 </style>
 
 <!-- Slider -->
@@ -1165,9 +1197,16 @@
     let progressTimeout;
     
     // Punkte erstellen
+    // Punkte erstellen (Updated for About You Style)
     slides.forEach((_, idx) => {
         const d = document.createElement('div');
         d.className = 'dot' + (idx === 0 ? ' active' : '');
+        
+        // Inner Progress Fill
+        const fill = document.createElement('div');
+        fill.className = 'progress-fill';
+        d.appendChild(fill);
+        
         d.addEventListener('click', () => go(idx));
         dotsWrap.appendChild(d);
     });
@@ -1186,10 +1225,20 @@
         });
         
         // Punkte aktualisieren
+        // Punkte aktualisieren
         dots.forEach((d, k) => {
             d.classList.remove('active', 'completed');
+            
+            // Animation Reset Logic
+            const fill = d.querySelector('.progress-fill');
+            if (fill) {
+                fill.style.animation = 'none';
+                fill.offsetHeight; /* Trigger reflow */
+            }
+
             if (k === n) {
                 d.classList.add('active');
+                if (fill) fill.style.animation = 'fillProgress var(--progress-duration) linear forwards';
             } else if (k < n) {
                 d.classList.add('completed');
             }
