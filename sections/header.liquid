@@ -745,6 +745,15 @@
   }
 {% endstylesheet %}
 
+<style>
+  /* Remove borders for a clean look */
+  .header__row--top:not(.divider--page-width),
+  .header__row--top.divider--page-width .header__columns,
+  .header__row--bottom {
+    border-bottom: none !important;
+  }
+</style>
+
 {% unless request.design_mode %}
   <script type="module">
     import { hydrate } from '@theme/section-hydration';
