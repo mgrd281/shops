@@ -92,7 +92,7 @@
           <a
             href="{{ link.url }}"
             data-skip-node-update="true"
-            class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
+            class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}{% if link.title == 'SALE' or link.title == 'Sale' %} menu-list__link--sale{% endif %}"
             {%- if link.links != blank -%}
               aria-controls="submenu-{{ forloop.index }}"
               aria-haspopup="true"
@@ -693,6 +693,10 @@
   .mega-menu__submenu {
     /* preserves the inherited grid layout when this submenu wrapper is used */
     display: contents;
+  }
+  .menu-list__link--sale {
+    color: #E60000 !important;
+    font-weight: 700;
   }
 {% endstylesheet %}
 
