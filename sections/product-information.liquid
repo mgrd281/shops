@@ -1717,15 +1717,16 @@ nav[aria-label="Breadcrumb"],
   </button>
 </form>
 
-<!-- Payment Methods - Using Shopify Built-in Icons -->
+<!-- Payment Methods - Actual Store Payment Options -->
 <div class="payment-icons-row">
   {{ 'visa' | payment_type_svg_tag: class: 'payment-icon' }}
+  {{ 'maestro' | payment_type_svg_tag: class: 'payment-icon' }}
   {{ 'mastercard' | payment_type_svg_tag: class: 'payment-icon' }}
-  {{ 'paypal' | payment_type_svg_tag: class: 'payment-icon' }}
-  {{ 'apple_pay' | payment_type_svg_tag: class: 'payment-icon' }}
-  {{ 'google_pay' | payment_type_svg_tag: class: 'payment-icon' }}
-  {{ 'klarna' | payment_type_svg_tag: class: 'payment-icon' }}
   {{ 'american_express' | payment_type_svg_tag: class: 'payment-icon' }}
+  {{ 'unionpay' | payment_type_svg_tag: class: 'payment-icon' }}
+  {{ 'klarna' | payment_type_svg_tag: class: 'payment-icon' }}
+  <span class="payment-text-badge">Rechnung</span>
+  <span class="payment-text-badge">Vorkasse</span>
 </div>
 
 <style>
@@ -1738,8 +1739,23 @@ nav[aria-label="Breadcrumb"],
 }
 
 .payment-icons-row .payment-icon {
-  height: 28px;
+  height: 24px;
   width: auto;
+  border-radius: 4px;
+}
+
+.payment-text-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #333;
+  height: 24px;
+  box-sizing: border-box;
 }
 </style>
 
