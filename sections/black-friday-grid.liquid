@@ -501,61 +501,49 @@ document.addEventListener('DOMContentLoaded', function() {
   var row = wrap.querySelector('[data-bf-row]');
   var btnLeft = wrap.querySelector('.bf-left');
   var btnRight = wrap.querySelector('.bf-right');
-
-  /* ---------- Slider Navigation ---------- */
-  function updateButtons(){
-    if (!btnLeft || !btnRight || !scroller) return;
-    var maxScroll = scroller.scrollWidth - scroller.clientWidth - 1;
-    var canScroll = scroller.scrollWidth > scroller.clientWidth + 10;
-
-    btnLeft.classList.toggle('is-visible', canScroll && scroller.scrollLeft > 0);
-    btnRight.classList.toggle('is-visible', canScroll && scroller.scrollLeft < maxScroll);
-  }
-
-  function scrollByCards(dir){
-    if(!row || !scroller) return;
-    var card = row.querySelector('.bf-card');
-    var cardWidth = card ? card.offsetWidth + 16 : 220;
-    scroller.scrollBy({ left: dir * cardWidth * 3, behavior: 'smooth' });
-  }
-
-  if (btnLeft && scroller) btnLeft.addEventListener('click', function(){ scrollByCards(-1); });
-  if (btnRight && scroller) btnRight.addEventListener('click', function(){ scrollByCards(1); });
-
-  if(scroller) {
-    scroller.addEventListener('scroll', updateButtons, { passive: true });
-    scroller.addEventListener('keydown', function(e){
-      if (e.key === 'ArrowLeft') { e.preventDefault(); scrollByCards(-1); }
-      else if (e.key === 'ArrowRight') { e.preventDefault(); scrollByCards(1); }
-    });
-  }
   
-  window.addEventListener('resize', function(){ setTimeout(updateButtons, 100); });
-  updateButtons();
+  if(scroller && btnLeft && btnRight) {
+     /* ---------- Slider Navigation (Keep existing logic) ---------- */
+     function updateButtons(){
+      if (!btnLeft || !btnRight || !scroller) return;
+      var maxScroll = scroller.scrollWidth - scroller.clientWidth - 1;
+      var canScroll = scroller.scrollWidth > scroller.clientWidth + 10;
+      btnLeft.classList.toggle('is-visible', canScroll && scroller.scrollLeft > 0);
+      btnRight.classList.toggle('is-visible', canScroll && scroller.scrollLeft < maxScroll);
+     }
+  
+     function scrollByCards(dir){
+      if(!row || !scroller) return;
+      var card = row.querySelector('.bf-card');
+      var cardWidth = card ? card.offsetWidth + 16 : 220;
+      scroller.scrollBy({ left: dir * cardWidth * 3, behavior: 'smooth' });
+     }
+  
+     btnLeft.addEventListener('click', function(){ scrollByCards(-1); });
+     btnRight.addEventListener('click', function(){ scrollByCards(1); });
+  
+     scroller.addEventListener('scroll', updateButtons, { passive: true });
+     scroller.addEventListener('keydown', function(e){
+       if (e.key === 'ArrowLeft') { e.preventDefault(); scrollByCards(-1); }
+       else if (e.key === 'ArrowRight') { e.preventDefault(); scrollByCards(1); }
+     });
+     
+     window.addEventListener('resize', function(){ setTimeout(updateButtons, 100); });
+     updateButtons();
+  }
 
   /* ---------- Add to Cart (AJAX + DOM Update - ROBUST) ---------- */
   function openCartDrawer() {
-    const drawer = document.querySelector('cart-drawer');
-    const drawerElement = document.querySelector('.cart-drawer');
+    const drawerComp = document.querySelector('cart-drawer-component');
+    const dialog = drawerComp ? drawerComp.querySelector('dialog') : null;
     
-    // 1. Try Standard Method
-    if (drawer && typeof drawer.open === 'function') {
-       drawer.open();
-    } 
-    // 2. Try adding active class (common fallback)
-    else if (drawer) {
-       drawer.classList.add('active');
-       drawer.setAttribute('open', '');
+    if (drawerComp && typeof drawerComp.open === 'function') {
+       drawerComp.open();
+    } else if (dialog && typeof dialog.showModal === 'function') {
+       dialog.showModal();
+    } else {
+       document.dispatchEvent(new CustomEvent('cart:open', { bubbles: true }));
     }
-    // 3. Try legacy class
-    else if (drawerElement) {
-       drawerElement.classList.add('active');
-       drawerElement.classList.add('is-open'); // Some themes use this
-    }
-    
-    // 4. Dispatch Event (Broad Support)
-    document.dispatchEvent(new CustomEvent('cart:open', { bubbles: true }));
-    document.dispatchEvent(new CustomEvent('cart-drawer:open', { bubbles: true }));
   }
 
   function addToCart(variantId, btn) {
@@ -563,15 +551,13 @@ document.addEventListener('DOMContentLoaded', function() {
     btn.classList.add('loading');
     btn.disabled = true;
 
-    // We fetch the 'cart-drawer' and 'cart-notification' sections specifically
-    // Or 'header' if the cart bubble is there.
-    // 'cart-drawer' is the standard Dawn section name.
+    // Fetch 'header' section for correct elements
     const config = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
         items: [{ id: Number(variantId), quantity: 1 }],
-        sections: 'cart-drawer,cart-icon-bubble,cart-notification-product,header'
+        sections: 'header' 
       })
     };
 
@@ -581,68 +567,48 @@ document.addEventListener('DOMContentLoaded', function() {
       if (data.status) throw new Error(data.description);
 
       const parser = new DOMParser();
-
-      // --- Update Cart Icon / Bubble ---
-      // Try to find it in the returned sections
-      let updatedBubbleHTML = null;
-      if (data.sections['cart-icon-bubble']) updatedBubbleHTML = data.sections['cart-icon-bubble'];
-      else if (data.sections['header']) {
-         // If header was returned, extract bubble from it
+      
+      if (data.sections['header']) {
          const doc = parser.parseFromString(data.sections['header'], 'text/html');
-         const bubble = doc.getElementById('cart-icon-bubble');
-         if (bubble) updatedBubbleHTML = bubble.innerHTML;
-      }
-
-      if (updatedBubbleHTML) {
-         const bubbleEl = document.getElementById('cart-icon-bubble');
-         if (bubbleEl) bubbleEl.innerHTML = updatedBubbleHTML;
-      }
-
-      // --- Update Cart Drawer ---
-      if (data.sections['cart-drawer']) {
-         const doc = parser.parseFromString(data.sections['cart-drawer'], 'text/html');
-         const drawerCommon = document.querySelector('cart-drawer');
-         const newDrawer = doc.querySelector('cart-drawer');
          
-         // Dawn specific: The contents act inside cart-drawer
-         if (drawerCommon && newDrawer) {
-            // Replace inner content to keep event listeners on the custom element if possible, 
-            // but for Dawn strict structure, replacing specific children is safer:
-            const oldItems = drawerCommon.querySelector('.cart-drawer__items') || drawerCommon.querySelector('#CartDrawer-CartItems');
-            const newItems = newDrawer.querySelector('.cart-drawer__items') || newDrawer.querySelector('#CartDrawer-CartItems');
-            
-            const oldFooter = drawerCommon.querySelector('.cart-drawer__footer') || drawerCommon.querySelector('#CartDrawer-Footer');
-            const newFooter = newDrawer.querySelector('.cart-drawer__footer') || newDrawer.querySelector('#CartDrawer-Footer');
+         // 1. Update Cart Icon
+         const newIcon = doc.querySelector('cart-icon');
+         const currentIcon = document.querySelector('cart-icon');
+         if (newIcon && currentIcon) {
+            currentIcon.innerHTML = newIcon.innerHTML;
+            currentIcon.className = newIcon.className; 
+         }
 
-            if (oldItems && newItems) oldItems.replaceWith(newItems);
-            if (oldFooter && newFooter) oldFooter.replaceWith(newFooter);
+         // 2. Update Cart Drawer Component
+         const newDrawer = doc.querySelector('cart-drawer-component');
+         const currentDrawer = document.querySelector('cart-drawer-component');
+         if (newDrawer && currentDrawer) {
+            const newInner = newDrawer.querySelector('cart-items-component');
+            const currentInner = currentDrawer.querySelector('cart-items-component');
             
-            // If could not find structure, unsafe innerHTML
-            if (!oldItems && !oldFooter) {
-               drawerCommon.innerHTML = newDrawer.innerHTML;
+            if (newInner && currentInner) {
+               currentInner.replaceWith(newInner);
+            } else {
+               const newContent = newDrawer.querySelector('.cart-drawer__inner') || newDrawer.querySelector('dialog');
+               const currentContent = currentDrawer.querySelector('.cart-drawer__inner') || currentDrawer.querySelector('dialog');
+               if (newContent && currentContent) currentContent.innerHTML = newContent.innerHTML;
             }
          }
       }
 
-      // --- Final Trigger ---
       openCartDrawer();
-      
-      // Dispatch cart updated event for other listeners
-      document.dispatchEvent(new CustomEvent('cart:updated', { 
-         bubbles: true, 
-         detail: { cart: data } 
-      }));
+      document.dispatchEvent(new CustomEvent('cart:updated', { bubbles: true, detail: { cart: data } }));
     })
     .catch(err => {
       console.error('AJAX Cart Error:', err);
-      window.location.href = '/cart'; // Fallback
+      // window.location.href = '/cart'; 
     })
     .finally(() => {
       btn.classList.remove('loading');
       btn.disabled = false;
     });
   }
-
+  
   // Attach Listeners
   const cartButtons = wrap.querySelectorAll('[data-bf-add-to-cart]');
   cartButtons.forEach(btn => {
@@ -653,6 +619,5 @@ document.addEventListener('DOMContentLoaded', function() {
       addToCart(variantId, this);
     });
   });
-
 });
 </script>
