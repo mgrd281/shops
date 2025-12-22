@@ -47,13 +47,6 @@
               <span class="timer-label">SEK</span>
             </div>
           </div>
-          <a href="{{ routes.cart_url }}" class="mini-cart-icon" aria-label="Cart">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <path d="M16 10a4 4 0 0 1-8 0"></path>
-            </svg>
-          </a>
         </div>
       {% endif %}
     </div>
@@ -121,38 +114,18 @@
 
     .announcement-right {
       display: flex;
-      flex-direction: column; /* Stack Timer and Cart */
-      align-items: flex-end; /* Align right */
-      justify-content: center;
+      align-items: center;
       height: 100%;
-      padding-right: 25px; /* Move left by 20-30px */
-      gap: 2px;
     }
 
     .countdown-timer {
       display: flex !important;
       align-items: center !important;
       gap: 6px;
-      height: auto; /* Take natural height */
+      height: 100%;
       margin: 0 !important;
       padding: 0 !important;
-      transform: none !important;
-      line-height: 1;
-    }
-    
-    .mini-cart-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: inherit;
-      text-decoration: none;
-      line-height: 1;
-    }
-    
-    .mini-cart-icon svg {
-      width: 14px;
-      height: 14px;
-      stroke-width: 2px;
+      transform: none !important; /* Remove specific shifts */
     }
 
     .timer-block {
@@ -161,30 +134,36 @@
       align-items: center;
       justify-content: center;
       line-height: 1;
-      min-width: 18px; /* Compact */
-      height: auto;
-      padding: 0;
+      min-width: 22px;
+      height: 100%;
+      padding-top: 2px; /* Visual center */
     }
 
     .timer-value {
       font-weight: 700;
-      font-size: 11px; /* Smaller to fit */
+      font-size: 13px;
       line-height: 1;
       margin: 0;
     }
 
     .timer-label {
-      display: none; /* Hide labels (TAGE, STD) to save space and fit cart */
+      font-size: 7px;
+      margin-top: 1px;
+      opacity: 0.9;
+      text-transform: uppercase;
+      font-weight: 600;
+      line-height: 1;
+      display: block; /* Restore display */
     }
 
     .timer-separator {
       font-weight: 700;
-      font-size: 11px;
+      font-size: 13px;
       margin: 0 1px;
-      padding-bottom: 2px;
+      padding-bottom: 4px;
       display: flex;
       align-items: center;
-      height: auto;
+      height: 100%;
     }
 
     /* Mobile: Stack text and timer vertically */
