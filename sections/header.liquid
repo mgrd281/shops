@@ -747,6 +747,17 @@
   }
 {% endstylesheet %}
 
+<style>
+  /* Force parallel lines for header menu */
+  .header__row--top {
+      border-bottom: 1px solid #E5E7EB !important;
+  }
+  .header__row--bottom {
+      border-top: 1px solid #E5E7EB !important;
+      border-bottom: 1px solid #E5E7EB !important;
+  }
+</style>
+
 {% unless request.design_mode %}
   <script type="module">
     import { hydrate } from '@theme/section-hydration';
