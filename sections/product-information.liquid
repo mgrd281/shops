@@ -1777,13 +1777,26 @@ nav[aria-label="Breadcrumb"],
 /* Mobile Optimization */
 @media (max-width: 768px) {
   .payment-icons-row {
-    gap: 8px; /* Smaller gap for mobile */
+    display: flex;
+    flex-wrap: nowrap; /* Force single line */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    justify-content: flex-start; /* Align start for scrolling */
+    gap: 8px;
     margin-top: 16px;
-    justify-content: center;
+    padding-bottom: 5px; /* Space for scrollbar if visible */
+    -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+    scrollbar-width: none; /* Hide scrollbar Firefox */
   }
+  
+  /* Hide scrollbar for Chrome/Safari */
+  .payment-icons-row::-webkit-scrollbar {
+    display: none; 
+  }
+
   .payment-icons-row .payment-icon,
   .payment-icon-custom {
-    height: 22px; /* Slightly smaller to fit better */
+    height: 24px; /* Keep decent size */
+    flex-shrink: 0; /* Prevent icons from shrinking */
   }
 }
 </style>
