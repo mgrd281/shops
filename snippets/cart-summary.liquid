@@ -18,18 +18,46 @@
 <div class="cart__summary-totals">
   
   {% assign upsell_product = nil %}
+  
+  {% comment %} 1. Try 'all' collection {% endcomment %}
   {% for product in collections['all'].products limit: 10 %}
     {% assign in_cart = false %}
     {% for item in cart.items %}
-      {% if item.product.id == product.id %}
-        {% assign in_cart = true %}
-      {% endif %}
+      {% if item.product.id == product.id %}{% assign in_cart = true %}{% endif %}
     {% endfor %}
     {% if in_cart == false and product.available %}
       {% assign upsell_product = product %}
       {% break %}
     {% endif %}
   {% endfor %}
+
+  {% comment %} 2. Fallback to 'frontpage' collection if nothing found {% endcomment %}
+  {% if upsell_product == nil %}
+    {% for product in collections['frontpage'].products limit: 10 %}
+      {% assign in_cart = false %}
+      {% for item in cart.items %}
+        {% if item.product.id == product.id %}{% assign in_cart = true %}{% endif %}
+      {% endfor %}
+      {% if in_cart == false and product.available %}
+        {% assign upsell_product = product %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% comment %} 3. Fallback to ANY collection if possible (last resort, checking first collection) {% endcomment %}
+  {% if upsell_product == nil and collections.first %}
+      {% for product in collections.first.products limit: 5 %}
+        {% assign in_cart = false %}
+        {% for item in cart.items %}
+            {% if item.product.id == product.id %}{% assign in_cart = true %}{% endif %}
+        {% endfor %}
+        {% if in_cart == false and product.available %}
+            {% assign upsell_product = product %}
+            {% break %}
+        {% endif %}
+      {% endfor %}
+  {% endif %}
 
   {% if upsell_product %}
     <div class="cart-upsell" style="border-bottom: 1px solid var(--color-border); padding: 15px 0; margin-bottom: 15px;">
