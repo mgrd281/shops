@@ -1,0 +1,28 @@
+{% comment %}
+  ===========================================
+  UPSELL CONFIGURATION
+  Define your custom upsell rules here.
+  Format:
+  {% when 'product-handle-in-cart' %} {% assign upsell_handle = 'product-handle-to-recommend' %}
+  ===========================================
+{% endcomment %}
+
+{% assign upsell_handle = nil %}
+
+{% case trigger_handle %}
+  
+  {% comment %} --- EXAMPLES (Replace with your actual product handles) --- {% endcomment %}
+  
+  {% when 'windows-10-enterprise-lizenz-32-64-bit-original-produktschlussel-sofort-e-mail-versand' %} 
+     {% assign upsell_handle = 'microsoft-office-2021-professional-plus' %}
+
+  {% when 'windows-11-professional' %} 
+     {% assign upsell_handle = 'microsoft-office-2021-professional-plus' %}
+
+  {% when 'microsoft-office-2021-professional-plus' %}
+     {% assign upsell_handle = 'windows-11-professional' %}
+
+  {% comment %} --- ADD YOUR NEW RULES BELOW THIS LINE --- {% endcomment %}
+
+
+{% endcase %}

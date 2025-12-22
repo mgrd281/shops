@@ -14,32 +14,51 @@
 
 <div class="cart__summary-totals">
   
-  {% comment %} --- HYBRID UPSELL SYSTEM (Manual Tag > Smart Rules > Collection) --- {% endcomment %}
+  {% comment %} --- HYBRID UPSELL SYSTEM (Config > Tag > Smart Rules > Collection) --- {% endcomment %}
   {% assign upsell_product = nil %}
   {% assign reference_item = cart.items.first %}
   
   {% if reference_item %}
-    {% comment %} 1. MANUAL OVERRIDE: Check for 'upsell:product-handle' tag {% endcomment %}
-    {% for tag in reference_item.product.tags %}
-      {% if tag contains 'upsell:' %}
-        {% assign target_handle = tag | remove: 'upsell:' | strip %}
-        {% assign target_product = all_products[target_handle] %}
-        
-        {% if target_product != empty and target_product.available %}
-             {% assign in_cart = false %}
-             {% for item in cart.items %}
-                {% if item.product.id == target_product.id %}{% assign in_cart = true %}{% endif %}
-             {% endfor %}
-             
-             {% if in_cart == false %}
-                {% assign upsell_product = target_product %}
-                {% break %}
-             {% endif %}
-        {% endif %}
-      {% endif %}
-    {% endfor %}
+    
+    {% comment %} 1. CENTRAL CONFIG (Best Method) {% endcomment %}
+    {% assign trigger_handle = reference_item.product.handle %}
+    {% include 'upsell-config' %}
+    
+    {% if upsell_handle %}
+       {% assign target_product = all_products[upsell_handle] %}
+       {% if target_product != empty and target_product.available %}
+           {% assign in_cart = false %}
+           {% for item in cart.items %}
+              {% if item.product.id == target_product.id %}{% assign in_cart = true %}{% endif %}
+           {% endfor %}
+           {% if in_cart == false %}
+              {% assign upsell_product = target_product %}
+           {% endif %}
+       {% endif %}
+    {% endif %}
 
-    {% comment %} 2. SMART RULES (Fallback if no manual tag) {% endcomment %}
+    {% comment %} 2. MANUAL TAG OVERRIDE (Fallback) {% endcomment %}
+    {% if upsell_product == nil %}
+        {% for tag in reference_item.product.tags %}
+          {% if tag contains 'upsell:' %}
+            {% assign target_handle = tag | remove: 'upsell:' | strip %}
+            {% assign target_product = all_products[target_handle] %}
+            
+            {% if target_product != empty and target_product.available %}
+                 {% assign in_cart = false %}
+                 {% for item in cart.items %}
+                    {% if item.product.id == target_product.id %}{% assign in_cart = true %}{% endif %}
+                 {% endfor %}
+                 {% if in_cart == false %}
+                    {% assign upsell_product = target_product %}
+                    {% break %}
+                 {% endif %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% comment %} 3. SMART RULES (Fallback) {% endcomment %}
     {% if upsell_product == nil %}
         {% assign ref_title = reference_item.product.title | downcase %}
     {% assign target_keyword = nil %}
