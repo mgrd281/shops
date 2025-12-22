@@ -6,7 +6,7 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */ {
   "sections": {
     "cart-section": {
       "type": "main-cart",
@@ -103,7 +103,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>Discover something new</h2>",
+                "text": "<h2>Entdecke unsere Neuheiten</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
