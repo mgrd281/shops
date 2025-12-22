@@ -4,24 +4,15 @@
   @param {string} [accelerated_checkout_buttons_layout] - { 'vertical' } Forced layout of the additional checkout buttons, instead of relying on platform's layout.
 {%- enddoc -%}
 
-{% assign free_shipping_threshold = 50000 %} {% comment %} 500 EUR (adjust as needed) {% endcomment %}
+{% assign free_shipping_threshold = 0 %} 
 <div class="cart-free-shipping-bar" style="padding: 15px 0; border-bottom: 1px solid var(--color-border);">
-  {% assign remaining = free_shipping_threshold | minus: cart.total_price %}
-  {% if remaining > 0 %}
-    <p style="font-size: 13px; margin-bottom: 8px; color: var(--color-foreground);">
-      Nur noch <strong>{{ remaining | money }}</strong> bis zum <strong>kostenlosen Versand</strong>! 📦
-    </p>
-    <div style="background: #E5E7EB; border-radius: 99px; height: 6px; width: 100%; overflow: hidden;">
-      <div style="background: #10B981; height: 100%; width: {{ cart.total_price | times: 100 | divided_by: free_shipping_threshold }}%; transition: width 0.3s ease;"></div>
-    </div>
-  {% else %}
-    <p style="font-size: 13px; margin-bottom: 8px; color: #10B981; font-weight: 600;">
-      Du hast kostenlosen Versand erreicht! 🎉
-    </p>
-    <div style="background: #E5E7EB; border-radius: 99px; height: 6px; width: 100%; overflow: hidden;">
-      <div style="background: #10B981; height: 100%; width: 100%;"></div>
-    </div>
-  {% endif %}
+  <p style="font-size: 13px; margin-bottom: 8px; color: #10B981; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+    Kostenloser Versand für deine Bestellung! 🎉
+  </p>
+  <div style="background: #E5E7EB; border-radius: 99px; height: 6px; width: 100%; overflow: hidden;">
+    <div style="background: #10B981; height: 100%; width: 100%;"></div>
+  </div>
 </div>
 
 <div class="cart__summary-totals">
