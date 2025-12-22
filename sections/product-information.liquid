@@ -1782,11 +1782,12 @@ nav[aria-label="Breadcrumb"],
     overflow-x: auto !important; /* Strictly allow scrolling */
     white-space: nowrap !important;
     justify-content: flex-start !important;
-    gap: 8px !important;
+    gap: 4px !important; /* Smaller gap to fit more */
     margin-top: 16px !important;
     padding-bottom: 5px;
+    padding-right: 20px; /* Padding at end for better scroll UX */
     -webkit-overflow-scrolling: touch;
-    width: 100%; /* Ensure full width used */
+    width: 100%; 
   }
   
   .payment-icons-row::-webkit-scrollbar {
@@ -1795,9 +1796,9 @@ nav[aria-label="Breadcrumb"],
 
   .payment-icons-row .payment-icon,
   .payment-icon-custom {
-    height: 24px !important;
+    height: 20px !important; /* Smaller size to fit screen */
     width: auto !important;
-    flex-shrink: 0 !important; /* Never shrink icons */
+    flex-shrink: 0 !important; 
     display: inline-block !important;
   }
 }
