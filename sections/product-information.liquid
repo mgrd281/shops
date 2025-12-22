@@ -3948,3 +3948,226 @@ document.addEventListener('DOMContentLoaded', function () {
     padding: 0;
 }
 </style>
+
+<!-- ========================================== -->
+<!-- STICKY ADD TO CART BAR (High Converting)   -->
+<!-- ========================================== -->
+<div id="sticky-atc-bar" class="sticky-atc-bar" aria-hidden="true">
+  <div class="sticky-atc-container">
+    
+    <!-- Left: Image & Title (Desktop only) -->
+    <div class="sticky-atc-info">
+      {% if product.featured_image %}
+        <img src="{{ product.featured_image | img_url: '60x60', crop: 'center' }}" alt="{{ product.title }}" class="sticky-atc-img">
+      {% endif %}
+      <div class="sticky-atc-text">
+        <span class="sticky-atc-title">{{ product.title }}</span>
+        <div class="sticky-atc-price">
+          <span class="current-price-sticky">{{ product.selected_or_first_available_variant.price | money }}</span>
+          {% if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %}
+            <del class="old-price-sticky">{{ product.selected_or_first_available_variant.compare_at_price | money }}</del>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Button -->
+    <div class="sticky-atc-actions">
+      <button type="button" class="sticky-atc-btn" id="sticky-atc-btn">
+        <i class="fa-solid fa-cart-plus" style="margin-right:8px"></i> In den Warenkorb
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Base Styles */
+.sticky-atc-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  padding: 12px 20px;
+  z-index: 9999; /* Highest priority */
+  transform: translateY(105%); /* Hidden by default */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+}
+
+.sticky-atc-bar.is-visible {
+  transform: translateY(0);
+}
+
+.sticky-atc-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* Info Section */
+.sticky-atc-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sticky-atc-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid #eee;
+}
+
+.sticky-atc-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.sticky-atc-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: #222;
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sticky-atc-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.current-price-sticky {
+  font-weight: 700;
+  color: #1D4739;
+  font-size: 15px;
+}
+
+.old-price-sticky {
+  font-size: 13px;
+  color: #888;
+}
+
+/* Button Section */
+.sticky-atc-btn {
+  background: #1D4739;
+  color: white;
+  border: none;
+  padding: 0 32px;
+  height: 44px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 4px 6px rgba(29, 71, 57, 0.2);
+}
+
+.sticky-atc-btn:hover {
+  background: #14332a;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px rgba(29, 71, 57, 0.3);
+}
+
+@media (max-width: 768px) {
+  .sticky-atc-bar {
+    padding: 10px 16px; 
+    padding-bottom: max(10px, env(safe-area-inset-bottom)); /* Safe area for iPhone */
+  }
+  
+  /* On Mobile: Hide title/img to save space, focus on price + CTA */
+  .sticky-atc-img, 
+  .sticky-atc-title,
+  .old-price-sticky {
+    display: none; 
+  }
+  
+  .sticky-atc-info {
+    gap: 0;
+  }
+  
+  .sticky-atc-price {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+  
+  .current-price-sticky {
+    font-size: 18px;
+  }
+  
+  .sticky-atc-actions {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .sticky-atc-btn {
+    width: 100%;
+    max-width: none;
+    height: 48px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const bar = document.getElementById('sticky-atc-bar');
+  // Try multiple selectors for the main form button
+  const mainBtn = document.querySelector('button[name="add"]') || document.querySelector('.buy-buttons-container') || document.querySelector('#buy-now-form');
+  const stickyBtn = document.getElementById('sticky-atc-btn');
+
+  if (!bar || !mainBtn) return;
+
+  // Scroll Observer (Show when main button scrolls out of view)
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      // If main button is NOT intersecting (scrolled past), show sticky bar
+      // We check if boundingClientRect.top is negative to ensure we scrolled PAST it, not above it
+      if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+        bar.classList.add('is-visible');
+        bar.setAttribute('aria-hidden', 'false');
+      } else {
+        bar.classList.remove('is-visible');
+        bar.setAttribute('aria-hidden', 'true');
+      }
+    });
+  }, { threshold: 0 });
+
+  observer.observe(mainBtn);
+
+  // Sync Click to real button
+  stickyBtn.addEventListener('click', function() {
+    const realAddBtn = document.querySelector('button[name="add"]'); // Standard Shopify selector
+    if (realAddBtn) {
+      realAddBtn.click();
+      
+      // UX Feedback
+      const icon = stickyBtn.querySelector('i');
+      if(icon) icon.className = 'fa-solid fa-spinner fa-spin';
+      stickyBtn.style.opacity = '0.8';
+      
+      setTimeout(() => {
+        if(icon) icon.className = 'fa-solid fa-check';
+        stickyBtn.style.background = '#27ae60'; // Success green
+        setTimeout(() => {
+          if(icon) icon.className = 'fa-solid fa-cart-plus';
+          stickyBtn.style.background = ''; // Reset
+          stickyBtn.style.opacity = '1';
+        }, 2000);
+      }, 600);
+    }
+  });
+});
+</script>
