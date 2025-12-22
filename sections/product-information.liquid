@@ -1098,22 +1098,25 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 0 12px 10px; /* Slight indent to right */
+    padding: 12px 0 12px 10px;
     margin: 20px 0;
-    border: none; /* Remove explicit borders */
+    border: none;
     background-color: transparent;
     border-radius: 0;
     box-shadow: none;
+    font-size: 13px; /* Smaller font */
+    line-height: 1.4;
   }
   .shipping-info .icon-container i {
-      color: inherit; /* Restore original icon color */
-      font-size: inherit;
+      color: inherit;
+      font-size: 18px !important; /* Smaller Icon */
   }
   .shipping-info .ship-claim {
-      color: inherit; /* Restore original text color */
-      font-size: inherit;
-      margin-bottom: 0;
-      display: inline;
+      color: inherit;
+      font-size: 14px; /* Smaller Title */
+      font-weight: 600;
+      margin-bottom: 2px;
+      display: block;
   }
   .shipping-info .icon-container {
     width: 24px;
