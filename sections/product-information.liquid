@@ -1717,57 +1717,6 @@ nav[aria-label="Breadcrumb"],
   </button>
 </form>
 
-<!-- Payment Methods Icons -->
-<div class="payment-methods">
-  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40'%3E%3Crect fill='%23FFCC00' width='120' height='40'/%3E%3Ctext x='60' y='26' font-family='Arial' font-size='18' font-weight='bold' fill='%23D40511' text-anchor='middle'%3EDHL%3C/text%3E%3C/svg%3E" alt="DHL" title="DHL Express Versand">
-  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40'%3E%3Crect fill='%23006FCF' width='120' height='40' rx='4'/%3E%3Ctext x='60' y='26' font-family='Arial' font-size='16' font-weight='bold' fill='white' text-anchor='middle'%3EAMEX%3C/text%3E%3C/svg%3E" alt="American Express" title="American Express">
-  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40'%3E%3Crect fill='white' stroke='%23000' stroke-width='1' width='120' height='40' rx='6'/%3E%3Ctext x='25' y='26' font-family='-apple-system' font-size='20' fill='%23000'%3E%3C/text%3E%3Ctext x='45' y='26' font-family='Arial' font-size='14' fill='%23000'%3EPay%3C/text%3E%3C/svg%3E" alt="Apple Pay" title="Apple Pay">
-  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40'%3E%3Crect fill='white' stroke='%23E8E8E8' stroke-width='1' width='120' height='40' rx='4'/%3E%3Ctext x='25' y='26' font-family='Arial' font-size='18' fill='%234285F4'%3EG%3C/text%3E%3Ctext x='45' y='26' font-family='Arial' font-size='13' fill='%23666'%3EPay%3C/text%3E%3C/svg%3E" alt="Google Pay" title="Google Pay">
-  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40'%3E%3Crect fill='%23003087' width='120' height='40' rx='4'/%3E%3Ctext x='25' y='26' font-family='Arial' font-size='16' font-weight='bold' fill='%23009CDE'%3EPay%3C/text%3E%3Ctext x='55' y='26' font-family='Arial' font-size='16' font-weight='bold' fill='%2300457C'%3EPal%3C/text%3E%3C/svg%3E" alt="PayPal" title="PayPal">
-  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40'%3E%3Cdefs%3E%3ClinearGradient id='mc' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23EB001B'/%3E%3Cstop offset='1' stop-color='%23F79E1B'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='white' stroke='%23DEDEDE' stroke-width='1' width='120' height='40' rx='4'/%3E%3Ccircle cx='45' cy='20' r='12' fill='%23EB001B'/%3E%3Ccircle cx='60' cy='20' r='12' fill='%23F79E1B' opacity='0.8'/%3E%3C/svg%3E" alt="Mastercard" title="Mastercard">
-  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40'%3E%3Crect fill='%23FFB3C7' width='120' height='40' rx='4'/%3E%3Ctext x='60' y='26' font-family='Arial' font-size='15' font-weight='bold' fill='%23000' text-anchor='middle'%3EKlarna%3C/text%3E%3C/svg%3E" alt="Klarna" title="Klarna - Jetzt kaufen, später bezahlen">
-  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40'%3E%3Crect fill='%231A1F71' width='120' height='40' rx='4'/%3E%3Ctext x='60' y='28' font-family='Arial' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EVISA%3C/text%3E%3C/svg%3E" alt="Visa" title="Visa">
-</div>
-
-<style>
-.payment-methods {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  margin-top: 16px;
-  padding: 12px 0;
-  border-top: 1px solid #f0f0f0;
-}
-
-.payment-methods img {
-  height: 28px;
-  width: auto;
-  max-width: 50px;
-  object-fit: contain;
-  filter: grayscale(0.2);
-  opacity: 0.85;
-  transition: all 0.2s ease;
-}
-
-.payment-methods img:hover {
-  filter: grayscale(0);
-  opacity: 1;
-  transform: translateY(-2px);
-}
-
-@media (max-width: 768px) {
-  .payment-methods {
-    justify-content: center;
-  }
-  
-  .payment-methods img {
-    height: 24px;
-    max-width: 45px;
-  }
-}
-</style>
-
 
 <script>
   document.getElementById('buy-now-form').addEventListener('submit', function(e) {
