@@ -1500,9 +1500,7 @@ nav[aria-label="Breadcrumb"],
                     <a href="/collections/{{ vendor_handle }}" style="display: block;">
                       <img src="{{ brand_logo_filename | asset_url }}" 
                            alt="{{ product.vendor }}" 
-                           style="width: 130px; height: auto; max-height: 50px; object-fit: contain; display: block; transition: transform 0.3s ease, filter 0.3s ease; cursor: pointer;"
-                           onmouseover="this.style.transform='scale(1.08)'; this.style.filter='brightness(1.1)';"
-                           onmouseout="this.style.transform='scale(1)'; this.style.filter='brightness(1)';"
+                           style="width: 130px; height: auto; max-height: 50px; object-fit: contain; display: block; cursor: pointer;"
                            onerror="this.style.display='none'">
                     </a>
                   </div>
@@ -1530,11 +1528,6 @@ nav[aria-label="Breadcrumb"],
     {% else %}Dauerlizenz – Kein Abo – Sofort per E-Mail{% endif %}
   </p>
 {% endif %}
-{% comment %}
-  Sales counter and countdown timer moved here (before price) for better conversion
-{% endcomment %}
-
-{% render 'urgency-elements' %}
 
 
 <!-- === Icons & Webfont === -->
@@ -1759,6 +1752,10 @@ nav[aria-label="Breadcrumb"],
 
 <!-- Compact Product Meta (EAN, Marke, Lieferbar) -->
 {% render 'product-meta-compact', is_digital: is_digital, long_shipping: long_shipping, ship_dt: ship_dt %}
+
+<!-- Urgency Elements: Countdown Timer + Sales Counter -->
+{% render 'urgency-elements' %}
+
 <!-- ===== H I G H L I G H T S (Top 3) ===== -->
 <ul class="highlights-list">
   {%- if is_digital -%}
