@@ -165,36 +165,55 @@
       height: 100%;
     }
 
-    /* Mobile: Keep horizontal layout to maintain fixed height */
+    /* Mobile: Stack text and timer vertically */
     @media (max-width: 768px) {
+      .announcement-bar-wrapper {
+        height: auto !important; /* Allow expansion for 2 lines */
+        min-height: 50px !important;
+        max-height: none !important;
+        padding: 4px 0 !important;
+      }
+
       .announcement-bar-content {
+        flex-direction: column !important;
+        justify-content: center;
+        gap: 2px;
         padding: 0 10px;
-        justify-content: space-between; /* Spread space */
-        gap: 5px;
       }
+
       .announcement-left {
-        gap: 5px;
-        flex: 1;
-        overflow: hidden; /* Prevent overflow */
+        justify-content: center;
+        width: 100%;
+        height: auto;
       }
+
       .announcement-text {
-        font-size: 10px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: normal; /* Allow text flow if needed */
+        height: auto;
+        padding-bottom: 2px;
       }
+
       .announcement-cta {
-        display: none; /* Hide CTA on mobile to save space if needed, or keep small */
+        display: none; /* Hide visual clutter on mobile */
       }
+
       .announcement-right {
-        flex-shrink: 0; /* Keep timer visible */
+        width: 100%;
+        justify-content: center;
+        height: auto;
       }
+
       .countdown-timer {
-        gap: 4px;
+        justify-content: center;
+        transform: scale(0.9); /* Slightly smaller timer */
+        gap: 8px;
       }
+      
       .timer-value { font-size: 12px; }
-      .timer-block { min-width: 18px; }
-      .timer-label { font-size: 6px; }
+      .timer-label { font-size: 7px; }
+      .timer-block { min-width: 20px; }
     }
   </style>
 
