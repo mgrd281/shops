@@ -4,12 +4,10 @@
 {% endcomment %}
 
 <div class="product-meta-compact">
-  {% if product.selected_or_first_available_variant.barcode != blank %}
     <span class="meta-item">
       <i class="fa-solid fa-barcode"></i>
-      <strong>EAN:</strong> <span id="eanValue">{{ product.selected_or_first_available_variant.barcode }}</span>
+      <strong>EAN:</strong> <span id="eanValue">{{ product.selected_or_first_available_variant.barcode | default: 'Nicht verfügbar' }}</span>
     </span>
-  {% endif %}
   
   {% if product.vendor != blank %}
     <span class="meta-item">
