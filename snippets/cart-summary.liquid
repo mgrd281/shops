@@ -184,12 +184,37 @@
           <a href="{{ upsell_product.url }}" style="text-decoration: none; color: var(--color-foreground); font-size: 13px; font-weight: 500; display: block; line-height: 1.2; margin-bottom: 4px;">{{ upsell_product.title | truncate: 30 }}</a>
           <p style="font-size: 12px; color: rgb(var(--color-foreground-rgb) / 0.7); margin: 0;">{{ upsell_product.price | money }}</p>
         </div>
-        <form method="post" action="/cart/add" style="flex-shrink: 0;">
-          <input type="hidden" name="id" value="{{ upsell_product.selected_or_first_available_variant.id }}">
-          <button type="submit" class="button button--secondary" style="padding: 0 12px; min-height: 32px; height: 32px; font-size: 12px; border-radius: 99px;">
+        <div style="flex-shrink: 0;">
+          <button 
+            type="button" 
+            class="button button--secondary" 
+            style="padding: 0 12px; min-height: 32px; height: 32px; font-size: 12px; border-radius: 99px;"
+            onclick="
+              const btn = this;
+              const originalText = btn.innerText;
+              btn.innerText = '...';
+              fetch(window.Shopify.routes.root + 'cart/add.js', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ items: [{ id: {{ upsell_product.selected_or_first_available_variant.id }}, quantity: 1 }] })
+              })
+              .then(response => {
+                if (response.ok) {
+                   btn.innerText = '✓';
+                   setTimeout(() => { window.location.reload(); }, 500);
+                } else {
+                   btn.innerText = originalText;
+                }
+              })
+              .catch((e) => {
+                 btn.innerText = originalText;
+                 console.error(e);
+              });
+            "
+          >
             Hinzufügen
           </button>
-        </form>
+        </div>
       </div>
     </div>
   {% endif %}
