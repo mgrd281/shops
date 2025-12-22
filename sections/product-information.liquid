@@ -1777,26 +1777,28 @@ nav[aria-label="Breadcrumb"],
 /* Mobile Optimization */
 @media (max-width: 768px) {
   .payment-icons-row {
-    display: flex;
-    flex-wrap: nowrap; /* Force single line */
-    overflow-x: auto; /* Enable horizontal scrolling */
-    justify-content: flex-start; /* Align start for scrolling */
-    gap: 8px;
-    margin-top: 16px;
-    padding-bottom: 5px; /* Space for scrollbar if visible */
-    -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
-    scrollbar-width: none; /* Hide scrollbar Firefox */
+    display: flex !important;
+    flex-wrap: nowrap !important; /* Strictly force single line */
+    overflow-x: auto !important; /* Strictly allow scrolling */
+    white-space: nowrap !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    margin-top: 16px !important;
+    padding-bottom: 5px;
+    -webkit-overflow-scrolling: touch;
+    width: 100%; /* Ensure full width used */
   }
   
-  /* Hide scrollbar for Chrome/Safari */
   .payment-icons-row::-webkit-scrollbar {
     display: none; 
   }
 
   .payment-icons-row .payment-icon,
   .payment-icon-custom {
-    height: 24px; /* Keep decent size */
-    flex-shrink: 0; /* Prevent icons from shrinking */
+    height: 24px !important;
+    width: auto !important;
+    flex-shrink: 0 !important; /* Never shrink icons */
+    display: inline-block !important;
   }
 }
 </style>
