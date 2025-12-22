@@ -745,15 +745,6 @@
   }
 {% endstylesheet %}
 
-<style>
-  /* Enforce identical bottom borders for header rows to create parallel lines */
-  .header__row--top,
-  .header__row--bottom {
-      border-bottom: 1px solid #e5e7eb !important;
-      border-top: none !important;
-  }
-</style>
-
 {% unless request.design_mode %}
   <script type="module">
     import { hydrate } from '@theme/section-hydration';
