@@ -4,6 +4,26 @@
   @param {string} [accelerated_checkout_buttons_layout] - { 'vertical' } Forced layout of the additional checkout buttons, instead of relying on platform's layout.
 {%- enddoc -%}
 
+{% assign free_shipping_threshold = 50000 %} {% comment %} 500 EUR (adjust as needed) {% endcomment %}
+<div class="cart-free-shipping-bar" style="padding: 15px 0; border-bottom: 1px solid var(--color-border);">
+  {% assign remaining = free_shipping_threshold | minus: cart.total_price %}
+  {% if remaining > 0 %}
+    <p style="font-size: 13px; margin-bottom: 8px; color: var(--color-foreground);">
+      Nur noch <strong>{{ remaining | money }}</strong> bis zum <strong>kostenlosen Versand</strong>! 📦
+    </p>
+    <div style="background: #E5E7EB; border-radius: 99px; height: 6px; width: 100%; overflow: hidden;">
+      <div style="background: #10B981; height: 100%; width: {{ cart.total_price | times: 100 | divided_by: free_shipping_threshold }}%; transition: width 0.3s ease;"></div>
+    </div>
+  {% else %}
+    <p style="font-size: 13px; margin-bottom: 8px; color: #10B981; font-weight: 600;">
+      Du hast kostenlosen Versand erreicht! 🎉
+    </p>
+    <div style="background: #E5E7EB; border-radius: 99px; height: 6px; width: 100%; overflow: hidden;">
+      <div style="background: #10B981; height: 100%; width: 100%;"></div>
+    </div>
+  {% endif %}
+</div>
+
 <div class="cart__summary-totals">
   {% # We need to keep this node in place to allow morphing to work properly # %}
   <div class="cart__original-total-container cart-primary-typography">
@@ -240,6 +260,7 @@
         class="cart__total-value cart-secondary-typography"
         {% comment %} Used by payment_terms web component {% endcomment %}
         data-cart-subtotal
+        style="font-size: 1.25em;"
       >
         {{ total_price }}
       </text-component>
@@ -267,8 +288,10 @@
       disabled
     {% endif %}
     form="cart-form"
+    style="display: flex; justify-content: space-between; align-items: center; padding: 0 20px;"
   >
-    {{ 'content.checkout' | t }}
+    <span>{{ 'content.checkout' | t }}</span>
+    <span>{{ total_price }}</span>
   </button>
 
   {% if additional_checkout_buttons and settings.show_accelerated_checkout_buttons %}
