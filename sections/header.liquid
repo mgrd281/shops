@@ -498,10 +498,12 @@
     background-color: var(--header-bg-color, var(--color-background));
   }
 
-  .header__row--top:not(.divider--page-width),
-  .header__row--top.divider--page-width .header__columns,
+    border-bottom: 1px solid #E5E7EB !important; /* Uniform bottom line */
+  }
+
+  /* Add parallel top border specifically for the bottom row (menu) to create the parallel effect */
   .header__row--bottom {
-    border-bottom: none !important;
+    border-top: 1px solid #E5E7EB !important;
   }
 
   @media screen and (max-width: 749px) {
