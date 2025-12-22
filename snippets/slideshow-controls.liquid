@@ -157,12 +157,11 @@
           <span ref="current">1</span><span class="slash">/</span>{{ item_count -}}
         </div>
       {% when 'dots' %}
-        <ol class="slideshow-controls__{{ style }}">
+        <ol class="slideshow-controls__{{ style }} about-you-style" style="--duration: {{ autoplay_speed | default: 5 }}s;">
           {% for i in (1..item_count) %}
             <li>
               <button
                 class="slideshow-control button button-unstyled"
-                style="animation-timeline: --slide-{{ forloop.index }}"
                 aria-label="{{ 'accessibility.slide_status' | t: index: forloop.index, length: forloop.length }}"
                 on:click="/select/{{ forloop.index0 }}"
                 ref="dots[]"
@@ -170,11 +169,93 @@
                   aria-selected="true"
                 {% endif %}
               >
-                {{ forloop.index }}
+                <div class="dot-track">
+                  <div class="dot-progress-bar"></div>
+                </div>
               </button>
             </li>
           {% endfor %}
         </ol>
+        
+        <style>
+          .slideshow-controls__dots.about-you-style {
+            gap: 10px;
+            align-items: center;
+            height: 20px;
+          }
+          
+          .about-you-style button {
+            all: unset;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px; /* Increase click area */
+            transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            width: 10px; /* Default dot width */
+          }
+          
+          .about-you-style .dot-track {
+            width: 8px;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
+            border-radius: 99px;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            overflow: hidden;
+          }
+          
+          /* Active State: Stretch to line */
+          .about-you-style button[aria-selected='true'] {
+             width: 40px; /* Expanded width */
+          }
+          
+          .about-you-style button[aria-selected='true'] .dot-track {
+             width: 100%;
+             background-color: rgba(255, 255, 255, 0.3);
+          }
+          
+          /* Progress Bar (Fill) */
+          .about-you-style .dot-progress-bar {
+             position: absolute;
+             left: 0;
+             top: 0;
+             bottom: 0;
+             width: 0%;
+             background-color: #fff;
+             border-radius: 99px;
+             opacity: 0;
+          }
+          
+          /* Animate Progress when active and autoplay is on */
+          /* We rely on the parent checking autoplay to add a class, or we assume it runs if active */
+          /* Since we don't have a specific 'playing' class on the dot easily, we can use aria-selected */
+          
+          .about-you-style button[aria-selected='true'] .dot-progress-bar {
+             opacity: 1;
+             width: 100%;
+             transition: width var(--duration) linear;
+          }
+          
+          /* Reset for inactive */
+          .about-you-style button:not([aria-selected='true']) .dot-progress-bar {
+             width: 0%;
+             transition: none;
+             opacity: 0;
+          }
+          
+          /* If using dark background or different color scheme */
+          slideshow-controls:not([controls-on-media]) .about-you-style .dot-track {
+             background-color: rgba(0, 0, 0, 0.2); 
+          }
+          slideshow-controls:not([controls-on-media]) .about-you-style button[aria-selected='true'] .dot-track {
+             background-color: rgba(0, 0, 0, 0.1);
+          }
+          slideshow-controls:not([controls-on-media]) .about-you-style .dot-progress-bar {
+             background-color: #000;
+          }
+        </style>
     {% endcase %}
 
     {% if show_arrows_separately == false and show_arrows and pagination_position != 'right' %}
