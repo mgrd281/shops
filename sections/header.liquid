@@ -498,12 +498,10 @@
     background-color: var(--header-bg-color, var(--color-background));
   }
 
-    border-bottom: 1px solid #E5E7EB !important; /* Uniform bottom line */
-  }
-
-  /* Add parallel top border specifically for the bottom row (menu) to create the parallel effect */
+  .header__row--top:not(.divider--page-width),
+  .header__row--top.divider--page-width .header__columns,
   .header__row--bottom {
-    border-top: 1px solid #E5E7EB !important;
+    border-bottom: var(--border-bottom-width) solid var(--color-border);
   }
 
   @media screen and (max-width: 749px) {
@@ -746,17 +744,6 @@
     content-visibility: visible;
   }
 {% endstylesheet %}
-
-<style>
-  /* Force parallel lines for header menu */
-  .header__row--top {
-      border-bottom: 1px solid #E5E7EB !important;
-  }
-  .header__row--bottom {
-      border-top: 1px solid #E5E7EB !important;
-      border-bottom: 1px solid #E5E7EB !important;
-  }
-</style>
 
 {% unless request.design_mode %}
   <script type="module">
