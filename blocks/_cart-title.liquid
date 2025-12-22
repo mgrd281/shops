@@ -15,12 +15,6 @@
       {%- if block_settings.show_count -%}{% render 'cart-bubble' %}{%- endif -%}
     {%- endif -%}
   </h1>
-  {%- if cart.item_count > 0 -%}
-    <div style="background-color: #f5f5f5; padding: 12px 16px; font-size: 13px; color: #333; margin-top: 12px; display: inline-flex; align-items: center; gap: 10px; border-radius: 4px; border: 1px solid #e5e5e5;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-      <span>Artikel im Warenkorb sind nicht reserviert und können ausverkauft werden.</span>
-    </div>
-  {%- endif -%}
 </div>
 
 {% stylesheet %}
