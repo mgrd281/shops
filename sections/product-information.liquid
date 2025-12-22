@@ -1524,6 +1524,22 @@ nav[aria-label="Breadcrumb"],
                 {% endif %}
 
                                 <h1 class="product-title" style="margin-bottom: 6px;">{{ product.title }}</h1> 
+
+                                <!-- Windows Compatibility Icons -->
+                                {% if title_l contains 'windows' or tags_l contains 'windows' %}
+                                <div class="compatibility-icons" style="margin-bottom: 12px;">
+                                  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%230078D4' d='M0 7l20-3v19H0V7zm22-3l26-4v19H22V4zM0 26h20v19l-20-3V26zm22 0h26v20l-26-4V26z'/%3E%3C/svg%3E" 
+                                       alt="Windows 10" 
+                                       title="Kompatibel mit Windows 10"
+                                       style="height: 28px; width: auto; display: inline-block;">
+                                  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%230078D4' d='M0 7l20-3v19H0V7zm22-3l26-4v19H22V4zM0 26h20v19l-20-3V26zm22 0h26v20l-26-4V26z'/%3E%3C/svg%3E" 
+                                       alt="Windows 11" 
+                                       title="Kompatibel mit Windows 11"
+                                       style="height: 28px; width: auto; display: inline-block; margin-left: 8px;">
+                                  <span style="font-size: 12px; color: #555; margin-left: 8px; vertical-align: middle;">Kompatibel mit Windows 10 & 11</span>
+                                </div>
+                                {% endif %}
+
 <div class="product-rating" style="margin-bottom: 12px;">
   <div class="rechnung-profi-stars" data-product-id="{{ product.id }}"></div>
 </div>
@@ -1684,7 +1700,12 @@ nav[aria-label="Breadcrumb"],
         <div class="price-sub-row">
           <span class="old-price">{{ cap | money }}</span>
           <span class="price-sep">•</span>
-          <span class="savings-text">Du sparst: <strong>{{ cap | minus: cur | money }}</strong></span>
+          <span class="savings-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Du sparst {{ cap | minus: cur | money }}
+          </span>
         </div>
       {% endif %}
     </div>
@@ -1700,6 +1721,25 @@ nav[aria-label="Breadcrumb"],
     display: flex;
     flex-direction: column;
     margin-top: 0;
+  }
+  
+  /* Premium Savings Badge */
+  .savings-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .savings-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.35);
   }
 </style>
 <!-- In den Warenkorb Button -->
