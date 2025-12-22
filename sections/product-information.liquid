@@ -1717,6 +1717,45 @@ nav[aria-label="Breadcrumb"],
   </button>
 </form>
 
+<!-- Payment Methods - Professional Icons -->
+<div class="payment-icons-row">
+  <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/c1.en/assets/dhl.CxwV6P-_.svg" alt="DHL" height="24">
+  <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/c1.en/assets/amex.Bri970gE.svg" alt="American Express" height="24">
+  <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/c1.en/assets/apple-pay.CI_cOS9d.svg" alt="Apple Pay" height="24">
+  <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/c1.en/assets/google-pay.C_LmOZfd.svg" alt="Google Pay" height="24">
+  <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/c1.en/assets/paypal.CvrgDWXX.svg" alt="PayPal" height="24">
+  <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/c1.en/assets/mastercard.BnFS8lsx.svg" alt="Mastercard" height="24">
+  <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/c1.en/assets/klarna.CzPQ_LeD.svg" alt="Klarna" height="24">
+  <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/c1.en/assets/visa.sxIp5T_w.svg" alt="Visa" height="24">
+</div>
+
+<style>
+.payment-icons-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 0;
+}
+
+.payment-icons-row img {
+  height: 24px;
+  width: auto;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .payment-icons-row {
+    gap: 6px;
+  }
+  .payment-icons-row img {
+    height: 20px;
+  }
+}
+</style>
+
 
 <script>
   document.getElementById('buy-now-form').addEventListener('submit', function(e) {
