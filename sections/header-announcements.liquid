@@ -57,6 +57,7 @@
       background-color: {{ section.settings.bg_color }};
       color: {{ section.settings.text_color }};
       height: {{ section.settings.height }}px;
+      min-height: {{ section.settings.height }}px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -65,15 +66,18 @@
       letter-spacing: 1px;
       text-transform: uppercase;
       width: 100%;
+      padding: 0;
+      overflow: hidden; /* Ensure consistent height */
     }
 
     .announcement-bar-content {
       width: 100%;
       max-width: 1400px;
-      padding: 0 40px;
+      padding: 0 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      height: 100%;
     }
 
     .announcement-left {
@@ -84,6 +88,7 @@
 
     .announcement-text {
       font-weight: 600;
+      white-space: nowrap; /* Prevent wrapping affecting height */
     }
 
     .announcement-cta {
@@ -104,13 +109,14 @@
     .announcement-right {
       display: flex;
       align-items: center;
+      height: 100%;
     }
 
     .countdown-timer {
       display: flex;
-      align-items: center; /* Back to center for safety */
-      gap: 10px;
-      transform: translateY(2px); /* Safe visual nudge without affecting layout flow */
+      align-items: center;
+      gap: 6px;
+      height: 100%;
     }
 
     .timer-block {
@@ -118,55 +124,48 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      line-height: normal;
-      min-width: 28px;
+      line-height: 1;
+      min-width: 24px;
     }
 
     .timer-value {
       font-weight: 700;
-      font-size: 14px;
+      font-size: 13px;
       line-height: 1;
-      margin-top: 4px; /* Push numbers down slightly */
     }
 
     .timer-label {
-      font-size: 8px;
-      margin-top: 2px;
+      font-size: 7px;
+      margin-top: 1px;
       opacity: 0.9;
       text-transform: uppercase;
       font-weight: 600;
-      letter-spacing: 0.5px;
     }
 
     .timer-separator {
       font-weight: 700;
-      font-size: 14px;
-      padding-top: 4px; /* Align separator with numbers */
-      align-self: flex-start;
-      margin: 0 2px;
-    }
-
-    /* SPECIAL FIX: Push timer down ONLY on product page */
-    body.template-product .countdown-timer {
-      transform: translateY(5px) !important; /* Specific adjustment for product page */
+      font-size: 13px;
+      margin: 0 1px;
+      padding-bottom: 2px; /* Center with numbers */
     }
 
     @media (max-width: 768px) {
-      .announcement-bar-wrapper {
-        height: auto;
-        padding: 10px 0;
-        justify-content: center;
-      }
-      .promo-text { margin-bottom: 5px; }
       .announcement-bar-content {
-        flex-direction: column;
+        justify-content: center;
         gap: 10px;
-        padding: 0 20px;
-        text-align: center;
       }
       .announcement-left {
-        flex-direction: column;
-        gap: 5px;
+        gap: 8px;
+      }
+      .announcement-text {
+        font-size: 10px;
+      }
+      .announcement-cta {
+        font-size: 10px;
+      }
+      /* Ensure timer fits on mobile without stacking if possible, or scale down */
+      .countdown-timer {
+        transform: scale(0.9); /* Slight scale down to fit */
       }
     }
   </style>
