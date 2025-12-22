@@ -3879,70 +3879,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <div id="rechnung-profi-reviews-widget" data-product-id="{{ product.id }}"></div>
 
-<!-- ZOOM FUNCTIONALITY START (EASY TO REMOVE) -->
-<style>
-  .main-image-container {
-    overflow: hidden;
-    position: relative;
-    cursor: zoom-in; /* Show zoom cursor */
-  }
-  .main-image {
-    transition: transform 0.1s ease-out; /* Faster response for smooth follow */
-    transform-origin: center center;
-    width: 100%;
-    height: auto;
-    display: block;
-    will-change: transform; /* Performance optimization */
-  }
-  /* Disable on mobile/touch */
-  @media (hover: none) {
-    .main-image-container { cursor: default; }
-    .main-image { transform: none !important; }
-  }
-</style>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const container = document.querySelector('.main-image-container');
-    // Try to find the image by ID first, then fallback to class
-    const image = document.getElementById('zoom-image') || container.querySelector('img');
 
-    if (container && image) {
-      // Only enable on desktops/mouse devices
-      if (window.matchMedia('(hover: hover)').matches) {
-        
-        container.addEventListener('mousemove', function(e) {
-          const rect = container.getBoundingClientRect();
-          // Calculate mouse position relative to the container
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          
-          // Calculate percentage position
-          const xPercent = (x / rect.width) * 100;
-          const yPercent = (y / rect.height) * 100;
-          
-          // Move the focus point
-          image.style.transformOrigin = `${xPercent}% ${yPercent}%`;
-          // Apply zoom
-          image.style.transform = 'scale(2.2)'; // 2.2x Zoom
-        });
-
-        container.addEventListener('mouseleave', function() {
-          // Reset
-          image.style.transformOrigin = 'center center';
-          image.style.transform = 'scale(1)';
-          // Add a slight transition for the zoom-out reset
-          image.style.transition = 'transform 0.3s ease';
-        });
-        
-        container.addEventListener('mouseenter', function() {
-          // Remove transition for instant response when moving inside
-          image.style.transition = 'transform 0.1s ease-out';
-        });
-      }
-    }
-  });
-</script>
-<!-- ZOOM FUNCTIONALITY END -->
 
 <style>
 /* Updated Price Display */
