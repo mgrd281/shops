@@ -22,11 +22,15 @@
     {% assign ref_title = reference_item.product.title | downcase %}
     {% assign target_keyword = nil %}
 
-    {% comment %} Define Rules: If buys X -> Suggest Y {% endcomment %}
+    {% comment %} Define Rules: If buys X -> Suggest Y (with priority) {% endcomment %}
+    {% assign preferred_match = nil %}
+    
     {% if ref_title contains 'office' %}
       {% assign target_keyword = 'windows' %}
+      {% assign preferred_match = '11' %} {% comment %} Try to find Windows 11 first {% endcomment %}
     {% elsif ref_title contains 'windows' %}
       {% assign target_keyword = 'office' %}
+      {% assign preferred_match = '2024' %} {% comment %} Try to find Office 2024 first {% endcomment %}
     {% elsif ref_title contains 'server' %}
       {% assign target_keyword = 'cal' %}
     {% elsif ref_title contains 'visio' %}
@@ -37,21 +41,43 @@
 
     {% comment %} Search for target keyword in 'all' collection {% endcomment %}
     {% if target_keyword %}
-      {% comment %} Using 'all' collection efficiently {% endcomment %}
-      {% for product in collections['all'].products limit: 50 %}
-         {% assign p_title = product.title | downcase %}
-         {% if p_title contains target_keyword and product.available %}
-            {% assign in_cart = false %}
-            {% for item in cart.items %}
-              {% if item.product.id == product.id %}{% assign in_cart = true %}{% endif %}
-            {% endfor %}
-            
-            {% if in_cart == false %}
-               {% assign upsell_product = product %}
-               {% break %}
-            {% endif %}
-         {% endif %}
-      {% endfor %}
+      
+      {% comment %} PASS 1: Look for Preferred Match (e.g. Windows + 11) {% endcomment %}
+      {% if preferred_match %}
+        {% for product in collections['all'].products limit: 50 %}
+           {% assign p_title = product.title | downcase %}
+           {% if p_title contains target_keyword and p_title contains preferred_match and product.available %}
+              {% assign in_cart = false %}
+              {% for item in cart.items %}
+                {% if item.product.id == product.id %}{% assign in_cart = true %}{% endif %}
+              {% endfor %}
+              
+              {% if in_cart == false %}
+                 {% assign upsell_product = product %}
+                 {% break %}
+              {% endif %}
+           {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% comment %} PASS 2: Look for General Match if no preferred match found {% endcomment %}
+      {% if upsell_product == nil %}
+        {% for product in collections['all'].products limit: 50 %}
+           {% assign p_title = product.title | downcase %}
+           {% if p_title contains target_keyword and product.available %}
+              {% assign in_cart = false %}
+              {% for item in cart.items %}
+                {% if item.product.id == product.id %}{% assign in_cart = true %}{% endif %}
+              {% endfor %}
+              
+              {% if in_cart == false %}
+                 {% assign upsell_product = product %}
+                 {% break %}
+              {% endif %}
+           {% endif %}
+        {% endfor %}
+      {% endif %}
+      
     {% endif %}
 
     {% comment %} Fallback to Collection Logic if no smart match found {% endcomment %}
