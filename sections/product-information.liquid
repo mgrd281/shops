@@ -1726,23 +1726,18 @@ nav[aria-label="Breadcrumb"],
   {{ 'unionpay' | payment_type_svg_tag: class: 'payment-icon' }}
   {{ 'klarna' | payment_type_svg_tag: class: 'payment-icon' }}
   
-  <!-- Rechnung (Invoice) Icon -->
-  <svg class="payment-icon payment-icon-custom" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg">
-    <rect width="38" height="24" rx="3" fill="#1D4739"/>
-    <path d="M12 6h14v12H12z" fill="none" stroke="#fff" stroke-width="1.5"/>
-    <path d="M15 10h8M15 13h6" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/>
-    <text x="19" y="21" font-family="Arial" font-size="4" fill="#fff" text-anchor="middle">Rechnung</text>
+  <!-- Rechnung (Invoice) Professional Badge -->
+  <svg class="payment-icon payment-icon-custom" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Kauf auf Rechnung">
+    <rect width="37" height="23" x="0.5" y="0.5" rx="3" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+    <path d="M12 7h14v2H12zm0 4h10v2H12zm0 4h14v2H12z" fill="#555"/>
+    <text x="19" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="5" font-weight="600" fill="#333" text-anchor="middle">RECHNUNG</text>
   </svg>
   
-  <!-- Vorkasse (Bank Transfer) Icon -->
-  <svg class="payment-icon payment-icon-custom" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg">
-    <rect width="38" height="24" rx="3" fill="#2C3E50"/>
-    <path d="M10 10l9-4 9 4v2H10z" fill="#fff"/>
-    <rect x="12" y="12" width="3" height="5" fill="#fff"/>
-    <rect x="17.5" y="12" width="3" height="5" fill="#fff"/>
-    <rect x="23" y="12" width="3" height="5" fill="#fff"/>
-    <rect x="10" y="17" width="18" height="2" fill="#fff"/>
-    <text x="19" y="22" font-family="Arial" font-size="3.5" fill="#fff" text-anchor="middle">Vorkasse</text>
+  <!-- Vorkasse (Prepayment) Professional Badge -->
+  <svg class="payment-icon payment-icon-custom" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vorkasse">
+    <rect width="37" height="23" x="0.5" y="0.5" rx="3" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+    <path d="M19 6l-6 3v2h2v5h2v-5h4v5h2v-5h2V9z" fill="#555"/>
+    <text x="19" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="5" font-weight="600" fill="#333" text-anchor="middle">VORKASSE</text>
   </svg>
 </div>
 
@@ -1751,19 +1746,21 @@ nav[aria-label="Breadcrumb"],
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-top: 16px;
 }
 
 .payment-icons-row .payment-icon {
   height: 24px;
   width: auto;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .payment-icon-custom {
   height: 24px;
   width: auto;
+  display: inline-block;
+  vertical-align: middle;
 }
 </style>
 
