@@ -326,7 +326,7 @@
       "scheme-b585e57c-6eda-451e-b0f0-06d6fbeb5c3e": {
         "settings": {
           "background": "#1d4739",
-          "foreground_heading": "#000000",
+          "foreground_heading": "#ffffff",
           "foreground": "#000000b5",
           "primary": "#000000b5",
           "primary_hover": "#000000",
