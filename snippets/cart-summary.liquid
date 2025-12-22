@@ -14,41 +14,73 @@
 
 <div class="cart__summary-totals">
   
-  {% comment %} --- SMART UPSELL LOGIC --- {% endcomment %}
+  {% comment %} --- SUPER SMART UPSELL LOGIC --- {% endcomment %}
   {% assign upsell_product = nil %}
   {% assign reference_item = cart.items.first %}
   
   {% if reference_item %}
-    {% assign reference_collection = nil %}
-    
-    {% comment %} Find the most specific collection (skip 'all' or 'frontpage') {% endcomment %}
-    {% for col in reference_item.product.collections %}
-      {% if col.handle != 'all' and col.handle != 'frontpage' %}
-        {% assign reference_collection = col %}
-        {% break %}
-      {% endif %}
-    {% endfor %}
-    
-    {% comment %} Fallback if no specific collection found {% endcomment %}
-    {% if reference_collection == nil %}
-      {% assign reference_collection = reference_item.product.collections.first %}
+    {% assign ref_title = reference_item.product.title | downcase %}
+    {% assign target_keyword = nil %}
+
+    {% comment %} Define Rules: If buys X -> Suggest Y {% endcomment %}
+    {% if ref_title contains 'office' %}
+      {% assign target_keyword = 'windows' %}
+    {% elsif ref_title contains 'windows' %}
+      {% assign target_keyword = 'office' %}
+    {% elsif ref_title contains 'server' %}
+      {% assign target_keyword = 'cal' %}
+    {% elsif ref_title contains 'visio' %}
+      {% assign target_keyword = 'project' %}
+    {% elsif ref_title contains 'project' %}
+      {% assign target_keyword = 'visio' %}
     {% endif %}
 
-    {% if reference_collection %}
-      {% for product in reference_collection.products limit: 10 %}
-        {% comment %} Skip the product itself if it's the same {% endcomment %}
-        {% if product.id == reference_item.product.id %}{% continue %}{% endif %}
+    {% comment %} Search for target keyword in 'all' collection {% endcomment %}
+    {% if target_keyword %}
+      {% comment %} Using 'all' collection efficiently {% endcomment %}
+      {% for product in collections['all'].products limit: 50 %}
+         {% assign p_title = product.title | downcase %}
+         {% if p_title contains target_keyword and product.available %}
+            {% assign in_cart = false %}
+            {% for item in cart.items %}
+              {% if item.product.id == product.id %}{% assign in_cart = true %}{% endif %}
+            {% endfor %}
+            
+            {% if in_cart == false %}
+               {% assign upsell_product = product %}
+               {% break %}
+            {% endif %}
+         {% endif %}
+      {% endfor %}
+    {% endif %}
 
-        {% assign in_cart = false %}
-        {% for item in cart.items %}
-          {% if item.product.id == product.id %}{% assign in_cart = true %}{% endif %}
+    {% comment %} Fallback to Collection Logic if no smart match found {% endcomment %}
+    {% if upsell_product == nil %}
+        {% assign reference_collection = nil %}
+        {% for col in reference_item.product.collections %}
+            {% if col.handle != 'all' and col.handle != 'frontpage' %}
+                {% assign reference_collection = col %}
+                {% break %}
+            {% endif %}
         {% endfor %}
         
-        {% if in_cart == false and product.available %}
-          {% assign upsell_product = product %}
-          {% break %}
+        {% if reference_collection == nil %}
+            {% assign reference_collection = reference_item.product.collections.first %}
         {% endif %}
-      {% endfor %}
+
+        {% if reference_collection %}
+            {% for product in reference_collection.products limit: 10 %}
+                {% if product.id == reference_item.product.id %}{% continue %}{% endif %}
+                {% assign in_cart = false %}
+                {% for item in cart.items %}
+                    {% if item.product.id == product.id %}{% assign in_cart = true %}{% endif %}
+                {% endfor %}
+                {% if in_cart == false and product.available %}
+                    {% assign upsell_product = product %}
+                    {% break %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
     {% endif %}
   {% endif %}
 
