@@ -1750,6 +1750,7 @@ nav[aria-label="Breadcrumb"],
   </svg>
 </div>
 
+</style>
 <style>
 .payment-icons-row {
   display: flex;
@@ -1771,6 +1772,19 @@ nav[aria-label="Breadcrumb"],
   width: auto;
   display: inline-block;
   vertical-align: middle;
+}
+
+/* Mobile Optimization */
+@media (max-width: 768px) {
+  .payment-icons-row {
+    gap: 8px; /* Smaller gap for mobile */
+    margin-top: 16px;
+    justify-content: center;
+  }
+  .payment-icons-row .payment-icon,
+  .payment-icon-custom {
+    height: 22px; /* Slightly smaller to fit better */
+  }
 }
 </style>
 
