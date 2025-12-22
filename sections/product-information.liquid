@@ -1720,7 +1720,14 @@ nav[aria-label="Breadcrumb"],
 <!-- Payment Methods -->
 <div class="payment-icons-row">
   {{ 'visa' | payment_type_svg_tag: class: 'payment-icon' }}
-  {{ 'maestro' | payment_type_svg_tag: class: 'payment-icon' }}
+  <!-- Maestro Icon (Custom to avoid generic placeholder) -->
+  <svg class="payment-icon" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Maestro">
+    <rect width="38" height="24" rx="3" fill="#fff"/>
+    <circle cx="15" cy="12" r="7" fill="#EB001B"/>
+    <circle cx="23" cy="12" r="7" fill="#0081CB" fill-opacity="0.85"/>
+    <path d="M23 12a7 7 0 0 1-4 6.75 7 7 0 0 1 0-13.5 7 7 0 0 1 4 6.75z" fill="#000000" fill-opacity="0.2" style="mix-blend-mode: overlay;"/>
+    <text x="19" y="21" font-family="Arial" font-size="4" fill="#333" text-anchor="middle" style="display:none;">Maestro</text>
+  </svg>
   {{ 'mastercard' | payment_type_svg_tag: class: 'payment-icon' }}
   {{ 'american_express' | payment_type_svg_tag: class: 'payment-icon' }}
   {{ 'unionpay' | payment_type_svg_tag: class: 'payment-icon' }}
