@@ -26,18 +26,33 @@
   {% endif %}
 >
   {% if cart.empty? %}
-    {%- if shop.customer_accounts_enabled and customer == null -%}
-      <p>
-        {{ 'actions.log_in_html' | t: link: routes.account_login_url }}
+    <div class="empty-cart-modern text-center" style="display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 20px 0;">
+      <div style="color: #9ca3af; margin-bottom: 10px;">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+      </div>
+      
+      <p style="color: #6b7280; font-size: 14px; margin: 0; max-width: 280px; line-height: 1.5;">
+        Sieht so aus, als hättest du noch nichts gefunden. <br>Entdecke unsere Bestseller!
       </p>
-    {%- endif -%}
 
-    <a
-      class="button cart-items__empty-button"
-      href="{{ settings.empty_cart_button_link | default: routes.all_products_collection_url }}"
-    >
-      {{ 'actions.continue_shopping' | t }}
-    </a>
+      {%- if shop.customer_accounts_enabled and customer == null -%}
+        <p style="font-size: 13px; color: #6b7280;">
+          {{ 'actions.log_in_html' | t: link: routes.account_login_url }}
+        </p>
+      {%- endif -%}
+
+      <a
+        class="button button--primary cart-items__empty-button"
+        href="{{ settings.empty_cart_button_link | default: routes.all_products_collection_url }}"
+        style="width: 100%; max-width: 300px; margin-top: 10px;"
+      >
+        {{ 'actions.continue_shopping' | t }}
+      </a>
+    </div>
   {%- else -%}
     <span
       class="visually-hidden"
