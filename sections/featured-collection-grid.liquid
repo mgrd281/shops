@@ -365,20 +365,19 @@ document.addEventListener('DOMContentLoaded', function() {
   if (!wrap) return;
 
   function openCartDrawer() {
-    const drawer = document.querySelector('cart-drawer');
-    const drawerElement = document.querySelector('.cart-drawer');
+    const drawerComp = document.querySelector('cart-drawer-component');
+    const dialog = drawerComp ? drawerComp.querySelector('dialog') : null;
     
-    if (drawer && typeof drawer.open === 'function') {
-       drawer.open();
-    } else if (drawer) {
-       drawer.classList.add('active');
-       drawer.setAttribute('open', '');
-    } else if (drawerElement) {
-       drawerElement.classList.add('active');
-       drawerElement.classList.add('is-open');
+    if (drawerComp && typeof drawerComp.open === 'function') {
+       drawerComp.open();
+    } else if (dialog && typeof dialog.showModal === 'function') {
+       dialog.showModal();
+    } else {
+       // Dispatch events for theme listeners
+       document.dispatchEvent(new CustomEvent('cart:open', { bubbles: true }));
+       // Fallback redirect
+       // window.location.href = '/cart';
     }
-    document.dispatchEvent(new CustomEvent('cart:open', { bubbles: true }));
-    document.dispatchEvent(new CustomEvent('cart-drawer:open', { bubbles: true }));
   }
 
   function addToCart(variantId, btn) {
@@ -386,12 +385,13 @@ document.addEventListener('DOMContentLoaded', function() {
     btn.classList.add('loading');
     btn.disabled = true;
 
+    // Fetch 'header' section which contains both cart icon and drawer in this theme
     const config = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
         items: [{ id: Number(variantId), quantity: 1 }],
-        sections: 'cart-drawer,cart-icon-bubble,cart-notification-product,header'
+        sections: 'header' 
       })
     };
 
@@ -401,35 +401,36 @@ document.addEventListener('DOMContentLoaded', function() {
       if (data.status) throw new Error(data.description);
 
       const parser = new DOMParser();
-
-      // Update Cart Bubble
-      let updatedBubbleHTML = null;
-      if (data.sections['cart-icon-bubble']) updatedBubbleHTML = data.sections['cart-icon-bubble'];
-      else if (data.sections['header']) {
+      
+      // We expect 'header' section logic
+      if (data.sections['header']) {
          const doc = parser.parseFromString(data.sections['header'], 'text/html');
-         const bubble = doc.getElementById('cart-icon-bubble');
-         if (bubble) updatedBubbleHTML = bubble.innerHTML;
-      }
-      if (updatedBubbleHTML) {
-         const bubbleEl = document.getElementById('cart-icon-bubble');
-         if (bubbleEl) bubbleEl.innerHTML = updatedBubbleHTML;
-      }
-
-      // Update Cart Drawer
-      if (data.sections['cart-drawer']) {
-         const doc = parser.parseFromString(data.sections['cart-drawer'], 'text/html');
-         const drawerCommon = document.querySelector('cart-drawer');
-         const newDrawer = doc.querySelector('cart-drawer');
          
-         if (drawerCommon && newDrawer) {
-            const oldItems = drawerCommon.querySelector('.cart-drawer__items') || drawerCommon.querySelector('#CartDrawer-CartItems');
-            const newItems = newDrawer.querySelector('.cart-drawer__items') || newDrawer.querySelector('#CartDrawer-CartItems');
-            const oldFooter = drawerCommon.querySelector('.cart-drawer__footer') || drawerCommon.querySelector('#CartDrawer-Footer');
-            const newFooter = newDrawer.querySelector('.cart-drawer__footer') || newDrawer.querySelector('#CartDrawer-Footer');
+         // 1. Update Cart Icon
+         const newIcon = doc.querySelector('cart-icon');
+         const currentIcon = document.querySelector('cart-icon');
+         if (newIcon && currentIcon) {
+            currentIcon.innerHTML = newIcon.innerHTML;
+            // Update classes (e.g. to show dot)
+            currentIcon.className = newIcon.className; 
+         }
 
-            if (oldItems && newItems) oldItems.replaceWith(newItems);
-            if (oldFooter && newFooter) oldFooter.replaceWith(newFooter);
-            if (!oldItems && !oldFooter) drawerCommon.innerHTML = newDrawer.innerHTML;
+         // 2. Update Cart Drawer Component
+         const newDrawer = doc.querySelector('cart-drawer-component');
+         const currentDrawer = document.querySelector('cart-drawer-component');
+         if (newDrawer && currentDrawer) {
+            // Replace the 'cart-items-component' inside the drawer to keep dialog state
+            const newInner = newDrawer.querySelector('cart-items-component');
+            const currentInner = currentDrawer.querySelector('cart-items-component');
+            
+            if (newInner && currentInner) {
+               currentInner.replaceWith(newInner);
+            } else {
+               // Fallback: replace inner HTML of drawer content
+               const newContent = newDrawer.querySelector('.cart-drawer__inner') || newDrawer.querySelector('dialog');
+               const currentContent = currentDrawer.querySelector('.cart-drawer__inner') || currentDrawer.querySelector('dialog');
+               if (newContent && currentContent) currentContent.innerHTML = newContent.innerHTML;
+            }
          }
       }
 
@@ -438,7 +439,7 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .catch(err => {
       console.error('AJAX Cart Error:', err);
-      // window.location.href = '/cart'; // Optional fallback
+      // window.location.href = '/cart'; 
     })
     .finally(() => {
       btn.classList.remove('loading');
@@ -446,7 +447,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Attach Listeners
   const cartButtons = wrap.querySelectorAll('[data-fc-add-to-cart]');
   cartButtons.forEach(btn => {
     btn.addEventListener('click', function(e) {
