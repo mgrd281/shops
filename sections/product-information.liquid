@@ -1005,11 +1005,76 @@
     </style>
 </head>
 <body>
-{% if product.metafields.sales.last24h %}
-  <div class="sales-counter">
-    📦 <strong>{{ product.metafields.sales.last24h }}</strong> Verkäufe in den letzten 24 Stunden
-  </div>
-{% endif %}
+{% comment %} --- Advanced Smart Social Proof Logic --- {% endcomment %}
+{%- assign city_list = "Berlin,Hamburg,München,Köln,Frankfurt,Stuttgart,Essen,Dortmund,Düsseldorf,Bremen,Hannover,Leipzig,Dresden,Nürnberg,Duisburg,Bochum,Wuppertal,Bielefeld,Bonn,Münster" | split: ',' -%}
+{%- assign time_now_seed = 'now' | date: '%s' | divided_by: 3600 | plus: product.id -%}
+{%- assign day_seed = 'now' | date: '%j' | plus: 0 -%}
+{%- assign unique_seed = product.id | divided_by: 1000 | plus: day_seed -%}
+
+{% comment %} Calculate Sales (Range: 210 - 480) {% endcomment %}
+{%- assign min_sales = 210 -%}
+{%- assign range_sales = 270 -%}
+{%- assign sales_count = unique_seed | modulo: range_sales | plus: min_sales -%}
+{%- if product.metafields.sales.last24h != blank -%}
+  {%- assign sales_count = product.metafields.sales.last24h -%}
+{%- endif -%}
+
+{% comment %} Calculate Minutes Ago (Range: 3 - 55 mins) {% endcomment %}
+{%- assign minutes_ago = unique_seed | times: 13 | modulo: 52 | plus: 3 -%}
+
+{% comment %} Select Random City {% endcomment %}
+{%- assign city_index = unique_seed | modulo: city_list.size -%}
+{%- assign random_city = city_list[city_index] -%}
+
+<div class="smart-social-proof">
+  <span class="trend-icon">📈</span>
+  <span class="sales-highlight"><strong>{{ sales_count }}</strong> Verkäufe in den letzten 24 Stunden</span>
+  <span class="proof-separator">•</span>
+  <span class="proof-details">Letzter Verkauf: <strong>vor {{ minutes_ago }} Min.</strong> aus <strong>{{ random_city }}</strong></span>
+</div>
+
+<style>
+  .smart-social-proof {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    color: #555;
+    background: transparent;
+    padding: 0;
+    border: none;
+  }
+  .smart-social-proof .trend-icon {
+    font-size: 18px;
+    color: #e04f35; /* Orange-Red like screenshot */
+    margin-right: 2px;
+  }
+  .smart-social-proof .sales-highlight {
+    color: #e04f35; /* Orange-Red text */
+    font-weight: 500;
+  }
+  .smart-social-proof .proof-separator {
+    color: #999;
+    font-size: 12px;
+  }
+  .smart-social-proof .proof-details {
+    color: #666;
+  }
+  .smart-social-proof strong {
+    font-weight: 700;
+    color: inherit;
+  }
+  /* Mobile optimization */
+  @media (max-width: 480px) {
+    .smart-social-proof {
+      font-size: 13px;
+      gap: 4px;
+    }
+  }
+</style>
 <style>
   /* Globally hide the image counter overlay across devices */
   .image-counter{ display:none !important; }
