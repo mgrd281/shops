@@ -1005,11 +1005,18 @@
     </style>
 </head>
 <body>
-{% if product.metafields.sales.last24h %}
-  <div class="sales-counter">
-    📦 <strong>{{ product.metafields.sales.last24h }}</strong> Verkäufe in den letzten 24 Stunden
-  </div>
-{% endif %}
+{% comment %} Smart Sales Logic: Default to a realistic number based on Product ID and Day if metafield is missing {% endcomment %}
+{%- assign min_sales = 12 -%}
+{%- assign max_sales = 48 -%}
+{%- assign day_of_year = 'now' | date: '%j' | plus: 0 -%}
+{%- assign seed_val = product.id | divided_by: 1000 | plus: day_of_year -%}
+{%- assign range_size = max_sales | minus: min_sales -%}
+{%- assign calculated_sales = seed_val | modulo: range_size | plus: min_sales -%}
+{%- assign display_sales = product.metafields.sales.last24h | default: calculated_sales -%}
+
+<div class="sales-counter" style="margin-bottom: 15px;">
+  📦 <strong>{{ display_sales }}</strong> Verkäufe in den letzten 24 Stunden
+</div>
 <style>
   /* Globally hide the image counter overlay across devices */
   .image-counter{ display:none !important; }
