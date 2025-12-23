@@ -321,12 +321,15 @@
         display: none
     }
 
-    .nextend-arrow:hover .n2-arrow-normal-img {
-        display: none
-    }
+    /* Only swap images on devices that support hover (Mouse) */
+    @media (hover: hover) {
+        .nextend-arrow:hover .n2-arrow-normal-img {
+            display: none
+        }
 
-    .nextend-arrow:hover .n2-arrow-hover-img {
-        display: inline
+        .nextend-arrow:hover .n2-arrow-hover-img {
+            display: inline
+        }
     }
 
     /* Punkte die sich in Rechtecke verwandeln - Hintergrund entfernt */
