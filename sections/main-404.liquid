@@ -1,116 +1,176 @@
 <style>
-  .template-404 .title + .subtext {
-    margin-top: 1rem;
+  .template-404-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 80px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
   }
 
-  .template-404 .button {
-    margin-top: 3rem;
+  .template-404-illustration {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    margin-bottom: 40px;
+    color: var(--color-foreground, #333);
+    opacity: 0.8;
+  }
+
+  .template-404-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0 0 20px;
+    color: var(--color-heading, #111);
+  }
+
+  .template-404-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: rgba(var(--color-foreground, #333), 0.7);
+    max-width: 500px;
+    margin: 0 auto 40px;
+  }
+
+  /* Search Bar */
+  .template-404-search {
+    position: relative;
+    max-width: 500px;
+    width: 100%;
+    margin-bottom: 40px;
   }
   
-  .template-404 {
-    text-align: center;
-    padding: 6rem 1.5rem;
+  .template-404-search input {
+    width: 100%;
+    padding: 15px 20px;
+    padding-right: 50px;
+    border: 2px solid #e5e5e5;
+    border-radius: 50px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: transparent;
   }
-  
-  .template-404 h1 {
-    font-size: 4rem;
-    margin-bottom: 1rem;
+
+  .template-404-search input:focus {
+    border-color: #000;
+    outline: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   }
-  
-  .template-404 p {
-    font-size: 1.2rem;
-    color: rgba(var(--color-foreground), 0.75);
+
+  .template-404-search button {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #000;
+    color: #fff;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+  }
+
+  .template-404-search button:hover {
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  /* Buttons */
+  .template-404-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn-404 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .btn-404-primary {
+    background: #000;
+    color: #fff;
+  }
+
+  .btn-404-primary:hover {
+    background: #333;
+    transform: translateY(-2px);
+  }
+
+  .btn-404-secondary {
+    background: transparent;
+    color: #000;
+    border: 2px solid #e5e5e5;
+  }
+
+  .btn-404-secondary:hover {
+    border-color: #000;
+    background: transparent;
   }
 </style>
 
-<div class="template-404 page-width center">
-  {%- for block in section.blocks -%}
-    {%- case block.type -%}
-      {%- when 'text' -%}
-        <div class="rte" {{ block.shopify_attributes }}>
-          {{ block.settings.text }}
-        </div>
-      {%- when 'button' -%}
-        <a href="{{ block.settings.link | default: routes.all_products_collection_url }}" class="button">
-          {{ block.settings.label | default: 'Weiter shoppen' }}
-        </a>
-    {%- endcase -%}
-  {%- endfor -%}
+<div class="template-404-container">
+  <!-- Illustration SVG -->
+  <svg class="template-404-illustration" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"></circle>
+    <path d="M16 16s-1.5-2-4-2-4 2-4 2"></path>
+    <line x1="9" y1="9" x2="9.01" y2="9" stroke-width="2"></line>
+    <line x1="15" y1="9" x2="15.01" y2="9" stroke-width="2"></line>
+  </svg>
+
+  <h1 class="template-404-title">Hoppla! Seite nicht gefunden.</h1>
   
-  {%- if section.blocks.size == 0 -%}
-    <p>
-      Die Seite, die Sie suchen, ist nicht verfügbar.
-    </p>
-    <h1 class="title">
-      Seite nicht gefunden
-    </h1>
-    <a href="{{ routes.all_products_collection_url }}" class="button">
-      Weiter shoppen
+  <p class="template-404-text">
+    Die Seite, die Sie suchen, wurde möglicherweise verschoben, gelöscht oder existiert gar nicht. Versuchen Sie eine Suche oder kehren Sie zur Startseite zurück.
+  </p>
+
+  <form action="{{ routes.search_url }}" method="get" role="search" class="template-404-search">
+    <input
+      type="search"
+      name="q"
+      value="{{ search.terms | escape }}"
+      placeholder="Wonach suchen Sie?"
+      aria-label="Suche"
+    >
+    <input type="hidden" name="type" value="product">
+    <button type="submit" aria-label="Suchen">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+    </button>
+  </form>
+
+  <div class="template-404-actions">
+    <a href="{{ routes.root_url }}" class="btn-404 btn-404-primary">
+      Zur Startseite
     </a>
-  {%- endif -%}
+    <a href="{{ routes.all_products_collection_url }}" class="btn-404 btn-404-secondary">
+      Alle Produkte ansehen
+    </a>
+  </div>
 </div>
 
 {% schema %}
 {
-  "name": "t:names.404",
+  "name": "Custom 404 Page",
   "tag": "section",
   "class": "section",
-  "settings": [
-    {
-      "type": "header",
-      "content": "t:content.padding"
-    },
-    {
-      "type": "range",
-      "id": "padding_top",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "t:settings.top",
-      "default": 36
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "t:settings.bottom",
-      "default": 36
-    }
-  ],
-  "blocks": [
-    {
-      "type": "text",
-      "name": "Text",
-      "settings": [
-        {
-          "type": "richtext",
-          "id": "text",
-          "label": "Text",
-          "default": "<h1>Seite nicht gefunden</h1><p>Die Seite, die Sie suchen, ist nicht verfügbar.</p>"
-        }
-      ]
-    },
-    {
-      "type": "button",
-      "name": "Button",
-      "settings": [
-        {
-          "type": "text",
-          "id": "label",
-          "label": "Button Label",
-          "default": "Weiter shoppen"
-        },
-        {
-          "type": "url",
-          "id": "link",
-          "label": "Button Link"
-        }
-      ]
-    }
-  ]
+  "settings": []
 }
 {% endschema %}
