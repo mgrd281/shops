@@ -16,12 +16,7 @@
       class="svg-wrapper"
       aria-hidden="true"
     >
-      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true" class="icon-cart">
-        <path d="M6 6h15l-1.5 9h-12z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="9" cy="20" r="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
-        <circle cx="17" cy="20" r="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
-        <path d="M5 6H3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
+      {{ 'icon-cart.svg' | inline_asset_content }}
     </span>
 
     {% render 'cart-bubble', limit: 100, live_region: true, test_id: test_id %}
@@ -74,9 +69,7 @@
             class="svg-wrapper"
             aria-hidden="true"
           >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="icon-close">
-              <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            {{- 'icon-close.svg' | inline_asset_content -}}
           </span>
         </button>
         {% render 'account-actions', heading_id: 'account-drawer-heading' %}
@@ -111,7 +104,7 @@
 
       <dialog
         ref="dialog"
-        class="cart-drawer__dialog dialog-modal dialog-drawer dialog-drawer--right color-{{ settings.drawer_color_scheme }}{% if cart.empty? %} cart-drawer--empty{%endif%}"
+        class="cart-drawer__dialog dialog-modal dialog-drawer color-{{ settings.drawer_color_scheme }}{% if cart.empty? %} cart-drawer--empty{%endif%}"
         aria-labelledby="{% if cart.empty? %}cart-drawer-heading-empty{% else %}cart-drawer-heading{% endif %}"
         scroll-lock
         cart-summary-sticky="true"
@@ -130,9 +123,7 @@
                   aria-label="{{ 'actions.close_dialog' | t }}"
                 >
                   <span class="svg-wrapper">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="icon-close">
-                      <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                    {{- 'icon-close.svg' | inline_asset_content -}}
                   </span>
                 </button>
               </div>
@@ -172,9 +163,7 @@
                   aria-label="{{ 'actions.close_dialog' | t }}"
                 >
                   <span class="svg-wrapper">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="icon-close">
-                      <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                    {{- 'icon-close.svg' | inline_asset_content -}}
                   </span>
                 </button>
               </div>
@@ -370,7 +359,6 @@
     height: 100%;
     margin: 0 0 0 auto;
     padding: 0;
-    border-right: none;
     border-left: var(--style-border-drawer);
     box-shadow: var(--shadow-drawer);
     background-color: var(--color-background);

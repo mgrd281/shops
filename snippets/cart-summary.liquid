@@ -170,9 +170,7 @@
           {%- for discount in cart.cart_level_discount_applications -%}
             <li class="cart__summary-item cart__discount">
               <span class="cart__discount-label">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="icon-discount">
-                  <path d="M6 1V11M1 6H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                {{- 'icon-discount.svg' | inline_asset_content -}}
                 {{ discount.title | escape }}
               </span>
               <span class="cart__discount-value cart-secondary-typography"
@@ -213,9 +211,7 @@
                 </span>
 
                 <span class="svg-wrapper icon-plus">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="icon-plus">
-                    <path d="M6 1V11M1 6H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
+                  {{- 'icon-plus.svg' | inline_asset_content -}}
                 </span>
               </summary>
 
@@ -277,9 +273,7 @@
             <span class="disclosure-trigger__label cart-primary-typography">{{ 'content.discount' | t }}</span>
 
             <span class="svg-wrapper icon-plus">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="icon-plus">
-                <path d="M6 1V11M1 6H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
+              {{- 'icon-plus.svg' | inline_asset_content -}}
             </span>
           </button>
 
@@ -329,10 +323,7 @@
                   ref="cartDiscountError"
                 >
                   <span class="svg-wrapper">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="icon-error">
-                      <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                      <path d="M7 4V8M7 10H7.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                    {{- 'icon-error.svg' | inline_asset_content -}}
                   </span>
                   <small
                     class="cart-discount__error-text cart-primary-typography hidden"
@@ -363,9 +354,7 @@
                         class="cart-discount__pill-remove svg-wrapper svg-wrapper--smaller button-unstyled"
                         aria-label="{{ 'actions.remove_discount' | t: code: discount_code }}"
                       >
-                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" class="icon-close">
-                          <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                        {{- 'icon-filters-close.svg' | inline_asset_content -}}
                       </button>
                     </li>
                   {% endfor %}
