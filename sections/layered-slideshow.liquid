@@ -41,7 +41,11 @@
             aria-controls="Panel-{{ block.id }}-{{ section.id }}"
             aria-label="{{ 'accessibility.slide_status' | t: index: forloop.index, length: section.blocks.size }}"
             tabindex="{% if forloop.index0 == 0 %}0{% else %}-1{% endif %}"
-          ></button>
+          >
+            <div class="dot-track">
+               <div class="dot-progress-bar"></div>
+            </div>
+          </button>
         {% endfor %}
       </div>
       <div class="layered-slideshow__panels">

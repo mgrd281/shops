@@ -3,38 +3,8 @@
 
     <meta name="keywords" content="{{ product.title }}, kaufen, Shop, Premium">
     <!-- Schema.org Structured Data for SEO -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org/",
-      "@type": "Product",
-      "name": "{{ product.title | escape }}",
-      "image": "{% if product.featured_image %}{{ product.featured_image | image_url: width: 1200 }}{% endif %}",
-      "description": "{{ product.description | strip_html | escape }}",
-      "sku": "{{ product.selected_or_first_available_variant.sku | default: product.id }}",
-      "brand": {
-        "@type": "Brand",
-        "name": "{% if product.vendor != blank %}{{ product.vendor | escape }}{% else %}Karinex{% endif %}"
-      },
-      "offers": {
-        "@type": "Offer",
-        "url": "{{ shop.url }}{{ product.url }}",
-        "priceCurrency": "EUR",
-        "price": "{{ product.selected_or_first_available_variant.price | divided_by: 100.0 | replace: ',', '.' }}",
-        {% if product.selected_or_first_available_variant.compare_at_price %}
-        "priceValidUntil": "{{ 'now' | date: '%s' | plus: 2592000 | date: '%Y-%m-%d' }}",
-        {% endif %}
-        "availability": "{% if product.selected_or_first_available_variant.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
-        "itemCondition": "https://schema.org/NewCondition"
-      }
-      {% if product.metafields.ddreviews.content.average_star %}
-      ,"aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "{{ product.metafields.ddreviews.content.average_star }}",
-        "reviewCount": "{{ product.metafields.ddreviews.content.total_reviews | default: 1 }}"
-      }
-      {% endif %}
-    }
-    </script>
+    <!-- Enhanced Product Schema (Elite SEO) -->
+    {% render 'schema-product-enhanced' %}
     <!-- Breadcrumb Schema -->
     <script type="application/ld+json">
     {
@@ -87,7 +57,7 @@
     
     <!-- Preload wichtiger Ressourcen -->
 
-    <!-- Font Awesome unified in theme.liquid -->
+
     <style>
         /* Design-Tokens */
         :root {
@@ -128,6 +98,12 @@
             --thumb-gap: 12px;
             --gallery-height: 464px;
         }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .star-filled { fill: #F39C12; stroke: #F39C12; }
+        .star-empty { fill: none; stroke: #BDC3C7; }
         /* Basis-Styles */
         * {
             box-sizing: border-box;
@@ -144,12 +120,10 @@
         }
         /* Force solid gold stars for rating widget */
         .rechnung-profi-stars i,
-        .rating-stars i,
-        .fa-star {
+        .rating-stars i {
             color: #FFB800 !important;
             font-weight: 900 !important; /* Force Solid (FA) */
-            font-family: "Font Awesome 6 Free" !important;
-            -webkit-text-stroke: 0 !important; /* Remove outline if any */
+
         }
         .rechnung-profi-stars { display: inline-flex; gap: 2px; }
         .product-rating .rating-value { font-weight: 700; color: #333; margin-right: 6px; }
@@ -1174,7 +1148,7 @@
   <!-- DIGITALER VERSAND -->
   <div class="shipping-info border-digital">
     <span class="icon-container" role="img" aria-label="Download">
-      <i class="fa-solid fa-download" aria-hidden="true"></i>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="icon-download" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </span>
     <span class="text">
       <strong class="ship-claim">Blitzversand per E-Mail</strong>
@@ -1238,7 +1212,7 @@
   {% assign delivery_iso = found_ts | date: '%Y-%m-%d' %}
   <div class="shipping-info border-physisch">
     <span class="icon-container" role="img" aria-label="Lieferung">
-      <i class="fa-solid fa-truck" aria-hidden="true"></i>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="icon-truck" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="5.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/><path d="M16 8h3.33a2 2 0 0 1 1.66 1.11l1.52 3.03A2 2 0 0 1 22.5 13V16H16V8z" stroke="currentColor" stroke-width="2"/></svg>
     </span>
     <span class="text">
       <strong class="return-claim">Kostenlose Rückgabe innerhalb von 100 Tagen</strong>
@@ -1365,7 +1339,7 @@ nav[aria-label="Breadcrumb"],
                 <!-- Thumbnail-Spalte (vertikal) -->
                 <div class="thumbs-rail {% if images_count > 5 %}is-scroll{% else %}is-static{% endif %}">
                 {% if images_count > 5 %}
-                <button type="button" class="thumbs-scroll-btn thumbs-scroll-btn--up" aria-label="Scroll up"><i class="fa-solid fa-chevron-up"></i></button>
+                <button type="button" class="thumbs-scroll-btn thumbs-scroll-btn--up" aria-label="Scroll up"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="icon-chevron-up"><path d="M18 15l-6-6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                 {% endif %}
                 <div class="gallery-thumbs{% if images_count > 5 %} gallery-thumbs--scroll{% endif %}">
      {% assign media_index = 0 %}
@@ -1395,7 +1369,7 @@ nav[aria-label="Breadcrumb"],
              <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center' }}"
                   alt="{{ media.alt | default: product.title }} - Video"
                   loading="lazy">
-             <span class="thumb-badge" aria-label="Video"><i class="fa-solid fa-play"></i></span>
+             <span class="thumb-badge" aria-label="Video"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></span>
            </div>
            {% assign media_index = media_index | plus: 1 %}
          {% when 'external_video' %}
@@ -1417,7 +1391,7 @@ nav[aria-label="Breadcrumb"],
              <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center' }}"
                   alt="{{ media.alt | default: product.title }} - Video"
                   loading="lazy">
-             <span class="thumb-badge" aria-label="Video"><i class="fa-solid fa-play"></i></span>
+             <span class="thumb-badge" aria-label="Video"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></span>
            </div>
            {% assign media_index = media_index | plus: 1 %}
          {% when 'model' %}
@@ -1436,7 +1410,7 @@ nav[aria-label="Breadcrumb"],
      {% endfor %}
                 </div>
                 {% if images_count > 5 %}
-                <button type="button" class="thumbs-scroll-btn thumbs-scroll-btn--down" aria-label="Scroll down"><i class="fa-solid fa-chevron-down"></i></button>
+                <button type="button" class="thumbs-scroll-btn thumbs-scroll-btn--down" aria-label="Scroll down"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
                 {% endif %}
                 </div>
    <!-- Hauptbild-Bereich -->
@@ -1457,7 +1431,7 @@ nav[aria-label="Breadcrumb"],
 
                         <!-- Video-Indikator (nur bei Videos sichtbar) -->
                         <div class="video-indicator" style="display: none;">
-                            <i class="fa-solid fa-play"></i> Video
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Video
                         </div>
                         {% assign selv = product.selected_or_first_available_variant %}
                         {% assign cap = selv.compare_at_price | default: 0 %}
@@ -1496,10 +1470,10 @@ nav[aria-label="Breadcrumb"],
                         <!-- Navigationsbuttons -->
                     <div class="gallery-nav">
                         <button class="nav-btn prev-btn" disabled>
-                            <i class="fa-solid fa-chevron-left"></i>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                         </button>
                         <button class="nav-btn next-btn">
-                            <i class="fa-solid fa-chevron-right"></i>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </button>
                     </div>
                 </div>
@@ -1706,14 +1680,14 @@ nav[aria-label="Breadcrumb"],
 <form method="post" action="/cart/add" id="add-to-cart-form">
   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
    <button type="submit" class="buy-btn pulse">
-    <i class="fa-solid fa-shopping-cart"></i> <span class="btn-text">In den Warenkorb</span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="icon-cart"><path d="M6 6h15l-1.5 9h-12z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.5" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="17" cy="20" r="1.5" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 6H3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> <span class="btn-text">In den Warenkorb</span>
   </button>
 </form>
 <!-- Jetzt kaufen Button -->
 <form method="post" action="/cart/add" id="buy-now-form">
   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
   <button type="submit" class="buy-btn buy-now">
-    <i class="fa-solid fa-rocket"></i> <span class="btn-text">Jetzt kaufen</span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="icon-rocket"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.48-.56.93-1.23 1.35-2h0a7 7 0 0 0 7.82-3.82l-2.84 2.84h0a2 2 0 0 1-2.83 0l-2.83-2.83a2 2 0 0 1 0-2.83h0l2.84-2.84A7 7 0 0 0 7.18 8.85c-.77.42-1.44.87-2 1.35zM12 15l-3 3M15 12l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> <span class="btn-text">Jetzt kaufen</span>
   </button>
 </form>
 
@@ -1796,7 +1770,7 @@ nav[aria-label="Breadcrumb"],
 
   .payment-icons-row .payment-icon,
   .payment-icon-custom {
-    height: 24px !important; /* Increased to 24px */
+    height: 23.52px !important; /* Decreased by another 1% */
     width: auto !important;
     flex-shrink: 0 !important; 
     display: inline-block !important;
@@ -1830,7 +1804,7 @@ nav[aria-label="Breadcrumb"],
   <div class="product-info-line usk-info" style="align-items: center;">
     <span class="usk-badge usk-{{ usk_age }}">USK {{ usk_age }}</span>
     {%- if usk_age == '18' -%}
-      <span class="usk-warning"><i class="fa-solid fa-exclamation-triangle"></i> Altersprüfung erforderlich</span>
+      <span class="usk-warning"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg> Altersprüfung erforderlich</span>
     {%- endif -%}
   </div>
   <style>
@@ -1867,18 +1841,18 @@ nav[aria-label="Breadcrumb"],
 <!-- ===== H I G H L I G H T S (Top 3) ===== -->
 <ul class="highlights-list">
   {%- if is_digital -%}
-    <li><i class="fa-solid fa-check-circle" style="color:#1D4739;"></i> Einmalige Zahlung – keine Folgekosten</li>
-    <li><i class="fa-solid fa-envelope" style="color:#1D4739;"></i> Lizenzschlüssel sofort per E-Mail</li>
-    <li><i class="fa-solid fa-file-invoice" style="color:#1D4739;"></i> Rechnung per E-Mail direkt nach Zahlung</li>
-    <li><i class="fa-solid fa-undo-alt" style="color:#1D4739;"></i> 100 Tage Widerrufsrecht</li>
+    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="color:#1D4739; margin-right: 8px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Einmalige Zahlung – keine Folgekosten</li>
+    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="color:#1D4739; margin-right: 8px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Lizenzschlüssel sofort per E-Mail</li>
+    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="color:#1D4739; margin-right: 8px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="10 9 9 9 8 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Rechnung per E-Mail direkt nach Zahlung</li>
+    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="color:#1D4739; margin-right: 8px;"><path d="M1 4v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 100 Tage Widerrufsrecht</li>
   {%- else -%}
-    <li><i class="fa-solid fa-shipping-fast" style="color:#1D4739;"></i> Schneller & kostenloser Versand aus DE</li>
-    <li><i class="fa-solid fa-undo-alt" style="color:#1D4739;"></i>
+    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="color:#1D4739; margin-right: 8px;"><rect x="1" y="3" width="15" height="13" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="5.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/><path d="M16 8h3.33a2 2 0 0 1 1.66 1.11l1.52 3.03A2 2 0 0 1 22.5 13V16H16V8z" stroke="currentColor" stroke-width="2"/></svg> Schneller & kostenloser Versand aus DE</li>
+    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="icon-undo" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#1D4739;"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
       <a href="#" class="open-return-drawer" aria-haspopup="dialog" aria-controls="returnPolicyDrawer" aria-expanded="false" style="color:#222; text-decoration: none;">
         100 Tage Widerrufsrecht & kostenfreie Retoure
       </a>
     </li>
-    <li><i class="fa-solid fa-headset" style="color:#1D4739;"></i> Deutscher Support & kompetente Beratung</li>
+    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="color:#1D4739; margin-right: 8px;"><path d="M3 18v-6a9 9 0 0 1 18 0v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Deutscher Support & kompetente Beratung</li>
   {%- endif -%}
 </ul>
 
@@ -2208,7 +2182,7 @@ nav[aria-label="Breadcrumb"],
           <strong id="fbt-total-price">{{ product.selected_or_first_available_variant.price | money }}</strong>
         </div>
         <button type="button" class="buy-btn fbt-add-btn" id="fbt-add-all">
-          <i class="fa-solid fa-shopping-cart"></i> Alle in den Warenkorb
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M5 6H3"/></svg> Alle in den Warenkorb
         </button>
       </div>
     </div>
@@ -2376,7 +2350,7 @@ nav[aria-label="Breadcrumb"],
           if (items.length === 0) return;
           
           addAllBtn.disabled = true;
-          addAllBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Wird hinzugefügt...';
+          addAllBtn.innerHTML = '<svg class="icon-spinner" style="animation: spin 1s linear infinite; margin-right: 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Wird hinzugefügt...';
           
           fetch('/cart/add.js', {
             method: 'POST',
@@ -2385,14 +2359,14 @@ nav[aria-label="Breadcrumb"],
           })
           .then(response => response.json())
           .then(data => {
-            addAllBtn.innerHTML = '<i class="fa-solid fa-check"></i> Hinzugefügt!';
+            addAllBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px;"><polyline points="20 6 9 17 4 12"/></svg> Hinzugefügt!';
             setTimeout(() => {
               window.location.href = '/cart';
             }, 500);
           })
           .catch(error => {
             addAllBtn.disabled = false;
-            addAllBtn.innerHTML = '<i class="fa-solid fa-shopping-cart"></i> Alle in den Warenkorb';
+            addAllBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px;"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M5 6H3"/></svg> Alle in den Warenkorb';
             alert('Fehler beim Hinzufügen. Bitte versuchen Sie es erneut.');
           });
         });
@@ -2405,7 +2379,7 @@ nav[aria-label="Breadcrumb"],
 
 <!-- Button mit Icon (Font Awesome question-circle) -->
 <button id="frage-btn" class="frage-btn" type="button" aria-label="Frage zum Artikel" onclick="(window.__openFrageModal ? __openFrageModal() : (function(){var m=document.getElementById('frage-modal'); if(m){ m.setAttribute('aria-hidden','false'); }})()); return false;">
-  <i class="fa-solid fa-circle-question frage-icon" aria-hidden="true"></i>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon-question frage-icon" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
   <span>Frage zum Artikel</span>
 </button>
 <!-- Modal -->
@@ -2445,7 +2419,7 @@ nav[aria-label="Breadcrumb"],
           <a href="/policies/privacy-policy">Bitte beachten Sie unsere Datenschutzerklärung</a>
         </p>
         <button type="submit" class="frage-submit">
-          <i class="fa-solid fa-paper-plane"></i> Frage abschicken
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Frage abschicken
         </button>
       </form>
     </div>
@@ -2609,15 +2583,15 @@ nav[aria-label="Breadcrumb"],
 </style>
                 <div class="trust-badges">
                     <a class="trust-badge" href="/pages/zahlungsarten" aria-label="Sicherer Einkauf">
-                        <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                         <span>Sicherer Einkauf</span>
                     </a>
                     <a class="trust-badge" href="/policies/refund-policy" aria-label="100 Tage Rückgabe">
-                        <i class="fa-solid fa-undo-alt" aria-hidden="true"></i>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
                         <span>100 Tage Rückgabe</span>
                     </a>
                     <a class="trust-badge" href="/pages/kontakt" aria-label="Deutscher Support">
-                        <i class="fa-solid fa-headset" aria-hidden="true"></i>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
                         <span>Deutscher Support</span>
                     </a>
                 </div>
@@ -2629,19 +2603,19 @@ nav[aria-label="Breadcrumb"],
     <h3 style="margin-bottom: var(--space-md); color: var(--primary);">Hauptfunktionen</h3>
     <ul class="feature-list" style="list-style: none; padding-left: 0;">
         <li style="margin-bottom: 1rem; display: flex; align-items: center;">
-            <i class="fa-solid fa-file-alt" style="margin-right: 0.75rem; color: var(--primary);"></i>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.75rem; color: var(--primary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
             Professionelle Textverarbeitung
         </li>
         <li style="margin-bottom: 1rem; display: flex; align-items: center;">
-            <i class="fa-solid fa-table" style="margin-right: 0.75rem; color: var(--primary);"></i>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.75rem; color: var(--primary);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
             Leistungsstarke Tabellenkalkulation
         </li>
         <li style="margin-bottom: 1rem; display: flex; align-items: center;">
-            <i class="fa-solid fa-chart-line" style="margin-right: 0.75rem; color: var(--primary);"></i>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.75rem; color: var(--primary);"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
             Beeindruckende Präsentationen
         </li>
         <li style="margin-bottom: 1rem; display: flex; align-items: center;">
-            <i class="fa-solid fa-envelope-open-text" style="margin-right: 0.75rem; color: var(--primary);"></i>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.75rem; color: var(--primary);"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
             Effizientes E-Mail-Management
         </li>
     </ul>
@@ -2763,23 +2737,23 @@ nav[aria-label="Breadcrumb"],
   <div class="benefits-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:var(--space-lg);margin-top:var(--space-xl);">
     {%- if is_digital -%}
       <div class="benefit-item" style="background:var(--light);padding:var(--space-lg);border-radius:var(--radius-md);text-align:center;">
-        <i class="fa-solid fa-money-bill-wave" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary);margin-bottom:var(--space-sm);"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
         <h3 style="margin-bottom:var(--space-xs);">Kein Abo</h3>
         <p style="color:var(--text-light);">Einmalige Zahlung, keine versteckten Kosten</p>
       </div>
       <div class="benefit-item" style="background:var(--light);padding:var(--space-lg);border-radius:var(--radius-md);text-align:center;">
-        <i class="fa-solid fa-bolt" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary);margin-bottom:var(--space-sm);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         <h3 style="margin-bottom:var(--space-xs);">Sofortiger Download</h3>
         <p style="color:var(--text-light);">Direkt nach Kauf verfügbar</p>
       </div>
     {%- else -%}
       <div class="benefit-item" style="background:var(--light);padding:var(--space-lg);border-radius:var(--radius-md);text-align:center;">
-        <i class="fa-solid fa-truck" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary);margin-bottom:var(--space-sm);"><rect x="1" y="3" width="15" height="13" rx="2"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/><path d="M16 8h3.33a2 2 0 0 1 1.66 1.11l1.52 3.03A2 2 0 0 1 22.5 13V16H16V8z"/></svg>
         <h3 style="margin-bottom:var(--space-xs);">Kostenloser Versand</h3>
         <p style="color:var(--text-light);">Schneller Versand aus Deutschland</p>
       </div>
       <div class="benefit-item" style="background:var(--light);padding:var(--space-lg);border-radius:var(--radius-md);text-align:center;">
-        <i class="fa-solid fa-undo-alt" style="color:var(--primary);font-size:2rem;margin-bottom:var(--space-sm);"></i>
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary);margin-bottom:var(--space-sm);"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
         <h3 style="margin-bottom:var(--space-xs);">100 Tage Rückgabe</h3>
         <p style="color:var(--text-light);">Widerrufsrecht &amp; einfacher Rückversand</p>
       </div>
@@ -2981,37 +2955,37 @@ nav[aria-label="Breadcrumb"],
   {%- if is_digital -%}
   <div class="faq-item">
     <button class="faq-question">Ist dies eine Einmalzahlung oder ein Abonnement?
-      <i class="fa-solid fa-plus icon-toggle"></i></button>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-toggle"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
     <div class="faq-answer"><p>Einmalzahlung – Dauerlizenz, keine Folgekosten.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Wie erhalte ich den Download?
-      <i class="fa-solid fa-plus icon-toggle"></i></button>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-toggle"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
     <div class="faq-answer"><p>Download-Link & Lizenzschlüssel kommen automatisch per E-Mail – meist in Sekunden.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Wie schnell erfolgt die Lieferung?
-      <i class="fa-solid fa-plus icon-toggle"></i></button>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-toggle"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
     <div class="faq-answer"><p>Digital sofort nach Zahlungseingang (E-Mail-Zustellung).</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Welche Zahlungsmethoden gibt es?
-      <i class="fa-solid fa-plus icon-toggle"></i></button>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-toggle"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
     <div class="faq-answer"><p>Kreditkarte (Visa, Mastercard, American Express, UnionPay), Apple Pay, Google Pay, Klarna, Rechnung, Vorkasse/Banküberweisung u. a.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Sind wir ein zertifiziertes/seriöses Unternehmen?
-      <i class="fa-solid fa-plus icon-toggle"></i></button>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-toggle"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
     <div class="faq-answer"><p>Ja, wir sind ein in Deutschland registriertes Unternehmen und erfüllen alle gesetzlichen Anforderungen der EU. Zudem sind wir ein zertifizierter Microsoft‑Partner, was unsere Glaubwürdigkeit und die Qualität unserer Dienstleistungen zusätzlich bestätigt.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Wie schnell beantworten wir Kundenanfragen?
-      <i class="fa-solid fa-plus icon-toggle"></i></button>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-toggle"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
     <div class="faq-answer"><p>Wir legen großen Wert auf schnelle Reaktionszeiten – in der Regel beantworten wir Kundenanfragen innerhalb von weniger als einer Stunde und gewährleisten damit einen verlässlichen und prompten Service.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Welche Vorteile habe ich hier?
-      <i class="fa-solid fa-plus icon-toggle"></i></button>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-toggle"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
     <div class="faq-answer">
       <ul style="list-style:none; padding-left:0; margin:0;">
         <li><span class="faq-check">✔</span>Sofortiger Download per E-Mail</li>
@@ -3024,32 +2998,32 @@ nav[aria-label="Breadcrumb"],
   {%- else -%}
   <div class="faq-item">
     <button class="faq-question">Wie erfolgt die Lieferung?
-      <i class="fa-solid fa-plus icon-toggle"></i></button>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-toggle"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
     <div class="faq-answer"><p>Versand aus DE mit DHL inkl. Sendungsverfolgung.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Wie lange ist die Lieferzeit?
-      <i class="fa-solid fa-plus icon-toggle"></i></button>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-toggle"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
     <div class="faq-answer"><p>In der Regel 1–3 Werktage. Bestellungen bis 12&nbsp;Uhr meist noch am selben Tag.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Fallen Versandkosten an?
-      <i class="fa-solid fa-plus icon-toggle"></i></button>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-toggle"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
     <div class="faq-answer"><p>Innerhalb Deutschlands <strong>kostenloser Versand</strong> (Express ggf. gegen Aufpreis).</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Rückgabe & Widerruf?
-      <i class="fa-solid fa-plus icon-toggle"></i></button>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-toggle"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
     <div class="faq-answer"><p><strong>100 Tage Widerrufsrecht.</strong> Rücksendung unkompliziert – wir helfen beim Label.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Ist der Artikel original & neu?
-      <i class="fa-solid fa-plus icon-toggle"></i></button>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-toggle"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
     <div class="faq-answer"><p>Ja, originale Neuware im unbeschädigten Karton – ideal als Geschenk.</p></div>
   </div>
   <div class="faq-item">
     <button class="faq-question">Erhalte ich eine Rechnung mit MwSt.?
-      <i class="fa-solid fa-plus icon-toggle"></i></button>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-toggle"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
     <div class="faq-answer"><p>Ja, automatisch per E-Mail mit ausgewiesener Mehrwertsteuer.</p></div>
   </div>
   {%- endif -%}
@@ -3118,7 +3092,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
             <button id="write-review" class="buy-btn" style="margin-top: var(--space-lg);">
-                <i class="fa-solid fa-pen"></i> Bewertung schreiben
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="icon-pen" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Bewertung schreiben
             </button>
             <div id="review-form" class="review-form">
                 <h3 style="margin-bottom: var(--space-lg);">Ihre Bewertung</h3>
@@ -3126,11 +3100,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div style="margin-bottom: var(--space-md);">
                         <label style="display: block; margin-bottom: var(--space-xs);">Ihre Bewertung</label>
                         <div class="stars" style="color: #F9C100; font-size: 1.5rem;">
-                            <i class="fa-regular fa-star" data-rating="1"></i>
-                            <i class="fa-regular fa-star" data-rating="2"></i>
-                            <i class="fa-regular fa-star" data-rating="3"></i>
-                            <i class="fa-regular fa-star" data-rating="4"></i>
-                            <i class="fa-regular fa-star" data-rating="5"></i>
+                            <svg class="icon-star star-empty" data-rating="1" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            <svg class="icon-star star-empty" data-rating="2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            <svg class="icon-star star-empty" data-rating="3" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            <svg class="icon-star star-empty" data-rating="4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            <svg class="icon-star star-empty" data-rating="5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                         </div>
                         <input type="hidden" name="rating" id="review-rating" value="0">
                     </div>
@@ -3143,7 +3117,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <textarea style="width: 100%; padding: var(--space-sm); border: 1px solid var(--medium-gray); border-radius: var(--radius-sm); min-height: 100px;"></textarea>
                     </div>
                     <button type="submit" class="buy-btn">
-                        <i class="fa-solid fa-paper-plane"></i> Bewertung absenden
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="icon-paper-plane" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Bewertung absenden
                     </button>
                 </form>
             </div>
@@ -3160,7 +3134,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                                 <p style="margin-bottom: var(--space-lg); max-width: 600px; margin-left: auto; margin-right: auto;">Jetzt {{ product.title }} sicher kaufen und sofort loslegen! 100 Tage Geld-zurück-Garantie.</p>
 <div data-shop-id="{{shop.id}}" product-id="{{product.id }}" data-page="{{request.page_type}}" class="ddreview-star"></div>
                         <a href="/cart/add?id={{ product.variants.first.id }}" class="buy-btn" style="background-color: var(--white); color: var(--primary); max-width: 300px; margin: 0 auto;">
-                <i class="fa-solid fa-rocket"></i> Jetzt kaufen
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="icon-rocket" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.48-.56.93-1.23 1.35-2h0a7 7 0 0 0 7.82-3.82l-2.84 2.84h0a2 2 0 0 1-2.83 0l-2.83-2.83a2 2 0 0 1 0-2.83h0l2.84-2.84A7 7 0 0 0 7.18 8.85c-.77.42-1.44.87-2 1.35zM12 15l-3 3M15 12l3 3"/></svg> Jetzt kaufen
             </a>
         </section>
     </main>
@@ -3390,8 +3364,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const writeReviewBtn = document.getElementById('write-review');
             const reviewForm = document.getElementById('review-form');
             if (writeReviewBtn && reviewForm) {
-                const openLabel = '<i class="fa-solid fa-pen"></i> Bewertung schreiben';
-                const closeLabel = '<i class="fa-solid fa-times"></i> Bewertung verbergen';
+                const openLabel = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="icon-pen" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Bewertung schreiben';
+                const closeLabel = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="icon-times" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Bewertung verbergen';
                 writeReviewBtn.addEventListener('click', function(e){
                     e.preventDefault();
                     const willOpen = !reviewForm.classList.contains('active');
@@ -3455,11 +3429,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const reviewFormContainer = document.getElementById('review-form');
             let selectedRating = Number(ratingInputEl && ratingInputEl.value) || 0;
 
-            function getStars(){ return Array.from(document.querySelectorAll('.review-form .stars i')); }
+            function getStars(){ return Array.from(document.querySelectorAll('.review-form .stars svg')); }
             function paintStars(n){
                 getStars().forEach((el, i) => {
-                    if (i < n) { el.classList.add('fa-solid'); el.classList.remove('fa-regular'); }
-                    else { el.classList.add('fa-regular'); el.classList.remove('fa-solid'); }
+                    if (i < n) { el.classList.add('star-filled'); el.classList.remove('star-empty'); }
+                    else { el.classList.add('star-empty'); el.classList.remove('star-filled'); }
                 });
             }
             // Initial paint
@@ -3468,13 +3442,13 @@ document.addEventListener('DOMContentLoaded', function () {
             // Delegated interactions to survive re-renders/toggles
             if (reviewFormContainer) {
                 reviewFormContainer.addEventListener('mouseover', (e) => {
-                    const star = e.target.closest('.stars i');
+                    const star = e.target.closest('.stars svg');
                     if (!star) return;
                     const val = Number(star.getAttribute('data-rating')) || 0;
                     if (val) paintStars(val);
                 });
                 reviewFormContainer.addEventListener('focusin', (e) => {
-                    const star = e.target.closest('.stars i');
+                    const star = e.target.closest('.stars svg');
                     if (!star) return;
                     const val = Number(star.getAttribute('data-rating')) || 0;
                     if (val) paintStars(val);
@@ -3485,7 +3459,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
                 reviewFormContainer.addEventListener('click', (e) => {
-                    const star = e.target.closest('.stars i');
+                    const star = e.target.closest('.stars svg');
                     if (!star) return;
                     const val = Number(star.getAttribute('data-rating')) || 0;
                     if (val) {
@@ -3495,7 +3469,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
                 reviewFormContainer.addEventListener('keydown', (e) => {
-                    const star = e.target.closest('.stars i');
+                    const star = e.target.closest('.stars svg');
                     if (!star) return;
                     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); star.click(); }
                 });
@@ -3612,16 +3586,16 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="product-lightbox__backdrop"></div>
     <div class="product-lightbox__content">
         <button class="product-lightbox__close" aria-label="Schließen">
-            <i class="fa-solid fa-xmark"></i>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="icon-close" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
         <button class="product-lightbox__nav product-lightbox__nav--prev" aria-label="Vorheriges Bild">
-            <i class="fa-solid fa-chevron-left"></i>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="icon-chevron-left" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
         <div class="product-lightbox__image-wrapper">
             <img class="product-lightbox__image" src="" alt="Produktbild vergrößert">
         </div>
         <button class="product-lightbox__nav product-lightbox__nav--next" aria-label="Nächstes Bild">
-            <i class="fa-solid fa-chevron-right"></i>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="icon-chevron-right" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
         <div class="product-lightbox__dots"></div>
     </div>
