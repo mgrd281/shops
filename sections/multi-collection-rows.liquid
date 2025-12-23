@@ -96,6 +96,7 @@
                           src="{{ product.featured_image | img_url: '600x' }}"
                           alt="{{ product.title | escape | default: shop.name }}"
                           loading="lazy"
+                          decoding="async"
                         >
                       {% else %}
                         {{ 'product-1' | placeholder_svg_tag: 'mcr-card__img' }}
