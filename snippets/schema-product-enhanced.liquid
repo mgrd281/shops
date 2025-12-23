@@ -76,11 +76,19 @@
       "returnFees": "https://schema.org/FreeReturn"
     }
   }
-  {% if product.metafields.ddreviews.content.average_star %}
+  {%- assign rating_value = product.metafields.reviews.rating.value -%}
+  {%- assign rating_count = product.metafields.reviews.rating_count -%}
+  
+  {%- if product.metafields.ddreviews.content.average_star -%}
+    {%- assign rating_value = product.metafields.ddreviews.content.average_star -%}
+    {%- assign rating_count = product.metafields.ddreviews.content.total_reviews -%}
+  {%- endif -%}
+
+  {% if rating_value != blank and rating_value > 0 %}
   ,"aggregateRating": {
     "@type": "AggregateRating",
-    "ratingValue": "{{ product.metafields.ddreviews.content.average_star }}",
-    "reviewCount": "{{ product.metafields.ddreviews.content.total_reviews | default: 1 }}",
+    "ratingValue": "{{ rating_value }}",
+    "reviewCount": "{{ rating_count | default: 1 }}",
     "bestRating": "5",
     "worstRating": "1"
   }

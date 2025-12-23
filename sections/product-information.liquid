@@ -3,38 +3,8 @@
 
     <meta name="keywords" content="{{ product.title }}, kaufen, Shop, Premium">
     <!-- Schema.org Structured Data for SEO -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org/",
-      "@type": "Product",
-      "name": "{{ product.title | escape }}",
-      "image": "{% if product.featured_image %}{{ product.featured_image | image_url: width: 1200 }}{% endif %}",
-      "description": "{{ product.description | strip_html | escape }}",
-      "sku": "{{ product.selected_or_first_available_variant.sku | default: product.id }}",
-      "brand": {
-        "@type": "Brand",
-        "name": "{% if product.vendor != blank %}{{ product.vendor | escape }}{% else %}Karinex{% endif %}"
-      },
-      "offers": {
-        "@type": "Offer",
-        "url": "{{ shop.url }}{{ product.url }}",
-        "priceCurrency": "EUR",
-        "price": "{{ product.selected_or_first_available_variant.price | divided_by: 100.0 | replace: ',', '.' }}",
-        {% if product.selected_or_first_available_variant.compare_at_price %}
-        "priceValidUntil": "{{ 'now' | date: '%s' | plus: 2592000 | date: '%Y-%m-%d' }}",
-        {% endif %}
-        "availability": "{% if product.selected_or_first_available_variant.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
-        "itemCondition": "https://schema.org/NewCondition"
-      }
-      {% if product.metafields.ddreviews.content.average_star %}
-      ,"aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "{{ product.metafields.ddreviews.content.average_star }}",
-        "reviewCount": "{{ product.metafields.ddreviews.content.total_reviews | default: 1 }}"
-      }
-      {% endif %}
-    }
-    </script>
+    <!-- Schema.org Structured Data for SEO -->
+    {% render 'schema-product-enhanced' %}
     <!-- Breadcrumb Schema -->
     <script type="application/ld+json">
     {
@@ -568,7 +538,7 @@
         .current-price { 
             font-size: clamp(2rem, 3.8vw, 2.8rem); 
             font-weight: 800; 
-            color: #e23d3d;
+            color: #137333;
             letter-spacing: 0.2px;
             line-height: 1.1;
         }
