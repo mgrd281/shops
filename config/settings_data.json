@@ -49,6 +49,13 @@
     "variant_button_radius": 0,
     "variant_button_width": "default-width-buttons",
     "content_for_index": [],
+    "blocks": {
+      "2367010369087667184": {
+        "type": "shopify://apps/deluxe-accounts/blocks/cad/b059626d-05f0-44bc-b55f-d2fc6d268902",
+        "disabled": false,
+        "settings": {}
+      }
+    },
     "color_schemes": {
       "scheme-1": {
         "settings": {
